@@ -1,7 +1,11 @@
 package model.genetic;
 
-public class ScheduleChromosome implements Chromosome {
+import java.util.ArrayList;
 
+public class ScheduleChromosome implements Chromosome {
+	
+	private ArrayList<Activity> activities;
+	
 	@Override
 	public double getFitness() {
 		// TODO Auto-generated method stub
