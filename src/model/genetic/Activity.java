@@ -58,12 +58,16 @@ public class Activity {
 			targetGroups = new ArrayList<String>(); // NOTE: Change this to ArrayList of target groups
 		}
 		
-		public void addDate(Date date){
+		
+		
+		public ActivityBuilder addDate(Date date){
 			dateRange.add(date);
+			return this;
 		}
 		
-		public void addTargetGroup(String targetGroup){ // NOTE: Change this to ArrayList of target groups
+		public ActivityBuilder addTargetGroup(String targetGroup){ // NOTE: Change this to ArrayList of target groups
 			targetGroups.add(targetGroup);
+			return this;
 		}
 		
 		public Activity buildActivity(){
@@ -124,4 +128,15 @@ public class Activity {
 		this.startTime = startTime;
 	}
 	
+	public Activity copy() {
+		ActivityBuilder ab = new ActivityBuilder(name, length, startTimeRange,endTimeRange,venue);
+		for(Date d: dateRange) {
+			ab.addDate(d);
+		}
+		for(String t : targetGroups) {
+			ab.addTargetGroup(t);
+		}
+		return ab.buildActivity();
+		
+	}
 }
