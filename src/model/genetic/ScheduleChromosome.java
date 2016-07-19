@@ -1,7 +1,10 @@
 package model.genetic;
 
+<<<<<<< HEAD
 import java.util.ArrayList;
 
+=======
+>>>>>>> origin/master
 public class ScheduleChromosome implements Chromosome {
 	
 	private ArrayList<Activity> activities;

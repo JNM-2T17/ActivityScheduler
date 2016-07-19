@@ -67,8 +67,12 @@ public class Activity {
 		}
 		
 		public Activity buildActivity(){
+<<<<<<< HEAD
 			if(length > (endTimeRange.getTime() - startTimeRange.getTime())/60000 &&
 			   name != "" && dateRange.size() > 0 && targetGroups.size() > 0){
+=======
+			if(name != "" && length > 0 && dateRange.size() > 0 && targetGroups.size() > 0){
+>>>>>>> origin/master
 				return new Activity(name, length, dateRange, startTimeRange, endTimeRange, targetGroups, venue);
 			}
 			else{
