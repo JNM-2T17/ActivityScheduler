@@ -35,7 +35,7 @@ public class Activity {
 	
 // Builder
 	
-	private class ActivityBuilder{
+	public static class ActivityBuilder{
 		// Immutable values
 		private String name;						 // Name of the activity
 		private int length;							 // Length of the activity (in minutes)

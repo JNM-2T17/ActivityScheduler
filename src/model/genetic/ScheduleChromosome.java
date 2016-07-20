@@ -20,6 +20,19 @@ public class ScheduleChromosome implements Chromosome {
 	
 	@Override
 	public double getFitness() {
+		// For every pair of activities (do not repeat pairs)
+			// If conflicting times
+			// if (start time 1 >= start time 2 && start time 1 < end time 2) || (end time 1 > start time 2 && end time 1 <= end time 2) 
+			
+				// If conflicting venues
+			
+				// Else if conflicting target groups
+				// if(!Collections.disjoint(target groups 1, target groups 2))
+		
+				// Else
+			
+			// Else if same date && same target group
+		
 		// TODO Auto-generated method stub
 		return 0;
 	}
