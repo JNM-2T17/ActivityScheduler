@@ -2,11 +2,6 @@ package model.genetic;
 
 import java.util.ArrayList;
 
-=======
->>>>>>> origin/master
-=======
-import java.util.ArrayList;
-
 public class ScheduleChromosome implements Chromosome {
 	
 	private ArrayList<Activity> activities;
