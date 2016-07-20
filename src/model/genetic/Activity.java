@@ -58,21 +58,21 @@ public class Activity {
 			targetGroups = new ArrayList<String>(); // NOTE: Change this to ArrayList of target groups
 		}
 		
-		public void addDate(Date date){
+		
+		
+		public ActivityBuilder addDate(Date date){
 			dateRange.add(date);
+			return this;
 		}
 		
-		public void addTargetGroup(String targetGroup){ // NOTE: Change this to ArrayList of target groups
+		public ActivityBuilder addTargetGroup(String targetGroup){ // NOTE: Change this to ArrayList of target groups
 			targetGroups.add(targetGroup);
+			return this;
 		}
 		
 		public Activity buildActivity(){
-<<<<<<< HEAD
 			if(length > (endTimeRange.getTime() - startTimeRange.getTime())/60000 &&
 			   name != "" && dateRange.size() > 0 && targetGroups.size() > 0){
-=======
-			if(name != "" && length > 0 && dateRange.size() > 0 && targetGroups.size() > 0){
->>>>>>> origin/master
 				return new Activity(name, length, dateRange, startTimeRange, endTimeRange, targetGroups, venue);
 			}
 			else{
@@ -129,4 +129,15 @@ public class Activity {
 		this.startTime = startTime;
 	}
 	
+	public Activity copy() {
+		ActivityBuilder ab = new ActivityBuilder(name, length, startTimeRange,endTimeRange,venue);
+		for(Date d: dateRange) {
+			ab.addDate(d);
+		}
+		for(String t : targetGroups) {
+			ab.addTargetGroup(t);
+		}
+		return ab.buildActivity();
+		
+	}
 }

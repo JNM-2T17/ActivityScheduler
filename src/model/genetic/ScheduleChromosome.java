@@ -1,13 +1,27 @@
 package model.genetic;
 
-<<<<<<< HEAD
 import java.util.ArrayList;
 
 =======
 >>>>>>> origin/master
+=======
+import java.util.ArrayList;
+
 public class ScheduleChromosome implements Chromosome {
 	
 	private ArrayList<Activity> activities;
+	
+	public ScheduleChromosome() {
+		activities = new ArrayList<Activity>();
+	}
+	
+	public void addActivity(Activity a) {
+		activities.add(a);
+	}
+	
+	public Activity getActivity(int index) {
+		return activities.get(index);
+	}
 	
 	@Override
 	public double getFitness() {
@@ -17,8 +31,22 @@ public class ScheduleChromosome implements Chromosome {
 
 	@Override
 	public Chromosome[] crossover(Chromosome c) {
-		// TODO Auto-generated method stub
-		return null;
+		ScheduleChromosome sc = (ScheduleChromosome)c;
+		ScheduleChromosome[] children = new ScheduleChromosome[]{
+				new ScheduleChromosome(),
+				new ScheduleChromosome()
+		};
+		int crossPoint = (int)(Math.random() * activities.size());
+		for(int i = 0; i < activities.size(); i++) {
+			if( i < crossPoint ) {
+				children[0].addActivity(getActivity(i).copy());
+				children[1].addActivity(sc.getActivity(i).copy());
+			} else {
+				children[1].addActivity(getActivity(i).copy());
+				children[0].addActivity(sc.getActivity(i).copy());
+			}
+		}
+		return children;
 	}
 
 	@Override
@@ -30,7 +58,11 @@ public class ScheduleChromosome implements Chromosome {
 	@Override
 	public Chromosome copy() {
 		// TODO Auto-generated method stub
-		return null;
+		ScheduleChromosome sc = new ScheduleChromosome();
+		for(Activity a: activities) {
+			sc.addActivity(a.copy());
+		}
+		return sc;
 	}
 
 }

@@ -63,10 +63,6 @@ public abstract class GeneticGenerator {
 		this.maxIter = maxIter;
 	}
 
-	private Chromosome[] getPopulation() {
-		return population;
-	}
-
 	private void setPopulation(Chromosome[] population) {
 		this.population = population;
 		changedPop = true;
