@@ -27,7 +27,7 @@ public class GeneticScheduleGenerator extends GeneticGenerator {
 		builder.addDate(new Date(2016, 7, 15));
 		builder.addDate(new Date(2016, 7, 22));
 		builder.addDate(new Date(2016, 7, 29));
-		builder.addTargetGroup("1st Year CS-ST");
+		builder.addTargetGroup(new TargetGroup("1st Year CS-ST"));
 		Activity activity = builder.buildActivity();
 			
 		// set date as random date from the date range

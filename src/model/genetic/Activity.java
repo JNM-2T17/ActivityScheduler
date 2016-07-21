@@ -3,6 +3,7 @@ package model.genetic;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Activity {
 	// Immutable values
@@ -11,8 +12,7 @@ public class Activity {
 	private ArrayList<Date> dateRange;			 // Possible dates the activity can be scheduled on
 	private Time startTimeRange;				 // Start of range of possible times the activity can be scheduled on
 	private Time endTimeRange;				 	 // End of range of possible times the activity can be scheduled on
-	private ArrayList<String> targetGroups; 	 // Target groups of the activity
-	// NOTE: Change this to ArrayList of target groups
+	private ArrayList<TargetGroup> targetGroups; 	 // Target groups of the activity
 	private String venue;						 // Venue of the activity
 	
 	// Mutable values
@@ -23,7 +23,7 @@ public class Activity {
 	
 	private Activity(String name, int length, ArrayList<Date> dateRange,
 					 Time startTimeRange, Time endTimeRange,
-					 ArrayList<String> targetGroups, String venue){ // NOTE: Change this to ArrayList of target groups
+					 ArrayList<TargetGroup> targetGroups, String venue){
 		this.name = name;
 		this.length = length;
 		this.dateRange = dateRange;
@@ -42,8 +42,7 @@ public class Activity {
 		private ArrayList<Date> dateRange;			 // Possible dates the activity can be scheduled on
 		private Time startTimeRange;				 // Start of range of possible times the activity can be scheduled on
 		private Time endTimeRange;				 	 // End of range of possible times the activity can be scheduled on
-		private ArrayList<String> targetGroups; 	 // Target groups of the activity
-		// NOTE: Change this to ArrayList of target groups
+		private ArrayList<TargetGroup> targetGroups; 	 // Target groups of the activity
 		private String venue;						 // Venue of the activity
 		
 		public ActivityBuilder(String name, int length, Time startTimeRange,
@@ -55,7 +54,7 @@ public class Activity {
 			this.venue = venue;
 			
 			dateRange = new ArrayList<Date>();
-			targetGroups = new ArrayList<String>(); // NOTE: Change this to ArrayList of target groups
+			targetGroups = new ArrayList<TargetGroup>();
 		}
 		
 		
@@ -65,7 +64,7 @@ public class Activity {
 			return this;
 		}
 		
-		public ActivityBuilder addTargetGroup(String targetGroup){ // NOTE: Change this to ArrayList of target groups
+		public ActivityBuilder addTargetGroup(TargetGroup targetGroup){
 			targetGroups.add(targetGroup);
 			return this;
 		}
@@ -103,7 +102,7 @@ public class Activity {
 		return endTimeRange;
 	}
 	
-	public ArrayList<String> getTargetGroups(){ // NOTE: Change this to ArrayList of target groups
+	public ArrayList<TargetGroup> getTargetGroups(){
 		return targetGroups;
 	}
 	
@@ -119,6 +118,10 @@ public class Activity {
 		return startTime;
 	}
 	
+	public Time getEndTime(){
+		return new Time(getStartTime().getTime() + getLength() * 60000);
+	}
+	
 // Setters
 	
 	public void setDate(Date date){
@@ -129,12 +132,18 @@ public class Activity {
 		this.startTime = startTime;
 	}
 	
+// Comparison
+	
+	public boolean hasConflictingTargetGroups(ArrayList<TargetGroup> compare){
+		return !Collections.disjoint(targetGroups, compare);
+	}
+	
 	public Activity copy() {
 		ActivityBuilder ab = new ActivityBuilder(name, length, startTimeRange,endTimeRange,venue);
 		for(Date d: dateRange) {
 			ab.addDate(d);
 		}
-		for(String t : targetGroups) {
+		for(TargetGroup t : targetGroups) {
 			ab.addTargetGroup(t);
 		}
 		return ab.buildActivity();
