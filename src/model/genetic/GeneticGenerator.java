@@ -13,7 +13,6 @@ public abstract class GeneticGenerator {
 	
 	public GeneticGenerator(int populationSize, double fitnessThreshold,
 			double elitismRate, double mutationRate,int maxIter,int changeThreshold) {
-		super();
 		this.populationSize = populationSize;
 		this.fitnessThreshold = fitnessThreshold;
 		this.elitismRate = elitismRate;
