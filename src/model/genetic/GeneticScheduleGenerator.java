@@ -4,15 +4,16 @@ import java.sql.Date;
 import java.sql.Time;
 import java.util.Random;
 
-import model.genetic.Activity.ActivityBuilder;
+import model.Activity;
+import model.Activity.ActivityBuilder;
+import model.TargetGroup;
 
 public class GeneticScheduleGenerator extends GeneticGenerator {
 
 	public GeneticScheduleGenerator(int populationSize,
 			double fitnessThreshold, double elitismRate, double mutationRate,
-			int maxIter, int changeThreshold) {
-		super(populationSize, fitnessThreshold, elitismRate, mutationRate, maxIter,
-				changeThreshold);
+			int maxIter) {
+		super(populationSize, fitnessThreshold, elitismRate, mutationRate, maxIter);
 	}
 
 	@Override
@@ -22,11 +23,11 @@ public class GeneticScheduleGenerator extends GeneticGenerator {
 		// for every activity
 		// Temp
 		ActivityBuilder builder = new Activity.ActivityBuilder("Activity Name", 180, new Time(9, 0, 0), new Time(18, 0, 0), "G301");
-		builder.addDate(new Date(2016, 7, 1));
-		builder.addDate(new Date(2016, 7, 8));
-		builder.addDate(new Date(2016, 7, 15));
-		builder.addDate(new Date(2016, 7, 22));
-		builder.addDate(new Date(2016, 7, 29));
+//		builder.addDate(new Date(2016, 7, 1));
+//		builder.addDate(new Date(2016, 7, 8));
+//		builder.addDate(new Date(2016, 7, 15));
+//		builder.addDate(new Date(2016, 7, 22));
+//		builder.addDate(new Date(2016, 7, 29));
 		builder.addTargetGroup(new TargetGroup("1st Year CS-ST"));
 		Activity activity = builder.buildActivity();
 			

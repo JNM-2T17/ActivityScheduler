@@ -2,6 +2,8 @@ package model.genetic;
 
 import java.util.ArrayList;
 
+import model.Activity;
+
 public class ScheduleChromosome implements Chromosome {
 	
 	private ArrayList<Activity> activities;

@@ -6,19 +6,17 @@ public abstract class GeneticGenerator {
 	private double elitismRate; 
 	private double mutationRate;
 	private int maxIter;
-	private double changeThreshold;
 	private boolean changedPop;
 	private double totalFitness;
 	protected Chromosome[] population;
 	
 	public GeneticGenerator(int populationSize, double fitnessThreshold,
-			double elitismRate, double mutationRate,int maxIter,int changeThreshold) {
+			double elitismRate, double mutationRate,int maxIter) {
 		this.populationSize = populationSize;
 		this.fitnessThreshold = fitnessThreshold;
 		this.elitismRate = elitismRate;
 		this.mutationRate = mutationRate;
 		this.maxIter = maxIter;
-		this.changeThreshold = changeThreshold;
 		changedPop = false;
 	}
 
@@ -26,40 +24,20 @@ public abstract class GeneticGenerator {
 		return populationSize;
 	}
 
-	public void setPopulationSize(int populationSize) {
-		this.populationSize = populationSize;
-	}
-
 	public double getFitnessThreshold() {
 		return fitnessThreshold;
-	}
-
-	public void setFitnessThreshold(double fitnessThreshold) {
-		this.fitnessThreshold = fitnessThreshold;
 	}
 
 	public double getElitismRate() {
 		return elitismRate;
 	}
 
-	public void setElitismRate(double elitismRate) {
-		this.elitismRate = elitismRate;
-	}
-
 	public double getMutationRate() {
 		return mutationRate;
 	}
 
-	public void setMutationRate(double mutationRate) {
-		this.mutationRate = mutationRate;
-	}
-	
 	public int getMaxIter() {
 		return maxIter;
-	}
-
-	public void setMaxIter(int maxIter) {
-		this.maxIter = maxIter;
 	}
 
 	private void setPopulation(Chromosome[] population) {
@@ -83,13 +61,13 @@ public abstract class GeneticGenerator {
 			for(Chromosome c: population) {
 				totalFitness += c.getFitness();
 			}
+			changedPop = false;
 		} 
 		return totalFitness;
 	}
 	
 	public Chromosome generate() {
 		initializePopulation();
-		changedPop = true;
 		Chromosome best = population[0];
 		for(int i = 1; i < population.length; i++) {
 			if( population[i].getFitness() > best.getFitness() ) {
@@ -99,14 +77,16 @@ public abstract class GeneticGenerator {
 		int iter = 0;
 		int elite = (int)(populationSize * elitismRate);
 		int mutate = (int)(populationSize * mutationRate);
-		double prevTotalFitness = getTotalFitness() - 2 * changeThreshold;
-		double currTotalFitness = getTotalFitness();
+		
+		System.out.println("Best:\t" + best + 
+				"\nMax Iterations:\t" + maxIter +
+				"\nBest Fitness:\t" + best.getFitness() + 
+				"\nFitness Threshold:\t" + fitnessThreshold + 
+				"\nTotal Fitness:\t" + getTotalFitness() + "\n\n");
 		
 		//while best is below the fitness threshold and less than max iterations
 		//and change in fitness is above change threshold
-		while(fitnessThreshold - best.getFitness() > 0.00001 && iter < maxIter && 
-				Math.abs(currTotalFitness - prevTotalFitness) - changeThreshold > 0.00001) {
-			prevTotalFitness = currTotalFitness;
+		while(fitnessThreshold - best.getFitness() > 0.00001 && iter < maxIter) {
 			Chromosome[] newPop = new Chromosome[populationSize];
 			int currIndex = 0;
 			
@@ -136,8 +116,6 @@ public abstract class GeneticGenerator {
 				population[getRandomChromosomeIndex()].mutate();
 			}
 			
-			currTotalFitness = getTotalFitness();
-			
 			//get best
 			for(int i = 0; i < population.length; i++) {
 				if( population[i].getFitness() > best.getFitness() ) {
@@ -146,11 +124,11 @@ public abstract class GeneticGenerator {
 			}
 			iter++;
 			System.out.println("ITERATION " + iter + 
+								"\nBest:\t" + best + 
 								"\nMax Iterations:\t" + maxIter +
 								"\nBest Fitness:\t" + best.getFitness() + 
-								"\nFitness Threshold:\t" + fitnessThreshold +
-								"\nChange in Fitness:\t" + Math.abs(currTotalFitness - prevTotalFitness) + 
-								"\nChange Threshold:\t" + changeThreshold + "\n\n");
+								"\nFitness Threshold:\t" + fitnessThreshold + 
+								"\nTotal Fitness:\t" + getTotalFitness() + "\n\n");
 		}
 		
 		return best;
@@ -160,10 +138,10 @@ public abstract class GeneticGenerator {
 		double random = Math.random() * getTotalFitness();
 		
 		int i = 0;
-		while(random > 0.00001) {
+		while(i < getPopulationSize() && random > 0.00001) {
 			random -= population[i].getFitness();
 			i++;
 		}
-		return i - 1;
+		return i == 0 ? 0 : i - 1;
 	}
 }

@@ -1,27 +1,27 @@
-package model.genetic;
+package model;
 
-import java.sql.Date;
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 
 public class Activity {
 	// Immutable values
 	private String name;						 // Name of the activity
 	private int length;							 // Length of the activity (in minutes)
-	private ArrayList<Date> dateRange;			 // Possible dates the activity can be scheduled on
+	private ArrayList<Calendar> dateRange;			 // Possible dates the activity can be scheduled on
 	private Time startTimeRange;				 // Start of range of possible times the activity can be scheduled on
 	private Time endTimeRange;				 	 // End of range of possible times the activity can be scheduled on
 	private ArrayList<TargetGroup> targetGroups; 	 // Target groups of the activity
 	private String venue;						 // Venue of the activity
 	
 	// Mutable values
-	private Date date;
+	private Calendar date;
 	private Time startTime;
 	
 // Constructor
 	
-	private Activity(String name, int length, ArrayList<Date> dateRange,
+	private Activity(String name, int length, ArrayList<Calendar> dateRange,
 					 Time startTimeRange, Time endTimeRange,
 					 ArrayList<TargetGroup> targetGroups, String venue){
 		this.name = name;
@@ -39,7 +39,7 @@ public class Activity {
 		// Immutable values
 		private String name;						 // Name of the activity
 		private int length;							 // Length of the activity (in minutes)
-		private ArrayList<Date> dateRange;			 // Possible dates the activity can be scheduled on
+		private ArrayList<Calendar> dateRange;			 // Possible dates the activity can be scheduled on
 		private Time startTimeRange;				 // Start of range of possible times the activity can be scheduled on
 		private Time endTimeRange;				 	 // End of range of possible times the activity can be scheduled on
 		private ArrayList<TargetGroup> targetGroups; 	 // Target groups of the activity
@@ -53,13 +53,13 @@ public class Activity {
 			this.endTimeRange = endTimeRange;
 			this.venue = venue;
 			
-			dateRange = new ArrayList<Date>();
+			dateRange = new ArrayList<Calendar>();
 			targetGroups = new ArrayList<TargetGroup>();
 		}
 		
 		
 		
-		public ActivityBuilder addDate(Date date){
+		public ActivityBuilder addDate(Calendar date){
 			dateRange.add(date);
 			return this;
 		}
@@ -90,7 +90,7 @@ public class Activity {
 		return length;
 	}
 	
-	public ArrayList<Date> getDateRange(){
+	public ArrayList<Calendar> getDateRange(){
 		return dateRange;
 	}
 	
@@ -110,7 +110,7 @@ public class Activity {
 		return venue;
 	}
 	
-	public Date getDate(){
+	public Calendar getDate(){
 		return date;
 	}
 	
@@ -124,7 +124,7 @@ public class Activity {
 	
 // Setters
 	
-	public void setDate(Date date){
+	public void setDate(Calendar date){
 		this.date = date;
 	}
 	
@@ -140,7 +140,7 @@ public class Activity {
 	
 	public Activity copy() {
 		ActivityBuilder ab = new ActivityBuilder(name, length, startTimeRange,endTimeRange,venue);
-		for(Date d: dateRange) {
+		for(Calendar d: dateRange) {
 			ab.addDate(d);
 		}
 		for(TargetGroup t : targetGroups) {
