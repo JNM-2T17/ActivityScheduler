@@ -9,6 +9,5 @@
 	<classpathentry exported="true" kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/Users/Clarisse/Documents/jars/javax.servlet.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

@@ -1,5 +1,7 @@
 package model.genetic;
 
+import java.util.ArrayList;
+
 public abstract class GeneticGenerator {
 	private int populationSize;
 	private double fitnessThreshold;
@@ -112,8 +114,9 @@ public abstract class GeneticGenerator {
 			setPopulation(newPop);
 			
 			//mutate children
-			for(int i = 0; i < mutate; i++) {
-				population[getRandomChromosomeIndex()].mutate();
+			int[] mutates = getRandomUniformIndices(mutate);
+			for(int i : mutates) {
+				population[i].mutate();
 			}
 			
 			//get best
@@ -132,6 +135,20 @@ public abstract class GeneticGenerator {
 		}
 		
 		return best;
+	}
+	
+	public int[] getRandomUniformIndices(int n) {
+		ArrayList<Integer> nums = new ArrayList<Integer>();
+		for(int i = 0; i < populationSize; i++) {
+			nums.add(i);
+		}
+		int[] indices = new int[n];
+		for(int i = 0; i < n; i++) {
+			int index = (int)(Math.random() * nums.size());
+			indices[i] = nums.get(index);
+			nums.remove(index);
+		}
+		return indices;
 	}
 	
 	public int getRandomChromosomeIndex() {
