@@ -13,7 +13,7 @@ public class Activity {
 	private Time startTimeRange;				 // Start of range of possible times the activity can be scheduled on
 	private Time endTimeRange;				 	 // End of range of possible times the activity can be scheduled on
 	private ArrayList<TargetGroup> targetGroups; 	 // Target groups of the activity
-	private String venue;						 // Venue of the activity
+	private Venue venue;						 // Venue of the activity
 	
 	// Mutable values
 	private Calendar date;
@@ -23,7 +23,7 @@ public class Activity {
 	
 	private Activity(String name, int length, ArrayList<Calendar> dateRange,
 					 Time startTimeRange, Time endTimeRange,
-					 ArrayList<TargetGroup> targetGroups, String venue){
+					 ArrayList<TargetGroup> targetGroups, Venue venue){
 		this.name = name;
 		this.length = length;
 		this.dateRange = dateRange;
@@ -43,10 +43,10 @@ public class Activity {
 		private Time startTimeRange;				 // Start of range of possible times the activity can be scheduled on
 		private Time endTimeRange;				 	 // End of range of possible times the activity can be scheduled on
 		private ArrayList<TargetGroup> targetGroups; 	 // Target groups of the activity
-		private String venue;						 // Venue of the activity
+		private Venue venue;						 // Venue of the activity
 		
 		public ActivityBuilder(String name, int length, Time startTimeRange,
-							   Time endTimeRange, String venue){
+							   Time endTimeRange, Venue venue){
 			this.name = name;
 			this.length = length;
 			this.startTimeRange = startTimeRange;
@@ -106,7 +106,7 @@ public class Activity {
 		return targetGroups;
 	}
 	
-	public String getVenue(){
+	public Venue getVenue(){
 		return venue;
 	}
 	
