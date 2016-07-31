@@ -30,7 +30,7 @@ public class VenueManager {
 		return false;
 	}
 	
-	public Venue[] getAllVenues() throws SQLException {
+	public static Venue[] getAllVenues() throws SQLException {
 		Connection con = DBManager.getInstance().getConnection();
 		String sql = "SELECT id,name FROM gs_venue WHERE status = 1";
 		PreparedStatement ps = con.prepareStatement(sql);
@@ -44,7 +44,7 @@ public class VenueManager {
 		return tgs.toArray(new Venue[0]);
 	}
 	
-	public void updateVenue(int venueId, String venue) throws SQLException {
+	public static void updateVenue(int venueId, String venue) throws SQLException {
 		Connection con = DBManager.getInstance().getConnection();
 		String sql = "UPDATE gs_venue SET name = ? WHERE id = ? AND status = 1";
 		PreparedStatement ps = con.prepareStatement(sql);
@@ -54,7 +54,7 @@ public class VenueManager {
 		con.close();
 	}
 	
-	public void deleteVenue(int venueId) throws SQLException {
+	public static void deleteVenue(int venueId) throws SQLException {
 		Connection con = DBManager.getInstance().getConnection();
 		String sql = "UPDATE gs_venue SET status = 0 WHERE id = ? AND status = 1";
 		PreparedStatement ps = con.prepareStatement(sql);

@@ -31,7 +31,7 @@ public class TargetGroupManager {
 		return false;
 	}
 	
-	public TargetGroup[] getAllTargetGroups(User u) throws SQLException {
+	public static TargetGroup[] getAllTargetGroups(User u) throws SQLException {
 		Connection con = DBManager.getInstance().getConnection();
 		String sql = "SELECT id,name FROM gs_target_group "
 				+ "WHERE userId = ? AND status = 1";
@@ -47,7 +47,7 @@ public class TargetGroupManager {
 		return tgs.toArray(new TargetGroup[0]);
 	}
 	
-	public void updateTargetGroup(int tgId, String targetGroup) throws SQLException {
+	public static void updateTargetGroup(int tgId, String targetGroup) throws SQLException {
 		Connection con = DBManager.getInstance().getConnection();
 		String sql = "UPDATE gs_target_group SET name = ? WHERE id = ? AND status = 1";
 		PreparedStatement ps = con.prepareStatement(sql);
@@ -57,7 +57,7 @@ public class TargetGroupManager {
 		con.close();
 	}
 	
-	public void deleteTargetGroup(int tgId) throws SQLException {
+	public static void deleteTargetGroup(int tgId) throws SQLException {
 		Connection con = DBManager.getInstance().getConnection();
 		String sql = "UPDATE gs_target_group SET status = 0 WHERE id = ? AND status = 1";
 		PreparedStatement ps = con.prepareStatement(sql);

@@ -10,7 +10,7 @@ import model.User;
 
 
 public class UserManager {
-	public boolean addUser(String username, String password, String fName, 
+	public static boolean addUser(String username, String password, String fName, 
 			String mi, String lName, String email) throws SQLException {
 		Connection con = DBManager.getInstance().getConnection();
 		String sql = "SELECT id FROM gs_user WHERE username = ? AND status = 1";
@@ -34,9 +34,9 @@ public class UserManager {
 		return false;
 	}
 	
-	public User login(String username, String password) throws SQLException {
+	public static User login(String username, String password) throws SQLException {
 		Connection con = DBManager.getInstance().getConnection();
-		String sql = "SELECT id,username,fName,mi,lName,email "
+		String sql = "SELECT id,username,password,fName,mi,lName,email "
 				+ "FROM gs_user "
 				+ "WHERE username = ? AND status = 1";
 		PreparedStatement ps = con.prepareStatement(sql);
@@ -50,7 +50,7 @@ public class UserManager {
 		return null;
 	}
 	
-	public void changePW(int userId,String password) throws SQLException {
+	public static void changePW(int userId,String password) throws SQLException {
 		Connection con = DBManager.getInstance().getConnection();
 		String sql = "UDPATE gs_user SET password = ? WHERE id = ? AND status = 1";
 		PreparedStatement ps = con.prepareStatement(sql);
@@ -60,7 +60,7 @@ public class UserManager {
 		con.close();
 	}
 	
-	public void updateUser(int userId,String username, String password, String fName, 
+	public static void updateUser(int userId,String username, String password, String fName, 
 			String mi, String lName, String email) throws SQLException {
 		Connection con = DBManager.getInstance().getConnection();
 		String sql = "UDPATE gs_user SET username = ?, fName = ?, lName = ?, mi = ?, email = ? WHERE id = ? AND status = 1";
