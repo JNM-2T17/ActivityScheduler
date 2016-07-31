@@ -1,6 +1,7 @@
 package model.genetic;
 
 public class TestChromosome implements Chromosome {
+	public static final int BIT_LENGTH = 64;
 	private byte[] bits; 
 	
 	public TestChromosome() {
