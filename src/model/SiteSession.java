@@ -71,14 +71,14 @@ public class SiteSession {
 		this.blacktimes = blacktimes;
 	}
 	
-	public void addBlackTime(Time start, Time end) {
+	public void addBlackTime(Calendar start, Calendar end) {
 		this.blacktimes.add(new TimeRange(start,end));
 	}
 
 	class TimeRange {
-		private Time startTime;
-		private Time endTime;
-		public TimeRange(Time startTime, Time endTime) {
+		private Calendar startTime;
+		private Calendar endTime;
+		public TimeRange(Calendar startTime, Calendar endTime) {
 			super();
 			this.startTime = startTime;
 			this.endTime = endTime;
@@ -86,16 +86,16 @@ public class SiteSession {
 		public TimeRange() {
 			super();
 		}
-		public Time getStartTime() {
+		public Calendar getStartTime() {
 			return startTime;
 		}
-		public void setStartTime(Time startTime) {
+		public void setStartTime(Calendar startTime) {
 			this.startTime = startTime;
 		}
-		public Time getEndTime() {
+		public Calendar getEndTime() {
 			return endTime;
 		}
-		public void setEndTime(Time endTime) {
+		public void setEndTime(Calendar endTime) {
 			this.endTime = endTime;
 		}
 		

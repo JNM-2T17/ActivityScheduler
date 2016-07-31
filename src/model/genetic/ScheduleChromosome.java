@@ -38,12 +38,12 @@ public class ScheduleChromosome implements Chromosome {
 				   activity1.getEndTime().compareTo(activity2.getEndTime()) <= 0){
 				 
 					// If conflicting venues
-					if(activity1.getVenue().equals(activity2.getVenue())){
+					if(activity1.getVenue().getId() == activity2.getVenue().getId()){
 						fitness += 100;
 					}
 				
 					// Else if conflicting target groups
-					else if(activity1.hasConflictingTargetGroups(activity2.getTargetGroups())){
+					else if(activity1.hasConflictingTargetGroups(activity2)){
 						fitness += 70;
 					}
 			
@@ -54,14 +54,15 @@ public class ScheduleChromosome implements Chromosome {
 				}
 				
 				// Else if same date && same target group
-				else if(activity1.getDate().compareTo(activity2.getDate()) == 0 &&
-						activity1.hasConflictingTargetGroups(activity2.getTargetGroups())){
+				else if(activity1.getStartTime().getTime().getTime() / 86400000 == 
+						activity2.getStartTime().getTime().getTime() / 86400000 &&
+						activity1.hasConflictingTargetGroups(activity2)){
 					fitness += 30;
 				}
 			}
 		}
 		
-		return 0;
+		return 1.0 / ( fitness + 1 );
 	}
 
 	@Override

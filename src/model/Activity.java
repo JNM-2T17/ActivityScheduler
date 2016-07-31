@@ -11,21 +11,20 @@ public class Activity {
 	private int length;							 // Length of the activity (in minutes)
 	private ArrayList<Calendar> dateRange;			 // Possible dates the activity can be scheduled on
 	private boolean[] days;
-	private Time startTimeRange;				 // Start of range of possible times the activity can be scheduled on
-	private Time endTimeRange;				 	 // End of range of possible times the activity can be scheduled on
+	private Calendar startTimeRange;				 // Start of range of possible times the activity can be scheduled on
+	private Calendar endTimeRange;				 	 // End of range of possible times the activity can be scheduled on
 	private ArrayList<TargetGroup> targetGroups; 	 // Target groups of the activity
 	private Venue venue;						 // Venue of the activity
 	private SiteSession session;
 	private Calendar[] allDates;
 	
 	// Mutable values
-	private Calendar date;
-	private Time startTime;
+	private Calendar startTime;
 	
 // Constructor
 	
 	private Activity(String name, int length, ArrayList<Calendar> dateRange,
-					 boolean[] days, Time startTimeRange, Time endTimeRange,
+					 boolean[] days, Calendar startTimeRange, Calendar endTimeRange,
 					 ArrayList<TargetGroup> targetGroups, Venue venue,SiteSession session){
 		this.name = name;
 		this.length = length;
@@ -47,14 +46,15 @@ public class Activity {
 		private int length;							 // Length of the activity (in minutes)
 		private ArrayList<Calendar> dateRange;			 // Possible dates the activity can be scheduled on
 		private boolean[] days;
-		private Time startTimeRange;				 // Start of range of possible times the activity can be scheduled on
-		private Time endTimeRange;				 	 // End of range of possible times the activity can be scheduled on
+		private Calendar startTimeRange;				 // Start of range of possible times the activity can be scheduled on
+		private Calendar endTimeRange;				 	 // End of range of possible times the activity can be scheduled on
 		private ArrayList<TargetGroup> targetGroups; 	 // Target groups of the activity
 		private Venue venue;						 // Venue of the activity
+		private Calendar startTime;
 		private SiteSession session;
 		
-		public ActivityBuilder(String name, int length, boolean[] days, Time startTimeRange,
-							   Time endTimeRange, Venue venue,SiteSession session){
+		public ActivityBuilder(String name, int length, boolean[] days, Calendar startTimeRange,
+							   Calendar endTimeRange, Venue venue,SiteSession session){
 			this.name = name;
 			this.length = length;
 			this.days = days;
@@ -66,7 +66,11 @@ public class Activity {
 			targetGroups = new ArrayList<TargetGroup>();
 		}
 		
-		
+		public ActivityBuilder setStartTime(Calendar startDate) {
+			this.startTime = startTime;
+			
+			return this;
+		}
 		
 		public ActivityBuilder addDate(Calendar date){
 			dateRange.add(date);
@@ -79,9 +83,11 @@ public class Activity {
 		}
 		
 		public Activity buildActivity(){
-			if(length > (endTimeRange.getTime() - startTimeRange.getTime())/60000 &&
+			if(length <= (endTimeRange.getTime().getTime() - startTimeRange.getTime().getTime())/60000 &&
 			   name != "" && dateRange.size() > 0 && targetGroups.size() > 0){
-				return new Activity(name, length, dateRange, days, startTimeRange, endTimeRange, targetGroups, venue,session);
+				Activity a = new Activity(name, length, dateRange, days, startTimeRange, endTimeRange, targetGroups, venue,session);
+				a.setStartTime(startTime);
+				return a;
 			}
 			else{
 				return null;
@@ -122,7 +128,9 @@ public class Activity {
 					while(c.get(Calendar.DAY_OF_WEEK) != dayIndex) {
 						c.add(Calendar.DAY_OF_MONTH, 1);
 					}
-					while(c.compareTo(session.getEndDate()) == -1) {
+					
+					//while before end date
+					while(c.compareTo(session.getEndDate()) <= 0) {
 						boolean found = false;
 						for(Calendar x : dates) {
 							if( x.compareTo(c) == 0 ) {
@@ -131,9 +139,7 @@ public class Activity {
 							}
 						}
 						if( !found ) {
-							Calendar newDate = Calendar.getInstance();
-							newDate.setTime(c.getTime());
-							dates.add(newDate);
+							dates.add(CalendarFactory.createCalendar(c.getTime().getTime()));
 						}
 					}
 				}
@@ -143,11 +149,11 @@ public class Activity {
 		return allDates;
 	}
 	
-	public Time getStartTimeRange(){
+	public Calendar getStartTimeRange(){
 		return startTimeRange;
 	}
 	
-	public Time getEndTimeRange(){
+	public Calendar getEndTimeRange(){
 		return endTimeRange;
 	}
 	
@@ -159,32 +165,35 @@ public class Activity {
 		return venue;
 	}
 	
-	public Calendar getDate(){
-		return date;
-	}
-	
-	public Time getStartTime(){
+	public Calendar getStartTime(){
 		return startTime;
 	}
 	
-	public Time getEndTime(){
-		return new Time(getStartTime().getTime() + getLength() * 60000);
+	public Calendar getEndTime(){
+		return CalendarFactory.createCalendar(getStartTime().getTime().getTime() + getLength() * 60000);
+	}
+	
+	public boolean isConflict(Activity anotherActivity) {
+		return anotherActivity.getStartTime().compareTo(getEndTime()) < 0;
 	}
 	
 // Setters
 	
-	public void setDate(Calendar date){
-		this.date = date;
-	}
-	
-	public void setStartTime(Time startTime){
+	public void setStartTime(Calendar startTime){
 		this.startTime = startTime;
 	}
 	
 // Comparison
 	
-	public boolean hasConflictingTargetGroups(ArrayList<TargetGroup> compare){
-		return !Collections.disjoint(targetGroups, compare);
+	public boolean hasConflictingTargetGroups(Activity compare){
+		for(TargetGroup tg1 : targetGroups) {
+			for(TargetGroup tg2 : compare.targetGroups) {
+				if( tg1.getId() == tg2.getId() ) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	public Activity copy() {
@@ -195,7 +204,7 @@ public class Activity {
 		for(TargetGroup t : targetGroups) {
 			ab.addTargetGroup(t);
 		}
-		return ab.buildActivity();
+		return ab.setStartTime(startTime).buildActivity();
 		
 	}
 }
