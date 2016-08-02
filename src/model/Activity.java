@@ -1,9 +1,15 @@
 package model;
 
 import java.sql.Time;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
+
+import model.TimeRange;
+import dao.SessionManager;
 
 public class Activity {
 	// Immutable values
@@ -17,6 +23,10 @@ public class Activity {
 	private Venue venue;						 // Venue of the activity
 	private SiteSession session;
 	private Calendar[] allDates;
+	private ArrayList<TimeRange> possibleTimes;
+	private SimpleDateFormat allf;
+	private SimpleDateFormat stf;
+	private SimpleDateFormat sdf;
 	
 	// Mutable values
 	private Calendar startTime;
@@ -36,11 +46,14 @@ public class Activity {
 		this.venue = venue;
 		this.session = session;
 		this.allDates = null;
+		allf = new SimpleDateFormat("MMMM dd, yyyy HH:mm:ss.SSS");
+		stf = new SimpleDateFormat("HH:mm:ss.SSS");
+		sdf = new SimpleDateFormat("MMMM dd, yyyy");
 	}
 	
 // Builder
 	
-	public static class ActivityBuilder{
+	public static class Builder{
 		// Immutable values
 		private String name;						 // Name of the activity
 		private int length;							 // Length of the activity (in minutes)
@@ -53,11 +66,15 @@ public class Activity {
 		private Calendar startTime;
 		private SiteSession session;
 		
-		public ActivityBuilder(String name, int length, boolean[] days, Calendar startTimeRange,
+		public Builder(String name, int length, String days, Calendar startTimeRange,
 							   Calendar endTimeRange, Venue venue,SiteSession session){
 			this.name = name;
 			this.length = length;
-			this.days = days;
+			String[] parts = days.split(",");
+			this.days = new boolean[parts.length];
+			for(int i = 0; i < parts.length; i++) {
+				this.days[i] = parts[i].equals("1");
+			}
 			this.startTimeRange = startTimeRange;
 			this.endTimeRange = endTimeRange;
 			this.venue = venue;
@@ -66,26 +83,29 @@ public class Activity {
 			targetGroups = new ArrayList<TargetGroup>();
 		}
 		
-		public ActivityBuilder setStartTime(Calendar startDate) {
+		public Builder setStartTime(Calendar startTime) {
 			this.startTime = startTime;
 			
 			return this;
 		}
 		
-		public ActivityBuilder addDate(Calendar date){
+		public Builder addDate(Calendar date){
 			dateRange.add(date);
 			return this;
 		}
 		
-		public ActivityBuilder addTargetGroup(TargetGroup targetGroup){
+		public Builder addTargetGroup(TargetGroup targetGroup){
 			targetGroups.add(targetGroup);
 			return this;
 		}
 		
 		public Activity buildActivity(){
 			if(length <= (endTimeRange.getTime().getTime() - startTimeRange.getTime().getTime())/60000 &&
-			   name != "" && dateRange.size() > 0 && targetGroups.size() > 0){
+			   name != "" && targetGroups.size() > 0){
 				Activity a = new Activity(name, length, dateRange, days, startTimeRange, endTimeRange, targetGroups, venue,session);
+				if( startTime == null ) {
+					System.out.println(name + " is not assigned!");
+				}
 				a.setStartTime(startTime);
 				return a;
 			}
@@ -141,6 +161,7 @@ public class Activity {
 						if( !found ) {
 							dates.add(CalendarFactory.createCalendar(c.getTime().getTime()));
 						}
+						c.add(Calendar.WEEK_OF_MONTH, 1);
 					}
 				}
 			}
@@ -183,6 +204,77 @@ public class Activity {
 		this.startTime = startTime;
 	}
 	
+	// set date as random date from the date range
+	public void randomizeTime() {
+		int dateCtr = getAllDates().length;
+		int randIndex = (int)(Math.random() * dateCtr);
+		long dateMillis = getAllDates()[randIndex].getTimeInMillis();
+		
+//		for(Calendar c : allDates ) {
+//			System.out.println(allf.format(c.getTime()));
+//		}
+		
+		if( possibleTimes == null ) {
+			TimeRange[] blacktimes = session.getBlacktimes();
+			
+			possibleTimes = new ArrayList<TimeRange>();
+			TimeRange curr = new TimeRange(startTimeRange,endTimeRange);
+			
+			for(TimeRange tr: blacktimes) {
+				System.out.println(tr);
+				if(tr.getStartTime().compareTo(curr.getStartTime()) < 0 ) {
+					if( tr.getEndTime().compareTo(curr.getStartTime()) > 0 ) {
+						curr.setStartTime(tr.getEndTime());
+					}
+				} else if( tr.getStartTime().compareTo(curr.getEndTime()) < 0 ){
+					if( tr.getEndTime().compareTo(curr.getEndTime()) < 0 ) {
+						TimeRange newRange = new TimeRange(tr.getEndTime(),curr.getEndTime());
+						curr.setEndTime(tr.getStartTime());
+						if( curr.getLength() >= length * 60000 ) {
+							possibleTimes.add(curr);
+						}
+						curr = newRange;
+					} else {
+						curr.setEndTime(tr.getStartTime());
+					}
+				}
+			}
+			if( curr.getLength() >= length * 60000 ) {
+				possibleTimes.add(curr);
+			}
+		}
+		long totalTime = 0;
+		for(TimeRange tr : possibleTimes ) {
+			totalTime += tr.getLength() - length * 60000;
+		}
+		totalTime /= (15 * 60 * 1000);
+		long finalTime = (long)(Math.random() * totalTime) * 15 * 60 * 1000;
+		
+		int i = 0;
+		boolean adjusted = false;
+		for(; i < possibleTimes.size(); i++) {
+			if( finalTime >= 0 ) {
+				finalTime -= possibleTimes.get(i).getLength();
+			} else {
+				i--;
+				finalTime += possibleTimes.get(i).getLength();
+				adjusted = true;
+				break;
+			}
+		}
+		if( !adjusted ) {
+			i--;
+			finalTime += possibleTimes.get(i).getLength();
+		}
+		long timeMillis = possibleTimes.get(i).getStartTime().getTimeInMillis() + finalTime;
+		Calendar time = CalendarFactory.createCalendar(timeMillis);
+		Calendar date = CalendarFactory.createCalendar(dateMillis);
+		date.set(Calendar.HOUR_OF_DAY,time.get(Calendar.HOUR_OF_DAY));
+		date.set(Calendar.MINUTE,time.get(Calendar.MINUTE));
+		date.set(Calendar.MINUTE,time.get(Calendar.MINUTE));
+		setStartTime(date);
+	}
+	
 // Comparison
 	
 	public boolean hasConflictingTargetGroups(Activity compare){
@@ -197,14 +289,57 @@ public class Activity {
 	}
 	
 	public Activity copy() {
-		ActivityBuilder ab = new ActivityBuilder(name, length, days, startTimeRange,endTimeRange,venue,session);
+		Builder ab = new Builder(name, length, SessionManager.stringifyDays(days), startTimeRange,endTimeRange,venue,session);
 		for(Calendar d: dateRange) {
 			ab.addDate(d);
 		}
 		for(TargetGroup t : targetGroups) {
 			ab.addTargetGroup(t);
 		}
-		return ab.setStartTime(startTime).buildActivity();
+		ab.setStartTime(startTime);
+		Activity copy = ab.buildActivity();
+		copy.possibleTimes = possibleTimes;
+		return copy;
+	}
+	
+	public String toString() {
+		String ret = name + "\n" + length + " minutes\nAllowed Days: ";
+		String[] days = new String[] {
+				"Sunday",
+				"Monday",
+				"Tuesday",
+				"Wednesday",
+				"Thursday",
+				"Friday",
+				"Saturday"
+		};
 		
+		String bd = "";
+		for(int i = 0; i < this.days.length; i++ ) {
+			if( this.days[i] ) {
+				bd += "\n" + days[i];
+			}
+		}
+		
+		ret += bd + "\n";
+		
+		ret += "From " + stf.format(startTimeRange.getTime()) + " to " + stf.format(endTimeRange.getTime()) + "\n";
+		ret += "Venue:\t" + venue.getName();
+		if( targetGroups.size() > 0 ) {
+			ret += "\nTarget Groups: ";
+			for(TargetGroup tg : targetGroups) {
+				ret += "\n" + tg.getName();
+			}
+		}
+		if( dateRange.size() > 0 ) {
+			ret += "\nSpecial Dates:";
+			for(Calendar c : dateRange ) {
+				ret += "\n" + sdf.format(c.getTime());
+			}
+		}
+		if( startTime != null ) {
+			ret += "\nAssigned Time:\t" + allf.format(startTime.getTime()) + " - " + allf.format(getEndTime().getTime());
+		}
+		return ret;
 	}
 }

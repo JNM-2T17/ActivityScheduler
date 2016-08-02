@@ -89,6 +89,9 @@ public abstract class GeneticGenerator {
 		//while best is below the fitness threshold and less than max iterations
 		//and change in fitness is above change threshold
 		while(fitnessThreshold - best.getFitness() > 0.00001 && iter < maxIter) {
+//			for(Chromosome c : population) {
+//				System.out.println(c);
+//			}
 			Chromosome[] newPop = new Chromosome[populationSize];
 			int currIndex = 0;
 			
@@ -155,10 +158,10 @@ public abstract class GeneticGenerator {
 		double random = Math.random() * getTotalFitness();
 		
 		int i = 0;
-		while(i < getPopulationSize() && random > 0.00001) {
+		while(i < getPopulationSize() && random > -0.00001) {
 			random -= population[i].getFitness();
 			i++;
 		}
-		return i == 0 ? 0 : i - 1;
+		return i - 1;
 	}
 }

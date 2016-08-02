@@ -1,6 +1,7 @@
 package model.genetic;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import model.Activity;
 
@@ -12,6 +13,13 @@ public class ScheduleChromosome implements Chromosome {
 		activities = new ArrayList<Activity>();
 	}
 	
+	public ScheduleChromosome(ArrayList<Activity> activities) {
+		this.activities = new ArrayList<Activity>();
+		for(Activity a : activities) {
+			this.activities.add(a.copy());
+		}
+	}
+	
 	public void addActivity(Activity a) {
 		activities.add(a);
 	}
@@ -20,13 +28,19 @@ public class ScheduleChromosome implements Chromosome {
 		return activities.get(index);
 	}
 	
+	public void randomize() {
+		for(Activity a : activities) {
+			a.randomizeTime();
+		}
+	}
+	
 	@Override
 	public double getFitness() {
 		int activityCount = activities.size();
 		double fitness = 0;
 		
 		for(int i = 0; i < activityCount - 1; i++){
-			for(int j = 0; j < activityCount - i; j++){
+			for(int j = i + 1; j < activityCount; j++){
 				Activity activity1 = activities.get(i);
 				Activity activity2 = activities.get(j);
 				
@@ -54,8 +68,12 @@ public class ScheduleChromosome implements Chromosome {
 				}
 				
 				// Else if same date && same target group
-				else if(activity1.getStartTime().getTime().getTime() / 86400000 == 
-						activity2.getStartTime().getTime().getTime() / 86400000 &&
+				else if(activity1.getStartTime().get(Calendar.YEAR) == 
+						activity2.getStartTime().get(Calendar.YEAR) &&
+						activity1.getStartTime().get(Calendar.MONTH) == 
+						activity2.getStartTime().get(Calendar.MONTH) &&
+						activity1.getStartTime().get(Calendar.DAY_OF_MONTH) == 
+						activity2.getStartTime().get(Calendar.DAY_OF_MONTH) &&
 						activity1.hasConflictingTargetGroups(activity2)){
 					fitness += 30;
 				}
@@ -74,12 +92,14 @@ public class ScheduleChromosome implements Chromosome {
 		};
 		int crossPoint = (int)(Math.random() * activities.size());
 		for(int i = 0; i < activities.size(); i++) {
+			Activity left = getActivity(i).copy();
+			Activity right = sc.getActivity(i).copy();
 			if( i < crossPoint ) {
-				children[0].addActivity(getActivity(i).copy());
-				children[1].addActivity(sc.getActivity(i).copy());
+				children[0].addActivity(left);
+				children[1].addActivity(right);
 			} else {
-				children[1].addActivity(getActivity(i).copy());
-				children[0].addActivity(sc.getActivity(i).copy());
+				children[1].addActivity(left);
+				children[0].addActivity(right);
 			}
 		}
 		return children;
@@ -88,7 +108,11 @@ public class ScheduleChromosome implements Chromosome {
 	@Override
 	public void mutate() {
 		// TODO Auto-generated method stub
-		
+		for(Activity a : activities) {
+			if( Math.random() <= 0.7 ) {
+				a.randomizeTime();
+			}
+		}
 	}
 
 	@Override
@@ -101,4 +125,11 @@ public class ScheduleChromosome implements Chromosome {
 		return sc;
 	}
 
+	public String toString() {
+		String ret = "Conflict Points:\t" + ((int)(1 / getFitness()) - 1);
+		for(Activity a : activities) {
+			ret += "\n\t" + a.toString();
+		}
+		return ret;
+	}
 }

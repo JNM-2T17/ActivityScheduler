@@ -3,7 +3,9 @@ package model;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Comparator;
 
 public class SiteSession {
 	private int id;
@@ -16,6 +18,7 @@ public class SiteSession {
 	private SimpleDateFormat allf;
 	private SimpleDateFormat sdf;
 	private SimpleDateFormat stf;
+	private boolean timesCollated = false;
 	
 	public SiteSession() {
 		super();
@@ -98,16 +101,45 @@ public class SiteSession {
 		blackdates.add(c);
 	}
 
-	public ArrayList<TimeRange> getBlacktimes() {
-		return blacktimes;
+	public TimeRange[] getBlacktimes() {
+		System.out.println(timesCollated  + " " + blacktimes.size());
+		if( !timesCollated && blacktimes.size() > 0 ) {
+			TimeRange[] tr = blacktimes.toArray(new TimeRange[0]);
+			Arrays.sort(tr,new Comparator<TimeRange>() {
+				@Override
+				public int compare(TimeRange arg0, TimeRange arg1) {
+					// TODO Auto-generated method stub
+					return (int)(arg0.getStartTime().getTime().getTime() - arg1.getStartTime().getTime().getTime());
+				}
+			});
+			ArrayList<TimeRange> newTimes = new ArrayList<TimeRange>();
+			
+			TimeRange curr = new TimeRange(tr[0].getStartTime(),tr[0].getEndTime());
+			
+			for(int i = 1; i < tr.length; i++) {
+				if(curr.getEndTime().compareTo(tr[i].getStartTime()) >= 0 ) {
+					curr.setEndTime(curr.getEndTime().compareTo(tr[i].getEndTime()) >= 0 ? curr.getEndTime() : tr[i].getEndTime());
+				} else {
+					newTimes.add(curr);
+					
+					curr = new TimeRange(tr[i].getStartTime(),tr[i].getEndTime());
+				}
+			}
+			newTimes.add(curr);
+			blacktimes = newTimes;
+			timesCollated = true;
+		}
+		return blacktimes.toArray(new TimeRange[0]);
 	}
 
 	public void setBlacktimes(ArrayList<TimeRange> blacktimes) {
 		this.blacktimes = blacktimes;
+		timesCollated = false;
 	}
 	
 	public void addBlackTime(Calendar start, Calendar end) {
 		this.blacktimes.add(new TimeRange(start,end));
+		timesCollated = false;
 	}
 	
 	public String toString() {
@@ -146,34 +178,5 @@ public class SiteSession {
 			}
 		}
 		return ret;
-	}
-
-	class TimeRange {
-		private Calendar startTime;
-		private Calendar endTime;
-		public TimeRange(Calendar startTime, Calendar endTime) {
-			super();
-			this.startTime = startTime;
-			this.endTime = endTime;
-		}
-		public TimeRange() {
-			super();
-		}
-		public Calendar getStartTime() {
-			return startTime;
-		}
-		public void setStartTime(Calendar startTime) {
-			this.startTime = startTime;
-		}
-		public Calendar getEndTime() {
-			return endTime;
-		}
-		public void setEndTime(Calendar endTime) {
-			this.endTime = endTime;
-		}
-		
-		public String toString() {
-			return stf.format(startTime.getTime()) + " to " + stf.format(endTime.getTime());
-		}
 	}
 }

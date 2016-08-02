@@ -2,45 +2,72 @@ package model.genetic;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.Random;
 
 import model.Activity;
-import model.Activity.ActivityBuilder;
+import model.Activity.Builder;
+import model.CalendarFactory;
+import model.SiteSession;
 import model.TargetGroup;
+import model.TimeRange;
+import model.Venue;
 
 public class GeneticScheduleGenerator extends GeneticGenerator {
-
+	private ArrayList<Activity> activities;
+	
+	public static void main(String[] args) {
+		SiteSession ss = new SiteSession(1,"Sample","1,0,0,0,0,0,0",CalendarFactory.createCalendar(2016, 7, 1),CalendarFactory.createCalendar(2016, 7, 15));
+		ss.addBlackTime(CalendarFactory.createCalendarTime(7, 30, 00), CalendarFactory.createCalendarTime(12, 30, 00));
+		ss.addBlackdate(CalendarFactory.createCalendar(2016, 7, 8));
+//		for(TimeRange tr: ss.getBlacktimes()) {
+//			System.out.println(tr);
+//		}
+		ArrayList<Activity> acts = new ArrayList<Activity>();
+		TargetGroup[] targetGroup = new TargetGroup[] {
+				new TargetGroup(1,"ST"),
+				new TargetGroup(2,"NE"),
+				new TargetGroup(3,"CSE"),
+				new TargetGroup(4,"IST")
+		};
+		Builder ab = new Activity.Builder("Act 1",210,"0,0,0,1,0,0,0",
+				CalendarFactory.createCalendarTime(12,0,0),
+				CalendarFactory.createCalendarTime(21,0,0),new Venue(1,"ISR"),ss);
+		ab.addTargetGroup(targetGroup[0]);
+		ab.addTargetGroup(targetGroup[1]);
+		ab.addTargetGroup(targetGroup[2]);
+		acts.add(ab.buildActivity());
+		ab = new Activity.Builder("Act 2",240,"0,0,0,1,0,0,0",
+				CalendarFactory.createCalendarTime(12,0,0),
+				CalendarFactory.createCalendarTime(21,0,0),new Venue(1,"ISR"),ss);
+		ab.addTargetGroup(targetGroup[0]);
+		ab.addTargetGroup(targetGroup[2]);
+		acts.add(ab.buildActivity());
+		ab = new Activity.Builder("Act 3",300,"0,0,0,1,0,0,0",
+				CalendarFactory.createCalendarTime(12,0,0),
+				CalendarFactory.createCalendarTime(21,0,0),new Venue(2,"Gox Lobby"),ss);
+		ab.addTargetGroup(targetGroup[2]);
+		ab.addTargetGroup(targetGroup[3]);
+		acts.add(ab.buildActivity());
+		System.out.println(acts);
+		GeneticScheduleGenerator gsg = new GeneticScheduleGenerator(50, 0.03, 0.2, 0.4, 200000, acts);
+		Chromosome sc = gsg.generate();
+		System.out.println(sc);
+	}
+	
 	public GeneticScheduleGenerator(int populationSize,
 			double fitnessThreshold, double elitismRate, double mutationRate,
-			int maxIter) {
+			int maxIter,ArrayList<Activity> activities) {
 		super(populationSize, fitnessThreshold, elitismRate, mutationRate, maxIter);
+		this.activities = activities;
 	}
 
 	@Override
 	protected Chromosome generateRandomChromosome() {
 		// TODO Randomize One Chromosome here
-		
-		// for every activity
-		// Temp
-//		ActivityBuilder builder = new Activity.ActivityBuilder("Activity Name", 180, new Time(9, 0, 0), new Time(18, 0, 0), "G301");
-//		builder.addDate(new Date(2016, 7, 1));
-//		builder.addDate(new Date(2016, 7, 8));
-//		builder.addDate(new Date(2016, 7, 15));
-//		builder.addDate(new Date(2016, 7, 22));
-//		builder.addDate(new Date(2016, 7, 29));
-//		builder.addTargetGroup(new TargetGroup("1st Year CS-ST"));
-//		Activity activity = builder.buildActivity();
+		ScheduleChromosome sc = new ScheduleChromosome(activities);
+		sc.randomize();
 			
-		// set date as random date from the date range
-//		activity.getAllDates().length
-//		int randIndex = rand.nextInt(activity.getAllDates().length);
-//		activity.setDate(activity.getDateRange().get(randIndex));
-		
-		// set time as random time from start of time range -> end of time range - activity length
-//		long randTime = rand.nextLong() % (activity.getEndTimeRange().getTime() - activity.getLength() * 60000)/60000/15;
-//		Time startTime = new Time(randTime * 15 * 60000);
-//		activity.setStartTime(startTime);
-			
-		return null;
+		return sc;
 	}
 }
