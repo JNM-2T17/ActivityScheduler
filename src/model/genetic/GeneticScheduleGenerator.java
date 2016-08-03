@@ -17,8 +17,9 @@ public class GeneticScheduleGenerator extends GeneticGenerator {
 	private ArrayList<Activity> activities;
 	
 	public static void main(String[] args) {
-		SiteSession ss = new SiteSession(1,"Sample","1,0,0,0,0,0,0",CalendarFactory.createCalendar(2016, 7, 1),CalendarFactory.createCalendar(2016, 7, 15));
-		ss.addBlackTime(CalendarFactory.createCalendarTime(7, 30, 00), CalendarFactory.createCalendarTime(12, 30, 00));
+		SiteSession ss = new SiteSession(1,"Sample","1,0,0,1,0,0,0",CalendarFactory.createCalendar(2016, 7, 1),CalendarFactory.createCalendar(2016, 7, 15));
+		ss.addBlackTime(CalendarFactory.createCalendarTime(7, 30, 00), CalendarFactory.createCalendarTime(8, 30, 00));
+		ss.addBlackTime(CalendarFactory.createCalendarTime(13, 00, 00), CalendarFactory.createCalendarTime(16, 00, 00));
 		ss.addBlackdate(CalendarFactory.createCalendar(2016, 7, 8));
 //		for(TimeRange tr: ss.getBlacktimes()) {
 //			System.out.println(tr);
@@ -30,8 +31,8 @@ public class GeneticScheduleGenerator extends GeneticGenerator {
 				new TargetGroup(3,"CSE"),
 				new TargetGroup(4,"IST")
 		};
-		Builder ab = new Activity.Builder("Act 1",210,"0,0,0,1,0,0,0",
-				CalendarFactory.createCalendarTime(12,0,0),
+		Builder ab = new Activity.Builder("Act 1",240,"0,0,0,1,0,0,0",
+				CalendarFactory.createCalendarTime(8,0,0),
 				CalendarFactory.createCalendarTime(21,0,0),new Venue(1,"ISR"),ss);
 		ab.addTargetGroup(targetGroup[0]);
 		ab.addTargetGroup(targetGroup[1]);
@@ -46,6 +47,14 @@ public class GeneticScheduleGenerator extends GeneticGenerator {
 		ab = new Activity.Builder("Act 3",300,"0,0,0,1,0,0,0",
 				CalendarFactory.createCalendarTime(12,0,0),
 				CalendarFactory.createCalendarTime(21,0,0),new Venue(2,"Gox Lobby"),ss);
+		ab.addTargetGroup(targetGroup[2]);
+		ab.addTargetGroup(targetGroup[3]);
+		ab.addDate(CalendarFactory.createCalendar(2017,11, 25));
+		acts.add(ab.buildActivity());
+		System.out.println(acts);
+		ab = new Activity.Builder("Act 4",30,"0,0,0,1,0,0,0",
+				CalendarFactory.createCalendarTime(12,45,0),
+				CalendarFactory.createCalendarTime(16,0,0),new Venue(2,"Gox Lobby"),ss);
 		ab.addTargetGroup(targetGroup[2]);
 		ab.addTargetGroup(targetGroup[3]);
 		acts.add(ab.buildActivity());

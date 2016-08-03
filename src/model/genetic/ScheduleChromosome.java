@@ -40,9 +40,16 @@ public class ScheduleChromosome implements Chromosome {
 		double fitness = 0;
 		
 		for(int i = 0; i < activityCount - 1; i++){
+			Activity activity1 = activities.get(i);
+			if( activity1.getStartTime().getTime().getTime() == 0 ) {
+				continue;
+			}
 			for(int j = i + 1; j < activityCount; j++){
-				Activity activity1 = activities.get(i);
 				Activity activity2 = activities.get(j);
+				
+				if( activity2.getStartTime().getTime().getTime() == 0 ) {
+					continue;
+				}
 				
 				// If conflicting times
 				// if (start time 1 >= start time 2 && start time 1 < end time 2) || (end time 1 > start time 2 && end time 1 <= end time 2)

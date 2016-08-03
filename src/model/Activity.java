@@ -141,7 +141,7 @@ public class Activity {
 			//for each day
 			for(int i = 0; i < days.length; i++) {
 				//if activity can be on that day
-				if( days[i] ) {
+				if( days[i] && !session.getBlackDays()[i] ) {
 					Calendar c = Calendar.getInstance();
 					c.setTime(session.getStartDate().getTime());
 					int dayIndex = i + 1;
@@ -207,6 +207,11 @@ public class Activity {
 	// set date as random date from the date range
 	public void randomizeTime() {
 		int dateCtr = getAllDates().length;
+		if( dateCtr == 0 ) {
+			startTime = CalendarFactory.createCalendar(0);
+			System.out.println(allf.format(startTime.getTime()));
+			return;
+		}
 		int randIndex = (int)(Math.random() * dateCtr);
 		long dateMillis = getAllDates()[randIndex].getTimeInMillis();
 		
@@ -221,7 +226,7 @@ public class Activity {
 			TimeRange curr = new TimeRange(startTimeRange,endTimeRange);
 			
 			for(TimeRange tr: blacktimes) {
-				System.out.println(tr);
+//				System.out.println(tr);
 				if(tr.getStartTime().compareTo(curr.getStartTime()) < 0 ) {
 					if( tr.getEndTime().compareTo(curr.getStartTime()) > 0 ) {
 						curr.setStartTime(tr.getEndTime());
@@ -243,13 +248,22 @@ public class Activity {
 				possibleTimes.add(curr);
 			}
 		}
-		long totalTime = 0;
-		for(TimeRange tr : possibleTimes ) {
-			totalTime += tr.getLength() - length * 60000;
-		}
-		totalTime /= (15 * 60 * 1000);
-		long finalTime = (long)(Math.random() * totalTime) * 15 * 60 * 1000;
 		
+		if(possibleTimes.size() == 0 ) {
+			startTime = CalendarFactory.createCalendar(0);
+			System.out.println(allf.format(startTime.getTime()));
+			return;
+		}
+		
+		long totalTime = 0;
+//		System.out.println(name);
+		for(TimeRange tr : possibleTimes ) {
+			totalTime += tr.getLength();
+//			System.out.println("POSSIBLE TIMES: " + tr + " of length " + (tr.getLength() - length * 60000));
+		}
+		long finalTime = (long)(Math.random() * totalTime);
+		
+//		System.out.println("Final Time: " + finalTime);
 		int i = 0;
 		boolean adjusted = false;
 		for(; i < possibleTimes.size(); i++) {
@@ -266,8 +280,15 @@ public class Activity {
 			i--;
 			finalTime += possibleTimes.get(i).getLength();
 		}
-		long timeMillis = possibleTimes.get(i).getStartTime().getTimeInMillis() + finalTime;
+		
+		TimeRange selectedChunk = possibleTimes.get(i);
+		
+		long totalChunks = (selectedChunk.getLength() - length * 60000) / 15 / 60 / 1000;
+		long timeMillis = (long)(Math.random() * totalChunks) * 15 * 60 * 1000 + selectedChunk.getStartTime().getTimeInMillis();
+		
+		System.out.println("SELECTED PERIOD: " + possibleTimes.get(i));
 		Calendar time = CalendarFactory.createCalendar(timeMillis);
+//		System.out.println("SELECTED TIME: " + stf.format(time.getTime()));
 		Calendar date = CalendarFactory.createCalendar(dateMillis);
 		date.set(Calendar.HOUR_OF_DAY,time.get(Calendar.HOUR_OF_DAY));
 		date.set(Calendar.MINUTE,time.get(Calendar.MINUTE));
