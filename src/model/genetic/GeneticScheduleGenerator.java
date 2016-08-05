@@ -17,7 +17,7 @@ public class GeneticScheduleGenerator extends GeneticGenerator {
 	private ArrayList<Activity> activities;
 	
 	public static void main(String[] args) {
-		SiteSession ss = new SiteSession(1,"Sample","1,0,0,1,0,0,0",CalendarFactory.createCalendar(2016, 7, 1),CalendarFactory.createCalendar(2016, 7, 15));
+		SiteSession ss = new SiteSession(1,"Sample","1,0,0,0,0,0,0",CalendarFactory.createCalendar(2016, 7, 1),CalendarFactory.createCalendar(2016, 7, 15));
 		ss.addBlackTime(CalendarFactory.createCalendarTime(7, 30, 00), CalendarFactory.createCalendarTime(8, 30, 00));
 		ss.addBlackTime(CalendarFactory.createCalendarTime(13, 00, 00), CalendarFactory.createCalendarTime(16, 00, 00));
 		ss.addBlackdate(CalendarFactory.createCalendar(2016, 7, 8));
@@ -49,17 +49,17 @@ public class GeneticScheduleGenerator extends GeneticGenerator {
 				CalendarFactory.createCalendarTime(21,0,0),new Venue(2,"Gox Lobby"),ss);
 		ab.addTargetGroup(targetGroup[2]);
 		ab.addTargetGroup(targetGroup[3]);
-		ab.addDate(CalendarFactory.createCalendar(2017,11, 25));
+//		ab.addDate(CalendarFactory.createCalendar(2017,11, 25));
 		acts.add(ab.buildActivity());
 		System.out.println(acts);
 		ab = new Activity.Builder("Act 4",30,"0,0,0,1,0,0,0",
-				CalendarFactory.createCalendarTime(12,45,0),
+				CalendarFactory.createCalendarTime(12,30,0),
 				CalendarFactory.createCalendarTime(16,0,0),new Venue(2,"Gox Lobby"),ss);
 		ab.addTargetGroup(targetGroup[2]);
 		ab.addTargetGroup(targetGroup[3]);
 		acts.add(ab.buildActivity());
 		System.out.println(acts);
-		GeneticScheduleGenerator gsg = new GeneticScheduleGenerator(50, 0.03, 0.2, 0.4, 200000, acts);
+		GeneticScheduleGenerator gsg = new GeneticScheduleGenerator(50, 0.3, 0.2, 0.4, 200000, acts);
 		Chromosome sc = gsg.generate();
 		System.out.println(sc);
 	}

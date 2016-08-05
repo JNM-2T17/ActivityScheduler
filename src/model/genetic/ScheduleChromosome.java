@@ -60,17 +60,17 @@ public class ScheduleChromosome implements Chromosome {
 				 
 					// If conflicting venues
 					if(activity1.getVenue().getId() == activity2.getVenue().getId()){
-						fitness += 100;
+						fitness += 10;
 					}
 				
 					// Else if conflicting target groups
 					else if(activity1.hasConflictingTargetGroups(activity2)){
-						fitness += 70;
+						fitness += 7;
 					}
 			
 					// Else
 					else{
-						fitness += 20;
+						fitness += 2;
 					}
 				}
 				
@@ -82,7 +82,7 @@ public class ScheduleChromosome implements Chromosome {
 						activity1.getStartTime().get(Calendar.DAY_OF_MONTH) == 
 						activity2.getStartTime().get(Calendar.DAY_OF_MONTH) &&
 						activity1.hasConflictingTargetGroups(activity2)){
-					fitness += 30;
+					fitness += 3;
 				}
 			}
 		}

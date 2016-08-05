@@ -286,7 +286,7 @@ public class Activity {
 		long totalChunks = (selectedChunk.getLength() - length * 60000) / 15 / 60 / 1000;
 		long timeMillis = (long)(Math.random() * totalChunks) * 15 * 60 * 1000 + selectedChunk.getStartTime().getTimeInMillis();
 		
-		System.out.println("SELECTED PERIOD: " + possibleTimes.get(i));
+//		System.out.println("SELECTED PERIOD: " + possibleTimes.get(i));
 		Calendar time = CalendarFactory.createCalendar(timeMillis);
 //		System.out.println("SELECTED TIME: " + stf.format(time.getTime()));
 		Calendar date = CalendarFactory.createCalendar(dateMillis);
