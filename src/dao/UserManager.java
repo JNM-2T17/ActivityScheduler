@@ -5,11 +5,35 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import security.AuthenticationException;
 import model.BCrypt;
 import model.User;
 
 
 public class UserManager {
+	public static boolean checkPass(String password) {
+		if( password.length() < 8 ) {
+			return false;
+		}
+		
+		boolean cap = false;
+		boolean low = false;
+		boolean num = false;
+		
+		for(int i = 0; i < password.length(); i++) {
+			if( password.substring(i,i + 1).matches("[A-Z]")) {
+				cap = true;
+			} else if(password.substring(i,i + 1).matches("[a-z]")) {
+				low = true;
+			} else if(password.substring(i,i + 1).matches("[0-9]")) {
+				num = true;
+			}
+		}
+		
+		
+		return (cap && low && num);
+	}
+	
 	public static boolean addUser(String username, String password, String fName, 
 			String mi, String lName, String email) throws SQLException {
 		Connection con = DBManager.getInstance().getConnection();
@@ -34,7 +58,7 @@ public class UserManager {
 		return false;
 	}
 	
-	public static User login(String username, String password) throws SQLException {
+	public static User login(String username, String password) throws SQLException, AuthenticationException {
 		Connection con = DBManager.getInstance().getConnection();
 		String sql = "SELECT id,username,password,fName,mi,lName,email "
 				+ "FROM gs_user "
@@ -42,7 +66,27 @@ public class UserManager {
 		PreparedStatement ps = con.prepareStatement(sql);
 		ps.setString(1,username);
 		ResultSet rs = ps.executeQuery();
-		if( rs.next() && BCrypt.checkpw(password, rs.getString("password"))) {
+		if( rs.next() ) {
+			if( BCrypt.checkpw(password, rs.getString("password")) ) {
+				User u = new User(rs.getInt("id"),rs.getString("username"),rs.getString("fName"),rs.getString("lName"),rs.getString("mi"),rs.getString("email"));
+				return u;
+			} else {
+				throw new AuthenticationException();
+			}
+		}
+		con.close();
+		return null;
+	}
+	
+	public static User getUser(int id) throws SQLException {
+		Connection con = DBManager.getInstance().getConnection();
+		String sql = "SELECT id,username,fName,mi,lName,email "
+				+ "FROM gs_user "
+				+ "WHERE id = ? AND status = 1";
+		PreparedStatement ps = con.prepareStatement(sql);
+		ps.setInt(1,id);
+		ResultSet rs = ps.executeQuery();
+		if( rs.next()) {
 			User u = new User(rs.getInt("id"),rs.getString("username"),rs.getString("fName"),rs.getString("lName"),rs.getString("mi"),rs.getString("email"));
 			return u;
 		}

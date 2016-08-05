@@ -12,16 +12,18 @@ import model.Venue;
 
 
 public class VenueManager {
-	public static boolean addVenue(String venue) throws SQLException {
+	public static boolean addVenue(User u, String venue) throws SQLException {
 		Connection con = DBManager.getInstance().getConnection();
-		String sql = "SELECT id FROM gs_venue WHERE name = ? AND status = 1";
+		String sql = "SELECT id FROM gs_venue WHERE userId = ? AND name = ? AND status = 1";
 		PreparedStatement ps = con.prepareStatement(sql);
-		ps.setString(1,venue);
+		ps.setInt(1,u.getId());
+		ps.setString(2,venue);
 		ResultSet rs = ps.executeQuery();
 		if( !rs.next() ) {
-			sql = "INSERT INTO gs_venue(name) VALUES (?)";
+			sql = "INSERT INTO gs_venue(userId,name) VALUES (?,?)";
 			ps = con.prepareStatement(sql);
-			ps.setString(1, venue);
+			ps.setInt(1, u.getId());
+			ps.setString(2, venue);
 			ps.execute();
 			con.close();
 			return true;
@@ -30,10 +32,11 @@ public class VenueManager {
 		return false;
 	}
 	
-	public static Venue[] getAllVenues() throws SQLException {
+	public static Venue[] getAllVenues(User u) throws SQLException {
 		Connection con = DBManager.getInstance().getConnection();
-		String sql = "SELECT id,name FROM gs_venue WHERE status = 1";
+		String sql = "SELECT id,name FROM gs_venue WHERE userId = ? AND status = 1";
 		PreparedStatement ps = con.prepareStatement(sql);
+		ps.setInt(1,u.getId());
 		ResultSet rs = ps.executeQuery();
 		ArrayList<Venue> tgs = new ArrayList<Venue>();
 		while(rs.next()) {

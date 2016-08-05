@@ -14,12 +14,6 @@ import model.SiteSession;
 import model.User;
 
 public class SessionManager {
-	public static void main(String[] args) throws SQLException {
-		User u = UserManager.login("ryanaustinf", "password");
-		SiteSession s = getSession(1);
-		System.out.println(s);
-	}
-	
 	public static boolean addSession(User u,String name, boolean[] blackdays, Calendar startDate,Calendar endDate,
 			Calendar[] blackTimeStarts,Calendar[] blackTimeEnds,Calendar[] blackDates) throws SQLException {
 		Connection con = DBManager.getInstance().getConnection();
