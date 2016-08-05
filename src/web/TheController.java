@@ -10,6 +10,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import model.SiteSession;
 import model.TargetGroup;
 import model.User;
 import model.Venue;
@@ -28,6 +29,7 @@ import security.Randomizer;
 import com.google.gson.Gson;
 
 import dao.ActivityManager;
+import dao.SessionManager;
 import dao.TargetGroupManager;
 import dao.UserManager;
 import dao.VenueManager;
@@ -128,12 +130,23 @@ public class TheController {
 	
 	@RequestMapping("/")
 	public void home(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		restoreSession(request, response);
-		homePage(request, response);
+		User u = restoreSession(request, response);
+		homePage(u,request, response);
 	}
 	
-	public void homePage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.getRequestDispatcher("WEB-INF/view/index.jsp").forward(request, response);
+	public void homePage(User u,HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		if( u == null ) {
+			request.getRequestDispatcher("WEB-INF/view/index.jsp").forward(request, response);
+		} else {
+			try {
+				SiteSession[] sessions = SessionManager.getSessions(u);
+				request.setAttribute("sessions", sessions);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			request.getRequestDispatcher("WEB-INF/view/sessions.jsp").forward(request, response);
+		}
 	}
 	
 	@ResponseBody
@@ -180,7 +193,7 @@ public class TheController {
 			logoutUser(request,response);
 			restoreToken(request,response);
 		}
-		homePage(request,response);
+		homePage(null,request,response);
 	}
 	
 	public void logoutUser(HttpServletRequest request,HttpServletResponse response) {

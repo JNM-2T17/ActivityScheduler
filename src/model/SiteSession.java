@@ -68,6 +68,25 @@ public class SiteSession {
 	public boolean[] getBlackDays() {
 		return blackDays;
 	}
+	
+	public String[] getBlackDaysString() {
+		String[] days = new String[] {
+				"Sunday",
+				"Monday",
+				"Tuesday",
+				"Wednesday",
+				"Thursday",
+				"Friday",
+				"Saturday"
+		};
+		ArrayList<String> list = new ArrayList<String>();
+		for(int i = 0; i < blackDays.length; i++ ) {
+			if( blackDays[i] ) {
+				list.add(days[i]);
+			}
+		}
+		return list.toArray(new String[0]);
+	}
 
 	public void setBlackDays(boolean[] blackDays) {
 		this.blackDays = blackDays;

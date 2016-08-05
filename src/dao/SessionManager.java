@@ -105,16 +105,14 @@ public class SessionManager {
 	
 	public static SiteSession[] getSessions(User u) throws SQLException {
 		Connection con = DBManager.getInstance().getConnection();
-		String sql = "SELECT id, name, blackdays, startDate, endDate "
+		String sql = "SELECT id "
 				+ "FROM gs_session WHERE userId = ? AND status = 1 ORDER BY dateAdded DESC";
 		PreparedStatement ps = con.prepareStatement(sql);
 		ps.setInt(1,u.getId());
 		ResultSet rs = ps.executeQuery();
 		ArrayList<SiteSession> ss = new ArrayList<SiteSession>();
 		while( rs.next() ) {
-			ss.add(new SiteSession(rs.getInt("id"),rs.getString("name"),rs.getString("blackdays"),
-					CalendarFactory.createCalendar(rs.getTimestamp("startDate").getTime()),
-					CalendarFactory.createCalendar(rs.getTimestamp("endDate").getTime())));
+			ss.add(getSession(rs.getInt("id")));
 		}
 		con.close();
 		return ss.toArray(new SiteSession[0]);
