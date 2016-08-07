@@ -42,3 +42,5 @@
 				</c:choose>
 				</ul>
 			</nav>
+			<input type="hidden" id="error" value="<c:out value="${error}"/>"/>
+			<input type="hidden" id="message" value="<c:out value="${message}"/>"/>
