@@ -98,7 +98,10 @@ public class TheController {
 								if( genHash.equals(c.getValue())) {
 									System.out.println("RESTORED SESSION");
 									request.getSession().setAttribute("sessionUser",u);
-								} 
+								} else {
+									u = null;
+									logoutUser(request,response);
+								}
 							} 
 						} catch(SQLException se) {
 							se.printStackTrace();
