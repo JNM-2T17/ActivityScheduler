@@ -56,6 +56,9 @@ public class CSPFilter implements Filter {
 		HttpServletResponse httpResponse = ((HttpServletResponse) response);
 
 		httpResponse.addHeader("X-FRAME-OPTIONS", "deny");
+		httpResponse.addHeader("X-XSS-Protection", "1;mode=block");
+		httpResponse.addHeader("X-Content-Type-Options", "nosniff");
+		httpResponse.addHeader("Content-Type", "text/html; charset=utf-8");
 		
 		/* Step 1 : Detect if target resource is a Frame */
 		// Customize here according to your context...
