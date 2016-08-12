@@ -64,14 +64,12 @@ public class ScheduleChromosome implements Chromosome {
 					}
 				
 					// Else if conflicting target groups
-					else if(activity1.hasConflictingTargetGroups(activity2)){
+					if(activity1.hasConflictingTargetGroups(activity2)){
 						fitness += 7;
 					}
 			
 					// Else
-					else{
-						fitness += 2;
-					}
+					fitness += 2;
 				}
 				
 				// Else if same date && same target group
