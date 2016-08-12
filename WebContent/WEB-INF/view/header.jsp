@@ -5,8 +5,13 @@
 	<head>
 		<title>Activity Scheduler</title>
 		<link rel="stylesheet" href="<c:url value="resources/css/style.css"/>"/>
+		<link rel="stylesheet" href="<c:url value="resources/css/jquery-ui.min.css"/>"/>
+		<link rel="stylesheet" href="<c:url value="resources/css/jquery-ui.structure.min.css"/>"/>
+		<link rel="stylesheet" href="<c:url value="resources/css/jquery-ui.theme.min.css"/>"/>
+		<link rel="stylesheet" href="<c:url value="resources/font-awesome/css/font-awesome.min.css"/>"/>
 		<link rel="shortcut icon" href="<c:url value="resources/images/icon.png"/>"/>
 		<script src="<c:url value="resources/js/jquery.min.js"/>"></script>
+		<script src="<c:url value="resources/js/jquery-ui.min.js"/>"></script>
 		<script src="<c:url value="resources/js/jquery-migrate-1.2.1.min.js"/>"></script>
 		<script src="<c:url value="resources/js/script.js"/>"></script>
 	</head>

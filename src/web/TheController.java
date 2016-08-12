@@ -4,12 +4,14 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.util.Calendar;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import model.CalendarFactory;
 import model.SiteSession;
 import model.TargetGroup;
 import model.User;
@@ -320,7 +322,6 @@ public class TheController {
 			@RequestParam("name") String name,
 			HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User u = restoreSession(request, response);
-		System.out.println("in AddTG");
 		if( u == null ) {
 			response.getWriter().print("{exit:1}");
 		} else {
@@ -337,6 +338,95 @@ public class TheController {
 				e.printStackTrace();
 				response.getWriter().print("null");
 			}			
+		}
+	}
+
+	@RequestMapping(value="/addSession",method=RequestMethod.GET)
+	public void addSession(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User u = restoreSession(request, response);
+		if( u == null ) {
+			home(request,response);
+		} else {
+			request.getRequestDispatcher("WEB-INF/view/addSession.jsp").forward(request, response);
+		}
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/addSession",method=RequestMethod.POST)
+	public void addSession(@RequestParam("name") String name,
+			@RequestParam("startDate") String startDate,
+			@RequestParam("endDate") String endDate,
+			@RequestParam(value="sunday",required=false) boolean sunday,
+			@RequestParam(value="monday",required=false) boolean monday,
+			@RequestParam(value="tuesday",required=false) boolean tuesday,
+			@RequestParam(value="wednesday",required=false) boolean wednesday,
+			@RequestParam(value="thursday",required=false) boolean thursday,
+			@RequestParam(value="friday",required=false) boolean friday,
+			@RequestParam(value="saturday",required=false) boolean saturday,
+			@RequestParam(value="bt[]",required=false) String[] blacktimes,
+			@RequestParam(value="bd[]",required=false) String[] blackdates,
+			HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User u = restoreSession(request, response);
+		if( u == null ) {
+			home(request,response);
+		} else {
+			String dateRegex = "^(0?[1-9]|1[0-2])\\/(0?[1-9]|[1-2][0-9]|3[0-1])\\/2[0-9]{3}$";
+			String timeRegex = "^((0?|1)[0-9]|2[0-3])([0-5][0-9])$";
+			
+			if( name.matches("^[A-Za-z0-9.,' \\-]+$") && startDate.matches(dateRegex) && endDate.matches(dateRegex)) {
+				boolean error = false;
+				Calendar[] bds = null;
+				if( blackdates != null ) {
+					bds = new Calendar[blackdates.length];
+					int i = 0;
+					for(String s : blackdates ) {
+						if( !s.matches(dateRegex) ) {
+							error = true;
+							break;
+						} else {
+							bds[i] = CalendarFactory.createCalendar(s);
+							i++;
+						}
+					}
+				}
+				Calendar[] bts = null;
+				Calendar[] bte = null;
+				if( !error && blacktimes != null ) {
+					bts = new Calendar[blacktimes.length];
+					bte = new Calendar[blacktimes.length];
+					int i = 0;
+					for(String s : blacktimes) {
+						String[] parts = s.split("-");
+						if( parts[0].matches(timeRegex) && parts[1].matches(timeRegex)) {
+							bts[i] = CalendarFactory.createCalendarTime(parts[0]);
+							bte[i] = CalendarFactory.createCalendarTime(parts[1]);
+							i++;
+						} else {
+							error = true;
+							break;
+						}
+					}
+				}
+				
+				if( !error ) {
+					try {
+						SessionManager.addSession(u, name, new boolean[] {
+								sunday,monday,tuesday,wednesday,thursday,friday,saturday
+						}, CalendarFactory.createCalendar(startDate), 
+								CalendarFactory.createCalendar(endDate), bts, bte, bds);
+						home(request,response);
+						return;
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						request.setAttribute("error", "Adding Session Failed");
+						request.getRequestDispatcher("WEB-INF/view/addSession.jsp").forward(request, response);
+						return;
+					}
+				}
+			}
+			request.setAttribute("error", "Data validation error.");
+			request.getRequestDispatcher("WEB-INF/view/addSession.jsp").forward(request, response);
 		}
 	}
 }
