@@ -31,6 +31,7 @@ import security.Randomizer;
 import com.google.gson.Gson;
 
 import dao.ActivityManager;
+import dao.AuditManager;
 import dao.SessionManager;
 import dao.TargetGroupManager;
 import dao.UserManager;
@@ -98,15 +99,22 @@ public class TheController {
 							if( u != null ) {
 								String genHash = genHash(u,request.getRemoteAddr());
 								if( genHash.equals(c.getValue())) {
-									System.out.println("RESTORED SESSION");
-									request.getSession().setAttribute("sessionUser",u);
+									AuditManager.setUser(u, request);
+									request.getSession().invalidate();
+									request.getSession(true).setAttribute("sessionUser",u);
+									AuditManager.addActivity("refreshed their session.");
 								} else {
 									u = null;
+									c.setMaxAge(0);
+									response.addCookie(c);
 									logoutUser(request,response);
+									AuditManager.setUser(request);
+									AuditManager.addActivity("had an invalid cookie and was logged out.");
 								}
 							} 
 						} catch(SQLException se) {
 							se.printStackTrace();
+							logError(se);
 						}
 						break;
 					}
@@ -115,6 +123,8 @@ public class TheController {
 		} else {
 			if( u.isExpired() ) {
 				logoutUser(request,response);
+				AuditManager.addActivity("had their session expired.");
+				AuditManager.setUser(request);
 				return null;
 			}
 			u.refreshIdle();
@@ -131,6 +141,10 @@ public class TheController {
 		if(!sessionToken.equals(token)) {
 			throw new MissingTokenException();
 		}
+	}
+	
+	private void logError(Exception e) {
+		AuditManager.addActivity("ran into the error " + e.getMessage());
 	}
 	
 	@RequestMapping("/")
@@ -174,17 +188,23 @@ public class TheController {
 					c.setSecure(true);
 					c.setHttpOnly(true);
 					response.addCookie(c);
+					AuditManager.setUser(u, request);
+					AuditManager.addActivity("logged in.");
 				} else {
 					request.setAttribute("error","Invalid username/password combination");
+					AuditManager.addActivity("failed to login to account " + username + ".");
 				}
 			} catch(SQLException se) {
 				se.printStackTrace();
+				logError(se);
 			} catch (AuthenticationException e) {
 				// TODO Auto-generated catch block
+				AuditManager.addActivity("failed to login to account " + username + ".");
 				request.setAttribute("error", "Invalid username/password combination");
 			} catch (MissingTokenException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				AuditManager.addActivity("had an invalid token on login.");
 				request.setAttribute("error", "An unexpected error occured.");
 			} 
 		}
@@ -196,12 +216,13 @@ public class TheController {
 		User u = restoreSession(request,response);
 		if( u != null) {
 			logoutUser(request,response);
-			restoreToken(request,response);
+			AuditManager.addActivity("logged out.");
+			AuditManager.setUser(request);
 		}
 		homePage(null,request,response);
 	}
 	
-	public void logoutUser(HttpServletRequest request,HttpServletResponse response) {
+	public void logoutUser(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
 		request.getSession().invalidate();
 		Cookie[] cookies = request.getCookies();
 		for(Cookie c : cookies) {
@@ -210,6 +231,8 @@ public class TheController {
 				response.addCookie(c);
 			}
 		}
+		request.getSession(true);
+		restoreToken(request,response);
 	}
 	
 	@RequestMapping(value="register",method = RequestMethod.GET)
@@ -244,14 +267,17 @@ public class TheController {
 						email.matches("^([-.a-zA-Z0-9_]+)@([-.a-zA-Z0-9_]+)[.]([a-zA-Z]{2,5})$") && 
 						UserManager.checkPass(password) && password.equals(confirmPassword)) {
 					UserManager.addUser(username, password, fname, mi, lname, email);
+					AuditManager.addActivity("registered account " + username + ".");
 					login(token,username,password,request,response);
 				} else {
+					AuditManager.addActivity("ran into data validation errors on register.");
 					request.setAttribute("error","Failed to register account.");
 					register(request,response);
 				}
 			} catch (SQLException | MissingTokenException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				logError(e);
 				request.setAttribute("error","An unexpected error occured.");
 				register(request,response);
 			} 
@@ -289,12 +315,15 @@ public class TheController {
 				if(name.matches("^[A-Za-z0-9.', _\\-]+$") && TargetGroupManager.addTargetGroup(u, name) ) {
 					TargetGroup[] tgs = TargetGroupManager.getAllTargetGroups(u);
 					response.getWriter().print((new Gson()).toJson(tgs[tgs.length - 1]));
+					AuditManager.addActivity("added target group " + name + ".");
 				} else {
+					AuditManager.addActivity("ran into data validation errors on add target group.");
 					response.getWriter().print("null");
 				}
 			} catch (MissingTokenException | SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				logError(e);
 				response.getWriter().print("null");
 			}			
 		}
@@ -330,12 +359,15 @@ public class TheController {
 				if(name.matches("^[A-Za-z0-9.', _\\-]+$") && VenueManager.addVenue(u, name) ) {
 					Venue[] venues = VenueManager.getAllVenues(u);
 					response.getWriter().print((new Gson()).toJson(venues[venues.length - 1]));
+					AuditManager.addActivity("added venue " + name + ".");
 				} else {
+					AuditManager.addActivity("ran into data validation errors on add venue.");
 					response.getWriter().print("null");
 				}
 			} catch (MissingTokenException | SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				logError(e);
 				response.getWriter().print("null");
 			}			
 		}
@@ -414,17 +446,20 @@ public class TheController {
 								sunday,monday,tuesday,wednesday,thursday,friday,saturday
 						}, CalendarFactory.createCalendar(startDate), 
 								CalendarFactory.createCalendar(endDate), bts, bte, bds);
+						AuditManager.addActivity("added session " + name);
 						home(request,response);
 						return;
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
+						logError(e);
 						request.setAttribute("error", "Adding Session Failed");
 						request.getRequestDispatcher("WEB-INF/view/addSession.jsp").forward(request, response);
 						return;
 					}
 				}
 			}
+			AuditManager.addActivity("ran into data validation errors on add target group.");
 			request.setAttribute("error", "Data validation error.");
 			request.getRequestDispatcher("WEB-INF/view/addSession.jsp").forward(request, response);
 		}
