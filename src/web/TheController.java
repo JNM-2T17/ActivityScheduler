@@ -184,7 +184,7 @@ public class TheController {
 					request.getSession(true).setAttribute("sessionUser", u);
 					String genHash = genToken(request,response);
 					Cookie c = new Cookie("asSessionToken",genHash);
-					c.setMaxAge(10080);
+					c.setMaxAge(User.SESSION_EXPIRY * 60);
 					c.setSecure(true);
 					c.setHttpOnly(true);
 					response.addCookie(c);
