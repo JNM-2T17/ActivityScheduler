@@ -13,6 +13,7 @@ import dao.SessionManager;
 
 public class Activity {
 	// Immutable values
+	private int id;
 	private String name;						 // Name of the activity
 	private int length;							 // Length of the activity (in minutes)
 	private ArrayList<Calendar> dateRange;			 // Possible dates the activity can be scheduled on
@@ -33,9 +34,10 @@ public class Activity {
 	
 // Constructor
 	
-	private Activity(String name, int length, ArrayList<Calendar> dateRange,
+	private Activity(int id,String name, int length, ArrayList<Calendar> dateRange,
 					 boolean[] days, Calendar startTimeRange, Calendar endTimeRange,
 					 ArrayList<TargetGroup> targetGroups, Venue venue,SiteSession session){
+		this.id = id;
 		this.name = name;
 		this.length = length;
 		this.dateRange = dateRange;
@@ -55,6 +57,7 @@ public class Activity {
 	
 	public static class Builder{
 		// Immutable values
+		private int id;
 		private String name;						 // Name of the activity
 		private int length;							 // Length of the activity (in minutes)
 		private ArrayList<Calendar> dateRange;			 // Possible dates the activity can be scheduled on
@@ -66,8 +69,9 @@ public class Activity {
 		private Calendar startTime;
 		private SiteSession session;
 		
-		public Builder(String name, int length, String days, Calendar startTimeRange,
+		public Builder(int id,String name, int length, String days, Calendar startTimeRange,
 							   Calendar endTimeRange, Venue venue,SiteSession session){
+			this.id = id;
 			this.name = name;
 			this.length = length;
 			String[] parts = days.split(",");
@@ -100,18 +104,9 @@ public class Activity {
 		}
 		
 		public Activity buildActivity(){
-			if(length <= (endTimeRange.getTime().getTime() - startTimeRange.getTime().getTime())/60000 &&
-			   name != "" && targetGroups.size() > 0){
-				Activity a = new Activity(name, length, dateRange, days, startTimeRange, endTimeRange, targetGroups, venue,session);
-				if( startTime == null ) {
-					System.out.println(name + " is not assigned!");
-				}
-				a.setStartTime(startTime);
-				return a;
-			}
-			else{
-				return null;
-			}
+			Activity a = new Activity(id,name, length, dateRange, days, startTimeRange, endTimeRange, targetGroups, venue,session);
+			a.setStartTime(startTime);
+			return a;
 		}
 	}
 	
@@ -121,6 +116,14 @@ public class Activity {
 		return name;
 	}
 	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
 	public int getLength(){
 		return length;
 	}
@@ -186,6 +189,61 @@ public class Activity {
 		return venue;
 	}
 	
+	public boolean[] getDays() {
+		return days;
+	}
+	
+	public String[] getDaysString() {
+		String[] days = new String[] {
+				"Sunday",
+				"Monday",
+				"Tuesday",
+				"Wednesday",
+				"Thursday",
+				"Friday",
+				"Saturday"
+		};
+		ArrayList<String> list = new ArrayList<String>();
+		for(int i = 0; i < this.days.length; i++ ) {
+			if( this.days[i] ) {
+				list.add(days[i]);
+			}
+		}
+		return list.toArray(new String[0]);
+	}
+
+	public void setDays(boolean[] days) {
+		this.days = days;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setLength(int length) {
+		this.length = length;
+	}
+
+	public void setDateRange(ArrayList<Calendar> dateRange) {
+		this.dateRange = dateRange;
+	}
+
+	public void setStartTimeRange(Calendar startTimeRange) {
+		this.startTimeRange = startTimeRange;
+	}
+
+	public void setEndTimeRange(Calendar endTimeRange) {
+		this.endTimeRange = endTimeRange;
+	}
+
+	public void setTargetGroups(ArrayList<TargetGroup> targetGroups) {
+		this.targetGroups = targetGroups;
+	}
+
+	public void setVenue(Venue venue) {
+		this.venue = venue;
+	}
+
 	public Calendar getStartTime(){
 		return startTime;
 	}
@@ -310,7 +368,7 @@ public class Activity {
 	}
 	
 	public Activity copy() {
-		Builder ab = new Builder(name, length, SessionManager.stringifyDays(days), startTimeRange,endTimeRange,venue,session);
+		Builder ab = new Builder(id,name, length, SessionManager.stringifyDays(days), startTimeRange,endTimeRange,venue,session);
 		for(Calendar d: dateRange) {
 			ab.addDate(d);
 		}

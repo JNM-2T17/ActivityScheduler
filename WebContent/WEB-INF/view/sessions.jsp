@@ -22,7 +22,7 @@
 			</tr>
 			<c:forEach items="${sessions }" var="s">
 			<tr>
-				<td><c:out value="${s.name }"/></td>
+				<td><a href="setSession?sessionId=${s.id }"><c:out value="${s.name }"/></a></td>
 				<td>
 				<c:choose>
 				<c:when test="${empty s.blackDaysString }">

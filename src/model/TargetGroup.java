@@ -2,6 +2,7 @@ package model;
 
 public class TargetGroup {
 	private int id;
+	private int userId;
 	private String name;
 
 	public TargetGroup() {
@@ -33,6 +34,14 @@ public class TargetGroup {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public int getUserId() {
+		return userId;
+	}
+
+	public void setUserId(int userId) {
+		this.userId = userId;
 	}
 
 	

@@ -5,6 +5,7 @@
 		<h1>Add Session</h1>
 		<script src="<c:url value="resources/js/addSession.js"/>"></script>
 		<form action="addSession" method="POST" onsubmit="return addSession.checkSubmit();">
+			<input type="hidden" name="token" value="${sessionToken }"/>
 			Name: <input type="text" name="name" id="name"/><br/>
 			Start and End Date: <input type="text" id="startDate" name="startDate"/> to 
 			<input type="text" id="endDate" name="endDate"/><br/>

@@ -13,6 +13,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import model.Activity;
 import model.CalendarFactory;
 import model.SiteSession;
 import model.TargetGroup;
@@ -77,11 +78,35 @@ public class TheController {
 		return "";
 	}
 	
+	private String genHash(User u,SiteSession ss, String ip) {
+		Hasher hash;
+		try {
+			hash = new Hasher(Hasher.SHA256);
+			hash.updateHash(u.getId() + u.getUsername(),"UTF-8");
+			hash.updateHash(ss.getId() + "","UTF-8");
+			hash.updateHash(ip,"UTF-8");
+			String token = u.getId() + "," + ss.getId() + "$" + hash.getHashBASE64();
+			return token;
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "";
+	}
+	
 	private String genToken(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User u = restoreSession(request,response);
+		SiteSession ss = (SiteSession)request.getSession().getAttribute("activeSession");
 		String genHash = null;
 		if( u != null ) {
-			genHash = genHash(u,request.getRemoteAddr());
+			if( ss == null ) {
+				genHash = genHash(u,request.getRemoteAddr());
+			} else {
+				genHash = genHash(u,ss,request.getRemoteAddr());
+			}
 			request.getSession().setAttribute("sessionToken",genHash); 
 		}
 		return genHash;
@@ -98,13 +123,25 @@ public class TheController {
 					if( c.getName().equals("asSessionToken") ) {
 						try {
 							int dollar = c.getValue().indexOf('$');
-							u = UserManager.getUser(Integer.parseInt(c.getValue().substring(0,dollar)));
+							String keys = c.getValue().substring(0,dollar);
+							String[] parts = keys.split(",");
+							u = UserManager.getUser(Integer.parseInt(parts[0]));
+							SiteSession ss = null;
+							if( parts.length > 1 ) {
+								ss = SessionManager.getSession(Integer.parseInt(parts[1]));
+							}
 							if( u != null ) {
-								String genHash = genHash(u,request.getRemoteAddr());
+								String genHash = null;
+								if( ss != null ) {
+									genHash = genHash(u,ss,request.getRemoteAddr());
+								} else {
+									genHash = genHash(u,request.getRemoteAddr());
+								}
 								if( genHash.equals(c.getValue())) {
 									AuditManager.setUser(u, request);
 									request.getSession().invalidate();
 									request.getSession(true).setAttribute("sessionUser",u);
+									request.getSession().setAttribute("activeSession", ss);
 									AuditManager.addActivity("refreshed their session.");
 								} else {
 									u = null;
@@ -153,10 +190,38 @@ public class TheController {
 	@RequestMapping("/")
 	public void home(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User u = restoreSession(request, response);
-		homePage(u,request, response);
+		homePage(u,(SiteSession)request.getSession().getAttribute("activeSession"),request, response);
 	}
 	
-	public void homePage(User u,HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	public void homePage(User u,SiteSession ss,HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		if( u == null ) {
+			request.getRequestDispatcher("WEB-INF/view/index.jsp").forward(request, response);
+		} else if( ss == null ) {
+			try {
+				SiteSession[] sessions = SessionManager.getSessions(u);
+				request.setAttribute("sessions", sessions);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				logError(e);
+			}
+			request.getRequestDispatcher("WEB-INF/view/sessions.jsp").forward(request, response);
+		} else {
+			try {
+				Activity[] acts = ActivityManager.getActivities(ss);
+				request.setAttribute("activities",acts);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				logError(e);
+			}
+			request.getRequestDispatcher("WEB-INF/view/activities.jsp").forward(request, response);
+		}
+	}
+	
+	@RequestMapping("sessions")
+	public void sessions(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User u = restoreSession(request,response);
 		if( u == null ) {
 			request.getRequestDispatcher("WEB-INF/view/index.jsp").forward(request, response);
 		} else {
@@ -166,6 +231,7 @@ public class TheController {
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				logError(e);
 			}
 			request.getRequestDispatcher("WEB-INF/view/sessions.jsp").forward(request, response);
 		}
@@ -222,7 +288,7 @@ public class TheController {
 			AuditManager.addActivity("logged out.");
 			AuditManager.setUser(request);
 		}
-		homePage(null,request,response);
+		homePage(null,null,request,response);
 	}
 	
 	public void logoutUser(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
@@ -309,7 +375,6 @@ public class TheController {
 			@RequestParam("name") String name,
 			HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User u = restoreSession(request, response);
-		System.out.println("in AddTG");
 		if( u == null ) {
 			response.getWriter().print("{exit:1}");
 		} else {
@@ -516,7 +581,6 @@ public class TheController {
 				String dateRegex = "^(0?[1-9]|1[0-2])\\/(0?[1-9]|[1-2][0-9]|3[0-1])\\/2[0-9]{3}$";
 				String timeRegex = "^((0?|1)[0-9]|2[0-3])([0-5][0-9])$";
 				
-				System.out.println(name + " " + name.matches("^[A-Za-z0-9.,' \\-]+$") + "\n" + startDate + " " + startDate.matches(dateRegex) + "\n" + endDate + " " + endDate.matches(dateRegex));
 				if( name.matches("^[A-Za-z0-9.,' \\-]+$") && startDate.matches(dateRegex) && endDate.matches(dateRegex)) {
 					boolean error = false;
 					Calendar[] bds = null;
@@ -524,7 +588,6 @@ public class TheController {
 						bds = new Calendar[blackdates.length];
 						int i = 0;
 						for(String s : blackdates ) {
-							System.out.println(s + s.matches(dateRegex));
 							if( !s.matches(dateRegex) ) {
 								error = true;
 								break;
@@ -542,7 +605,6 @@ public class TheController {
 						int i = 0;
 						for(String s : blacktimes) {
 							String[] parts = s.split("-");
-							System.out.println(parts[0] + " penis " + parts[1] + " " + parts[0].matches(timeRegex) + " " + parts[1].matches(timeRegex));
 							if( parts[0].matches(timeRegex) && parts[1].matches(timeRegex)) {
 								bts[i] = CalendarFactory.createCalendarTime(parts[0]);
 								bte[i] = CalendarFactory.createCalendarTime(parts[1]);
@@ -636,6 +698,163 @@ public class TheController {
 				// TODO Auto-generated catch block
 				logError(e);
 				response.getWriter().print("null");
+			}
+		}
+	}
+	
+	@RequestMapping(value="/setSession")
+	public void setSession(@RequestParam("sessionId") int sessionId,
+			HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User u = restoreSession(request, response);
+		if( u == null ) {
+			home(request,response);
+		} else {
+			SiteSession ss;
+			try {
+				ss = SessionManager.getSession(sessionId);
+				if( ss.getUserId() == u.getId()) {
+					request.getSession().setAttribute("activeSession", ss);
+					String token = genToken(request,response);
+					Cookie c = new Cookie("asSessionToken",token);
+					c.setMaxAge(User.SESSION_EXPIRY * 60);
+					c.setHttpOnly(true);
+					c.setSecure(true);
+					response.addCookie(c);
+					AuditManager.addActivity("set their session to session " + ss.getId() + ".");
+				} else {
+					AuditManager.addActivity("tried to access session " + ss.getId() + " which is not theirs.");
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				logError(e);
+				request.setAttribute("error", "An unexpected error occured");
+			}
+			home(request,response);
+		}
+	}
+	
+	@RequestMapping(value="addActivity",method=RequestMethod.GET)
+	public void addActivity(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User u = restoreSession(request,response);
+		if( u == null ) {
+			home(request,response);
+		} else {
+			Venue[] vs;
+			try {
+				vs = VenueManager.getAllVenues(u);
+				TargetGroup[] tgs = TargetGroupManager.getAllTargetGroups(u);
+				request.setAttribute("venues", vs);
+				request.setAttribute("targetGroups", tgs);
+				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+				SiteSession ss = (SiteSession)request.getSession().getAttribute("activeSession");
+				request.setAttribute("startDate",sdf.format(ss.getStartDate().getTime()));
+				request.setAttribute("endDate",sdf.format(ss.getEndDate().getTime()));
+				request.setAttribute("blackdays", ss.getBlackDaysString());
+				request.getRequestDispatcher("WEB-INF/view/addActivity.jsp").forward(request, response);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				logError(e);
+				request.setAttribute("error", "An unexpected error occured");
+				home(request,response);
+			}
+		}
+	}
+	
+	@RequestMapping(value="addActivity",method=RequestMethod.POST)
+	public void addActivity(@RequestParam("token") String token,
+			@RequestParam("name") String name,
+			@RequestParam("venue") int venue,
+			@RequestParam("length") int length,
+			@RequestParam("startTime") String str,
+			@RequestParam("endTime") String etr,
+			@RequestParam(value="sunday",required=false) boolean sunday,
+			@RequestParam(value="monday",required=false) boolean monday,
+			@RequestParam(value="tuesday",required=false) boolean tuesday,
+			@RequestParam(value="wednesday",required=false) boolean wednesday,
+			@RequestParam(value="thursday",required=false) boolean thursday,
+			@RequestParam(value="friday",required=false) boolean friday,
+			@RequestParam(value="saturday",required=false) boolean saturday,
+			@RequestParam(value="dr[]",required=false) String[] dateRange,
+			@RequestParam(value="tg[]",required=false) int[] targets,
+			HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User u = restoreSession(request,response);
+		if( u == null ) {
+			home(request,response);
+		} else {
+			try {
+				checkToken(token,request,response);
+				String dateRegex = "^(0?[1-9]|1[0-2])\\/(0?[1-9]|[1-2][0-9]|3[0-1])\\/2[0-9]{3}$";
+				String timeRegex = "^((0?|1)[0-9]|2[0-3])([0-5][0-9])$";
+				Venue v = VenueManager.getVenue(venue);
+				
+				if( name.matches("^[A-Za-z0-9.,' \\-]+$") && str.matches(timeRegex) && etr.matches(timeRegex) &&
+						v.getUserId() == u.getId() ) {
+					boolean error = false;
+					
+					Calendar[] bds = null;
+					if( dateRange != null ) {
+						bds = new Calendar[dateRange.length];
+						int i = 0;
+						for(String s : dateRange ) {
+							System.out.println(s + s.matches(dateRegex));
+							if( !s.matches(dateRegex) ) {
+								error = true;
+								break;
+							} else {
+								bds[i] = CalendarFactory.createCalendar(s);
+								i++;
+							}
+						}
+					}
+					
+					TargetGroup[] tgs = new TargetGroup[0];
+					if(targets != null ) {
+						tgs = new TargetGroup[targets.length];
+						for(int i = 0; !error && i < targets.length; i++) {
+							TargetGroup tg = TargetGroupManager.getTargetGroup(targets[i]);
+							if( tg.getUserId() != u.getId()) {
+								error = true;
+							} else {
+								tgs[i] = tg;
+							}
+						}
+					}
+					
+					if( !error ) {
+						try {
+							ActivityManager.addActivity((SiteSession)request.getSession().getAttribute("activeSession"), venue, name, length, new boolean[] {
+									sunday, monday, tuesday, wednesday, thursday, friday, saturday
+							}, CalendarFactory.createCalendarTime(str), CalendarFactory.createCalendarTime(etr), tgs, bds);
+							AuditManager.addActivity("added activity " + name + ".");
+							home(request,response);
+							return;
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							logError(e);
+							request.setAttribute("error", "Adding Activity Failed");
+							addActivity(request,response);
+							return;
+						}
+					}
+				}
+				AuditManager.addActivity("ran into data validation errors on add activity.");
+				request.setAttribute("error", "Data validation error.");
+				addSession(request,response);
+			} catch (MissingTokenException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				AuditManager.addActivity("had an invalid token on Add Activity.");
+				request.setAttribute("error", "An unexpected error occured.");
+				home(request,response);
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				logError(e1);
+				request.setAttribute("error", "Adding Activity Failed");
+				addActivity(request,response);
 			}
 		}
 	}

@@ -2,6 +2,7 @@ package model;
 
 public class Venue {
 	private int id;
+	private int userId;
 	private String name;
 	public Venue() {
 		super();
@@ -26,6 +27,12 @@ public class Venue {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public int getUserId() {
+		return userId;
+	}
+	public void setUserId(int userId) {
+		this.userId = userId;
 	}
 	
 	

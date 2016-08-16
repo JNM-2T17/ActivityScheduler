@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import model.Activity;
@@ -48,7 +49,7 @@ public class ActivityManager {
 					ps.setInt(2 * i + 1, actId);
 					ps.setDate(2 * i + 2, new Date(dates[i].getTime().getTime()));
 				}
-				ps.executeQuery();
+				ps.execute();
 			}
 			
 			if( targets != null && targets.length > 0 ) {
@@ -61,7 +62,7 @@ public class ActivityManager {
 					ps.setInt(2 * i + 1, targets[i].getId());
 					ps.setInt(2 * i + 2, actId);
 				}
-				ps.executeQuery();
+				ps.execute();
 			}
 		} 
 		con.close();	
@@ -70,14 +71,14 @@ public class ActivityManager {
 	public static Activity getActivity(SiteSession ss,int actId) throws SQLException {
 		Connection con = DBManager.getInstance().getConnection();
 		try {
-			String sql = "SELECT sessionId, venueId, V.name AS venue, A.name, length, days, startTimeRange, endTimeRange, assignedTime "
+			String sql = "SELECT A.id,sessionId, venueId, V.name AS venue, A.name, length, days, startTimeRange, endTimeRange, assignedTime "
 					+ "FROM gs_activity A INNER JOIN gs_venue V ON A.venueId = V.id AND A.status = 1 AND V.status = 1 "
 					+ "WHERE A.id = ?";
 			PreparedStatement ps = con.prepareStatement(sql);
 			ps.setInt(1,actId);
 			ResultSet rs = ps.executeQuery();
 			if(rs.next() ) {
-				Builder ab = new Activity.Builder(rs.getString("name"), rs.getInt("length"), rs.getString("days"), CalendarFactory.createCalendar(rs.getTimestamp("startTimeRange").getTime()), 
+				Builder ab = new Activity.Builder(rs.getInt("id"),rs.getString("name"), rs.getInt("length"), rs.getString("days"), CalendarFactory.createCalendar(rs.getTimestamp("startTimeRange").getTime()), 
 									CalendarFactory.createCalendar(rs.getTimestamp("endTimeRange").getTime()), new Venue(rs.getInt("venueId"),rs.getString("venue")), 
 									ss);
 				Timestamp ts = rs.getTimestamp("assignedTime");
@@ -109,5 +110,18 @@ public class ActivityManager {
 		} finally {
 			con.close();
 		}
+	}
+	
+	public static Activity[] getActivities(SiteSession ss) throws SQLException {
+		Connection con = DBManager.getInstance().getConnection();
+		String sql = "SELECT id FROM gs_activity WHERE sessionId = ?";
+		PreparedStatement ps = con.prepareStatement(sql);
+		ps.setInt(1,ss.getId());
+		ResultSet rs = ps.executeQuery();
+		ArrayList<Activity> acts = new ArrayList<Activity>();
+		while(rs.next()) {
+			acts.add(getActivity(ss,rs.getInt("id")));
+		}
+		return acts.toArray(new Activity[0]);
 	}
 }

@@ -32,15 +32,32 @@ public class VenueManager {
 		return false;
 	}
 	
+	public static Venue getVenue(int id) throws SQLException {
+		Connection con = DBManager.getInstance().getConnection();
+		String sql = "SELECT id,userId,name FROM gs_venue WHERE id = ? AND status = 1";
+		PreparedStatement ps = con.prepareStatement(sql);
+		ps.setInt(1,id);
+		ResultSet rs = ps.executeQuery();
+		if(rs.next()) {
+			Venue v = new Venue(rs.getInt("id"),rs.getString("name"));
+			v.setUserId(rs.getInt("userId"));
+			con.close();
+			return v;
+		} 
+		con.close();
+		return null;
+	}
+	
 	public static Venue[] getAllVenues(User u) throws SQLException {
 		Connection con = DBManager.getInstance().getConnection();
-		String sql = "SELECT id,name FROM gs_venue WHERE userId = ? AND status = 1";
+		String sql = "SELECT id,userId,name FROM gs_venue WHERE userId = ? AND status = 1";
 		PreparedStatement ps = con.prepareStatement(sql);
 		ps.setInt(1,u.getId());
 		ResultSet rs = ps.executeQuery();
 		ArrayList<Venue> tgs = new ArrayList<Venue>();
 		while(rs.next()) {
 			tgs.add(new Venue(rs.getInt("id"),rs.getString("name")));
+			tgs.get(tgs.size() - 1).setUserId(rs.getInt("userId"));
 		} 
 		con.close();
 		

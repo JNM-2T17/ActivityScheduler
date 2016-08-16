@@ -31,9 +31,26 @@ public class TargetGroupManager {
 		return false;
 	}
 	
+	public static TargetGroup getTargetGroup(int id) throws SQLException {
+		Connection con = DBManager.getInstance().getConnection();
+		String sql = "SELECT id,userId,name FROM gs_target_group "
+				+ "WHERE id = ? AND status = 1";
+		PreparedStatement ps = con.prepareStatement(sql);
+		ps.setInt(1, id);
+		ResultSet rs = ps.executeQuery();
+		TargetGroup tg = null;
+		if(rs.next()) {
+			tg = new TargetGroup(rs.getInt("id"),rs.getString("name"));
+			tg.setUserId(rs.getInt("userId"));
+		} 
+		con.close();
+		
+		return tg;
+	}
+	
 	public static TargetGroup[] getAllTargetGroups(User u) throws SQLException {
 		Connection con = DBManager.getInstance().getConnection();
-		String sql = "SELECT id,name FROM gs_target_group "
+		String sql = "SELECT id,userId,name FROM gs_target_group "
 				+ "WHERE userId = ? AND status = 1";
 		PreparedStatement ps = con.prepareStatement(sql);
 		ps.setInt(1, u.getId());
@@ -41,6 +58,7 @@ public class TargetGroupManager {
 		ArrayList<TargetGroup> tgs = new ArrayList<TargetGroup>();
 		while(rs.next()) {
 			tgs.add(new TargetGroup(rs.getInt("id"),rs.getString("name")));
+			tgs.get(tgs.size() - 1).setUserId(rs.getInt("userId"));
 		} 
 		con.close();
 		
