@@ -872,7 +872,7 @@ public class TheController {
 			SiteSession ss = (SiteSession)request.getSession().getAttribute("activeSession");
 			if( ss != null ) {
 				try {
-					GeneticScheduleGenerator gsg = new GeneticScheduleGenerator(50, 0.3, 0.2, 0.4, 20000, ActivityManager.getActivities(ss));
+					GeneticScheduleGenerator gsg = new GeneticScheduleGenerator(50, 0.25, 0.2, 0.4, 20000, ActivityManager.getActivities(ss));
 					ScheduleChromosome sc = (ScheduleChromosome)gsg.generate();
 					String json = "[";
 					SimpleDateFormat sdf = new SimpleDateFormat("hh:mm aa");
