@@ -1,8 +1,13 @@
 package model;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class CalendarFactory {
+	public static SimpleDateFormat allf = new SimpleDateFormat("MMMM dd, yyyy HH:mm:ss.SSS");
+	public static SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd, yyyy");
+	public static SimpleDateFormat stf = new SimpleDateFormat("HH:mm:ss.SSS");
+	
 	public static Calendar createCalendar(long millis) {
 		Calendar c = Calendar.getInstance();
 		c.setTimeInMillis(millis);

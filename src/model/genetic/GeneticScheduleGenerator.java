@@ -17,7 +17,7 @@ public class GeneticScheduleGenerator extends GeneticGenerator {
 	private ArrayList<Activity> activities;
 	
 	public static void main(String[] args) {
-		SiteSession ss = new SiteSession(1,"Sample","1,0,0,0,0,0,0",CalendarFactory.createCalendar(2016, 7, 1),CalendarFactory.createCalendar(2016, 7, 15));
+		SiteSession ss = new SiteSession(1,1,"Sample","1,0,0,0,0,0,0",CalendarFactory.createCalendar(2016, 7, 1),CalendarFactory.createCalendar(2016, 7, 15));
 		ss.addBlackTime(CalendarFactory.createCalendarTime(7, 30, 00), CalendarFactory.createCalendarTime(8, 30, 00));
 		ss.addBlackTime(CalendarFactory.createCalendarTime(13, 00, 00), CalendarFactory.createCalendarTime(16, 00, 00));
 		ss.addBlackdate(CalendarFactory.createCalendar(2016, 7, 8));

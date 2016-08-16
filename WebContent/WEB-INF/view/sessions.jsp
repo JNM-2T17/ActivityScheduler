@@ -18,6 +18,7 @@
 				<th>Blackout Times</th>
 				<th>Start Date</th>
 				<th>End Date</th>
+				<th></th>
 			</tr>
 			<c:forEach items="${sessions }" var="s">
 			<tr>
@@ -64,6 +65,7 @@
 				<td>
 					<fmt:formatDate pattern="MM/dd/yyyy" value="${s.endDate.time }"/>
 				</td>
+				<td><a href="editSession?sessionId=${s.id }"><i class="fa fa-edit"></i></a></td>
 			</tr>
 			</c:forEach>
 		</table>

@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -14,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import model.CalendarFactory;
 import model.SiteSession;
 import model.TargetGroup;
+import model.TimeRange;
 import model.User;
 import model.Venue;
 
@@ -385,7 +388,8 @@ public class TheController {
 	
 	@ResponseBody
 	@RequestMapping(value="/addSession",method=RequestMethod.POST)
-	public void addSession(@RequestParam("name") String name,
+	public void addSession(@RequestParam("token") String token,
+			@RequestParam("name") String name,
 			@RequestParam("startDate") String startDate,
 			@RequestParam("endDate") String endDate,
 			@RequestParam(value="sunday",required=false) boolean sunday,
@@ -402,66 +406,237 @@ public class TheController {
 		if( u == null ) {
 			home(request,response);
 		} else {
-			String dateRegex = "^(0?[1-9]|1[0-2])\\/(0?[1-9]|[1-2][0-9]|3[0-1])\\/2[0-9]{3}$";
-			String timeRegex = "^((0?|1)[0-9]|2[0-3])([0-5][0-9])$";
-			
-			if( name.matches("^[A-Za-z0-9.,' \\-]+$") && startDate.matches(dateRegex) && endDate.matches(dateRegex)) {
-				boolean error = false;
-				Calendar[] bds = null;
-				if( blackdates != null ) {
-					bds = new Calendar[blackdates.length];
-					int i = 0;
-					for(String s : blackdates ) {
-						if( !s.matches(dateRegex) ) {
-							error = true;
-							break;
-						} else {
-							bds[i] = CalendarFactory.createCalendar(s);
-							i++;
-						}
-					}
-				}
-				Calendar[] bts = null;
-				Calendar[] bte = null;
-				if( !error && blacktimes != null ) {
-					bts = new Calendar[blacktimes.length];
-					bte = new Calendar[blacktimes.length];
-					int i = 0;
-					for(String s : blacktimes) {
-						String[] parts = s.split("-");
-						if( parts[0].matches(timeRegex) && parts[1].matches(timeRegex)) {
-							bts[i] = CalendarFactory.createCalendarTime(parts[0]);
-							bte[i] = CalendarFactory.createCalendarTime(parts[1]);
-							i++;
-						} else {
-							error = true;
-							break;
-						}
-					}
-				}
+			try {
+				checkToken(token,request,response);
+				String dateRegex = "^(0?[1-9]|1[0-2])\\/(0?[1-9]|[1-2][0-9]|3[0-1])\\/2[0-9]{3}$";
+				String timeRegex = "^((0?|1)[0-9]|2[0-3])([0-5][0-9])$";
 				
-				if( !error ) {
-					try {
-						SessionManager.addSession(u, name, new boolean[] {
-								sunday,monday,tuesday,wednesday,thursday,friday,saturday
-						}, CalendarFactory.createCalendar(startDate), 
-								CalendarFactory.createCalendar(endDate), bts, bte, bds);
-						AuditManager.addActivity("added session " + name);
-						home(request,response);
-						return;
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						logError(e);
-						request.setAttribute("error", "Adding Session Failed");
-						request.getRequestDispatcher("WEB-INF/view/addSession.jsp").forward(request, response);
-						return;
+				if( name.matches("^[A-Za-z0-9.,' \\-]+$") && startDate.matches(dateRegex) && endDate.matches(dateRegex)) {
+					boolean error = false;
+					Calendar[] bds = null;
+					if( blackdates != null ) {
+						bds = new Calendar[blackdates.length];
+						int i = 0;
+						for(String s : blackdates ) {
+							if( !s.matches(dateRegex) ) {
+								error = true;
+								break;
+							} else {
+								bds[i] = CalendarFactory.createCalendar(s);
+								i++;
+							}
+						}
+					}
+					Calendar[] bts = null;
+					Calendar[] bte = null;
+					if( !error && blacktimes != null ) {
+						bts = new Calendar[blacktimes.length];
+						bte = new Calendar[blacktimes.length];
+						int i = 0;
+						for(String s : blacktimes) {
+							String[] parts = s.split("-");
+							if( parts[0].matches(timeRegex) && parts[1].matches(timeRegex)) {
+								bts[i] = CalendarFactory.createCalendarTime(parts[0]);
+								bte[i] = CalendarFactory.createCalendarTime(parts[1]);
+								i++;
+							} else {
+								error = true;
+								break;
+							}
+						}
+					}
+					
+					if( !error ) {
+						try {
+							SessionManager.addSession(u, name, new boolean[] {
+									sunday,monday,tuesday,wednesday,thursday,friday,saturday
+							}, CalendarFactory.createCalendar(startDate), 
+									CalendarFactory.createCalendar(endDate), bts, bte, bds);
+							AuditManager.addActivity("added session " + name);
+							home(request,response);
+							return;
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							logError(e);
+							request.setAttribute("error", "Adding Session Failed");
+							request.getRequestDispatcher("WEB-INF/view/addSession.jsp").forward(request, response);
+							return;
+						}
 					}
 				}
+				AuditManager.addActivity("ran into data validation errors on add session.");
+				request.setAttribute("error", "Data validation error.");
+				request.getRequestDispatcher("WEB-INF/view/addSession.jsp").forward(request, response);
+			} catch (MissingTokenException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				AuditManager.addActivity("had an invalid token on Add Session.");
+				request.setAttribute("error", "An unexpected error occured.");
+				home(request,response);
 			}
-			AuditManager.addActivity("ran into data validation errors on add target group.");
-			request.setAttribute("error", "Data validation error.");
-			request.getRequestDispatcher("WEB-INF/view/addSession.jsp").forward(request, response);
+		}
+	}
+	
+	@RequestMapping(value="/editSession",method=RequestMethod.GET)
+	public void editSession(@RequestParam("sessionId") int sessionId,
+			HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User u = restoreSession(request, response);
+		if( u == null ) {
+			home(request,response);
+		} else {
+			request.setAttribute("sessionId", sessionId);
+			request.getRequestDispatcher("WEB-INF/view/editSession.jsp").forward(request, response);
+		}
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/editSession",method=RequestMethod.POST)
+	public void editSession(@RequestParam("token") String token,
+			@RequestParam("sessionId") int sessionId,
+			@RequestParam("name") String name,
+			@RequestParam("startDate") String startDate,
+			@RequestParam("endDate") String endDate,
+			@RequestParam(value="sunday",required=false) boolean sunday,
+			@RequestParam(value="monday",required=false) boolean monday,
+			@RequestParam(value="tuesday",required=false) boolean tuesday,
+			@RequestParam(value="wednesday",required=false) boolean wednesday,
+			@RequestParam(value="thursday",required=false) boolean thursday,
+			@RequestParam(value="friday",required=false) boolean friday,
+			@RequestParam(value="saturday",required=false) boolean saturday,
+			@RequestParam(value="bt[]",required=false) String[] blacktimes,
+			@RequestParam(value="bd[]",required=false) String[] blackdates,
+			HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User u = restoreSession(request, response);
+		if( u == null ) {
+			home(request,response);
+		} else {
+			try {
+				checkToken(token,request,response);
+				String dateRegex = "^(0?[1-9]|1[0-2])\\/(0?[1-9]|[1-2][0-9]|3[0-1])\\/2[0-9]{3}$";
+				String timeRegex = "^((0?|1)[0-9]|2[0-3])([0-5][0-9])$";
+				
+				System.out.println(name + " " + name.matches("^[A-Za-z0-9.,' \\-]+$") + "\n" + startDate + " " + startDate.matches(dateRegex) + "\n" + endDate + " " + endDate.matches(dateRegex));
+				if( name.matches("^[A-Za-z0-9.,' \\-]+$") && startDate.matches(dateRegex) && endDate.matches(dateRegex)) {
+					boolean error = false;
+					Calendar[] bds = null;
+					if( blackdates != null ) {
+						bds = new Calendar[blackdates.length];
+						int i = 0;
+						for(String s : blackdates ) {
+							System.out.println(s + s.matches(dateRegex));
+							if( !s.matches(dateRegex) ) {
+								error = true;
+								break;
+							} else {
+								bds[i] = CalendarFactory.createCalendar(s);
+								i++;
+							}
+						}
+					}
+					Calendar[] bts = null;
+					Calendar[] bte = null;
+					if( !error && blacktimes != null ) {
+						bts = new Calendar[blacktimes.length];
+						bte = new Calendar[blacktimes.length];
+						int i = 0;
+						for(String s : blacktimes) {
+							String[] parts = s.split("-");
+							System.out.println(parts[0] + " penis " + parts[1] + " " + parts[0].matches(timeRegex) + " " + parts[1].matches(timeRegex));
+							if( parts[0].matches(timeRegex) && parts[1].matches(timeRegex)) {
+								bts[i] = CalendarFactory.createCalendarTime(parts[0]);
+								bte[i] = CalendarFactory.createCalendarTime(parts[1]);
+								i++;
+							} else {
+								error = true;
+								break;
+							}
+						}
+					}
+					
+					if( !error ) {
+						try {
+							SessionManager.editSession(u, sessionId, name, new boolean[] {
+									sunday,monday,tuesday,wednesday,thursday,friday,saturday
+							}, CalendarFactory.createCalendar(startDate), 
+									CalendarFactory.createCalendar(endDate), bts, bte, bds);
+							AuditManager.addActivity("edited session " + sessionId + ": " + name + ".");
+							home(request,response);
+							return;
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							logError(e);
+							request.setAttribute("error", "Editing Session Failed");
+							editSession(sessionId,request,response);
+							return;
+						}
+					}
+				}
+				AuditManager.addActivity("ran into data validation errors on edit session.");
+				request.setAttribute("error", "Data validation error.");
+				editSession(sessionId,request,response);
+			} catch (MissingTokenException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				AuditManager.addActivity("had an invalid token on Edit Session.");
+				request.setAttribute("error", "An unexpected error occured.");
+				home(request,response);
+			}
+		}
+	}
+	
+	@ResponseBody
+	@RequestMapping("getSession")
+	public void getSession(@RequestParam("token") String token,
+						@RequestParam("sessionId") int sessionId,
+			HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+		User u = restoreSession(request,response);
+		if( u == null ) {
+			response.getWriter().print("null");
+		} else {
+			try {
+				checkToken(token,request,response);
+				SiteSession ss = SessionManager.getSession(sessionId);
+				if( ss.getUserId() == u.getId() ) {
+					SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+					Gson g = new Gson();
+					String json = "{\"name\":\"" + ss.getName() + "\",\"startDate\":\"" + 
+									sdf.format(ss.getStartDate().getTime()) + "\",\"endDate\": \"" + 
+									sdf.format(ss.getEndDate().getTime()) + "\",\"blackDays\": " + 
+									g.toJson(ss.getBlackDaysString()) + ",\"blackDates\" : [";
+					List<Calendar> bd = ss.getBlackdates();
+					for(int i = 0; i < bd.size(); i++) {
+						if( i > 0 ) {
+							json += ",";
+						}
+						json += "\"" + sdf.format(bd.get(i).getTime()) + "\"";
+					}
+					json += "],\"blackTimes\":[";
+					TimeRange[] bts = ss.getBlacktimes();
+					SimpleDateFormat tf = new SimpleDateFormat("HHmm");
+					for(int i = 0; i < bts.length; i++) {
+						if( i > 0 ) {
+							json += ",";
+						}
+						json += "{\"startTime\":\"" + tf.format(bts[i].getStartTime().getTime()) + 
+									"\",\"endTime\":\"" + tf.format(bts[i].getEndTime().getTime()) + "\"}";
+					}
+					json += "]}";
+					response.getWriter().print(json);
+				} else {
+					AuditManager.addActivity("tried to get session " + ss.getId() + " that isn't theirs.");
+					response.getWriter().print("null");
+				}
+			} catch (MissingTokenException e) {
+				// TODO Auto-generated catch block
+				AuditManager.addActivity("had an invalid token on Get Session.");
+				response.getWriter().print("null");
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				logError(e);
+				response.getWriter().print("null");
+			}
 		}
 	}
 }

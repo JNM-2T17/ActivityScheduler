@@ -1,7 +1,5 @@
 package model;
 
-import java.sql.Time;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -9,36 +7,29 @@ import java.util.Comparator;
 
 public class SiteSession {
 	private int id;
+	private int userId;
 	private String name;
 	private boolean[] blackDays;
 	private Calendar startDate;
 	private Calendar endDate;
 	private ArrayList<Calendar> blackdates;
 	private ArrayList<TimeRange> blacktimes;
-	private SimpleDateFormat allf;
-	private SimpleDateFormat sdf;
-	private SimpleDateFormat stf;
 	private boolean timesCollated = false;
 	
 	public SiteSession() {
 		super();
-		allf = new SimpleDateFormat("MMMM dd, yyyy HH:mm:ss.SSS");
-		sdf = new SimpleDateFormat("MMMM dd, yyyy");
-		stf = new SimpleDateFormat("HH:mm:ss.SSS");
 	}
 
-	public SiteSession(int id, String name, String blackDays, Calendar startDate, Calendar endDate) {
+	public SiteSession(int id, int userId,String name, String blackDays, Calendar startDate, Calendar endDate) {
 		super();
 		this.id = id;
+		this.userId = userId;
 		this.name = name;
 		parseDays(blackDays);
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.blackdates = new ArrayList<Calendar>();
 		this.blacktimes = new ArrayList<TimeRange>();
-		allf = new SimpleDateFormat("MMMM dd, yyyy HH:mm:ss.SSS");
-		sdf = new SimpleDateFormat("MMMM dd, yyyy");
-		stf = new SimpleDateFormat("HH:mm:ss.SSS");
 	}
 
 	private void parseDays(String blackDays) {
@@ -55,6 +46,14 @@ public class SiteSession {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+	
+	public int getUserId() {
+		return userId;
+	}
+
+	public void setUserId(int userId) {
+		this.userId = userId;
 	}
 
 	public String getName() {
@@ -163,7 +162,7 @@ public class SiteSession {
 	
 	public String toString() {
 		String ret = "ID: " + id + "\nName: " + name + "\nStart Date: " + 
-					sdf.format(startDate.getTime()) + "\nEnd Date: " + sdf.format(endDate.getTime()); 
+					CalendarFactory.sdf.format(startDate.getTime()) + "\nEnd Date: " + CalendarFactory.sdf.format(endDate.getTime()); 
 		String bd = "\nBlack Days:\n";
 		String[] days = new String[] {
 				"Sunday",
@@ -193,7 +192,7 @@ public class SiteSession {
 		if( blackdates.size() > 0 ) {
 			ret += "\nBlack Dates: ";
 			for(Calendar c : blackdates) {
-				ret += "\n" + sdf.format(c.getTime());
+				ret += "\n" + CalendarFactory.sdf.format(c.getTime());
 			}
 		}
 		return ret;
