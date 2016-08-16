@@ -136,6 +136,7 @@ public class Activity {
 		if( allDates == null ) {
 			ArrayList<Calendar> dates = new ArrayList<Calendar>();
 			for(Calendar c : dateRange) {
+				if( c.compareTo(session.getStartDate()) >= 0 && c.compareTo(session.getEndDate()) <= 0 )
 				c.set(Calendar.HOUR_OF_DAY, 0);
 				c.set(Calendar.MINUTE, 0);
 				c.set(Calendar.SECOND, 0);

@@ -60,7 +60,7 @@
 				N/A
 				</c:when>
 				<c:otherwise>
-				<fmt:formatDate pattern="EEEE, MMMM dd, yyyy hh:mm aa" value="${a.startTime.time }"/> - <fmt:formatDate pattern="MMMM dd, yyyy hh:mm aa" value="${a.endTime.time }"/>
+				<fmt:formatDate pattern="EEEE, MMMM dd, yyyy hh:mm aa" value="${a.startTime.time }"/> - <fmt:formatDate pattern="hh:mm aa" value="${a.endTime.time }"/>
 				</c:otherwise>
 				</c:choose>
 				</td>
