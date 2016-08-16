@@ -31,9 +31,15 @@
 				<td><c:out value="${a.venue.name }"/></td>
 				<td><c:out value="${a.length }"/></td>
 				<td>
+				<table>
+				<tr>
+				<c:set var="i" value="0"/>
 				<c:forEach items="${a.targetGroups }" var="tg">
-				<c:out value="${tg.name }"/><br/>
+				<c:if test="${i > 0 && i % 3 == 0 }"></tr><tr></c:if>
+					<td><c:out value="${tg.name }"/></td>
+				<c:set var="i" value="${i + 1 }"/>
 				</c:forEach>
+				</tr></table>
 				</td>
 				<td>
 				<c:choose>
@@ -41,8 +47,12 @@
 				N/A
 				</c:when>
 				<c:otherwise>
+				<c:set var="i" value="0"/>
 				<c:forEach items="${a.daysString }" var="d">
-					${d }<br/>
+				<c:if test="${i > 0 }">,</c:if>
+				<!-- <c:if test="${i > 0 && i % 3 == 0 }"><br/></c:if> -->
+					${d }
+				<c:set var="i" value="${i + 1 }"/>
 				</c:forEach>
 				</c:otherwise>
 				</c:choose>
@@ -53,8 +63,11 @@
 				N/A
 				</c:when>
 				<c:otherwise>
+				<c:set var="i" value="0"/>
 				<c:forEach items="${a.dateRange}" var="d">
-					<fmt:formatDate pattern="MM/dd/yyyy" value="${d.time }"/><br/>
+				<c:if test="${i > 0 }"><br/></c:if>
+					<fmt:formatDate pattern="MM/dd/yyyy" value="${d.time }"/>
+				<c:set var="i" value="${i + 1 }"/>
 				</c:forEach>
 				</c:otherwise>
 				</c:choose>

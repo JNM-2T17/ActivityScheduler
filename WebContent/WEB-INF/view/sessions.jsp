@@ -29,8 +29,12 @@
 				N/A
 				</c:when>
 				<c:otherwise>
+				<c:set var="i" value="0"/>
 				<c:forEach items="${s.blackDaysString }" var="d">
-					${d }<br/>
+				<c:if test="${i > 0 }">,</c:if>
+				<c:if test="${i > 0 && i % 4 == 0 }"><br/></c:if>
+					${d }
+				<c:set var="i" value="${i + 1 }"/>
 				</c:forEach>
 				</c:otherwise>
 				</c:choose>
@@ -41,8 +45,11 @@
 				N/A
 				</c:when>
 				<c:otherwise>
+				<c:set var="i" value="0"/>
 				<c:forEach items="${s.blackdates }" var="d">
-					<fmt:formatDate pattern="MM/dd/yyyy" value="${d.time }"/><br/>
+				<c:if test="${i > 0 }"><br/></c:if>
+					<fmt:formatDate pattern="MM/dd/yyyy" value="${d.time }"/>
+				<c:set var="i" value="${i + 1 }"/>
 				</c:forEach>
 				</c:otherwise>
 				</c:choose>
@@ -53,8 +60,11 @@
 				N/A
 				</c:when>
 				<c:otherwise>
+				<c:set var="i" value="0"/>
 				<c:forEach items="${s.blacktimes }" var="d">
-					<fmt:formatDate pattern="hh:mm aa" value="${d.startTime.time }"/> - <fmt:formatDate pattern="hh:mm aa" value="${d.endTime.time }"/><br/>
+				<c:if test="${i > 0 }"><br/></c:if>
+					<fmt:formatDate pattern="hh:mm aa" value="${d.startTime.time }"/> - <fmt:formatDate pattern="hh:mm aa" value="${d.endTime.time }"/>
+				<c:set var="i" value="${i + 1 }"/>
 				</c:forEach>
 				</c:otherwise>
 				</c:choose>
