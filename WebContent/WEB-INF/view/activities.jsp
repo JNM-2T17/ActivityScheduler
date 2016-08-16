@@ -5,6 +5,9 @@
 		<h1><c:out value="${activeSession.name }"/></h1>
 		<a href="addActivity">Add Activity</a>
 		<a href="deleteActivity">Delete Activity</a>
+		<button id="genSched">Generate Schedule</button>
+		<script src="<c:url value="resources/js/activities.js"/>"></script>
+		<input type="hidden" name="token" value="${sessionToken }"/>
 		<c:choose>
 		<c:when test="${empty activities }">
 		<h2>No Activities to Display</h2>
@@ -51,13 +54,13 @@
 				</c:choose>
 				</td>
 				<td><fmt:formatDate pattern="hh:mm aa" value="${a.startTimeRange.time }"/> - <fmt:formatDate pattern="hh:mm aa" value="${a.endTimeRange.time }"/></td>
-				<td>
+				<td id="start-${a.id}">
 				<c:choose>
 				<c:when test="${empty a.startTime }">
 				N/A
 				</c:when>
 				<c:otherwise>
-				<fmt:formatDate pattern="MM/dd/yyyy hh:mm aa" value="${a.startTime.time }"/> - <fmt:formatDate pattern="MM/dd/yyyy hh:mm aa" value="${a.endTime.time }"/>
+				<fmt:formatDate pattern="EEEE, MMMM dd, yyyy hh:mm aa" value="${a.startTime.time }"/> - <fmt:formatDate pattern="MMMM dd, yyyy hh:mm aa" value="${a.endTime.time }"/>
 				</c:otherwise>
 				</c:choose>
 				</td>

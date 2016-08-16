@@ -20,6 +20,8 @@ import model.TargetGroup;
 import model.TimeRange;
 import model.User;
 import model.Venue;
+import model.genetic.GeneticScheduleGenerator;
+import model.genetic.ScheduleChromosome;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -623,6 +625,8 @@ public class TheController {
 							}, CalendarFactory.createCalendar(startDate), 
 									CalendarFactory.createCalendar(endDate), bts, bte, bds);
 							AuditManager.addActivity("edited session " + sessionId + ": " + name + ".");
+							SiteSession ss = SessionManager.getSession(sessionId);
+							request.getSession().setAttribute("activeSession", ss);
 							home(request,response);
 							return;
 						} catch (SQLException e) {
@@ -855,6 +859,46 @@ public class TheController {
 				logError(e1);
 				request.setAttribute("error", "Adding Activity Failed");
 				addActivity(request,response);
+			}
+		}
+	}
+	
+	@RequestMapping("genSched")
+	public void genSched(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User u = restoreSession(request,response);
+		if( u == null ) {
+			home(request,response);
+		} else {
+			SiteSession ss = (SiteSession)request.getSession().getAttribute("activeSession");
+			if( ss != null ) {
+				try {
+					GeneticScheduleGenerator gsg = new GeneticScheduleGenerator(50, 0.3, 0.2, 0.4, 200000, ActivityManager.getActivities(ss));
+					ScheduleChromosome sc = (ScheduleChromosome)gsg.generate();
+					String json = "[";
+					SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd, yyyy hh:mm aa");
+					SimpleDateFormat sdf2 = new SimpleDateFormat("EEEE, MMMM dd, yyyy hh:mm aa");
+					for(int i = 0; i < sc.size(); i++) {
+						if( i > 0 ) {
+							json += ",";
+						}
+						json += "{\"id\":\"" + sc.getActivity(i).getId() + 
+								"\",\"startTime\":\"" + 
+								sdf2.format(sc.getActivity(i).getStartTime().getTime()) + 
+								"\",\"endTime\":\"" + 
+								sdf.format(sc.getActivity(i).getEndTime().getTime()) +"\"}";
+					}
+					json += "]";
+					ActivityManager.assignDates(sc);
+					response.getWriter().print(json);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					logError(e);
+					response.getWriter().print("null");
+				}
+			} else {
+				AuditManager.addActivity("tried to generate a schedule without a session.");
+				response.getWriter().print("null");
 			}
 		}
 	}

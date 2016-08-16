@@ -13,7 +13,7 @@ public class ScheduleChromosome implements Chromosome {
 		activities = new ArrayList<Activity>();
 	}
 	
-	public ScheduleChromosome(ArrayList<Activity> activities) {
+	public ScheduleChromosome(Activity[] activities) {
 		this.activities = new ArrayList<Activity>();
 		for(Activity a : activities) {
 			this.activities.add(a.copy());
@@ -26,6 +26,10 @@ public class ScheduleChromosome implements Chromosome {
 	
 	public Activity getActivity(int index) {
 		return activities.get(index);
+	}
+	
+	public int size() {
+		return activities.size();
 	}
 	
 	public void randomize() {

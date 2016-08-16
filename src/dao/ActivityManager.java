@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -16,6 +17,7 @@ import model.CalendarFactory;
 import model.SiteSession;
 import model.TargetGroup;
 import model.Venue;
+import model.genetic.ScheduleChromosome;
 
 
 public class ActivityManager {
@@ -123,5 +125,18 @@ public class ActivityManager {
 			acts.add(getActivity(ss,rs.getInt("id")));
 		}
 		return acts.toArray(new Activity[0]);
+	}
+	
+	public static void assignDates(ScheduleChromosome sc) throws SQLException {
+		Connection con = DBManager.getInstance().getConnection();
+		for(int i = 0; i < sc.size(); i++) {
+			String sql = "UPDATE gs_activity SET assignedTime = ? WHERE id = ?";
+			PreparedStatement ps = con.prepareStatement(sql);
+			SimpleDateFormat allf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			ps.setString(1,allf.format(sc.getActivity(i).getStartTime().getTime()));
+			ps.setInt(2, sc.getActivity(i).getId());
+			ps.execute();
+		}
+		con.close();
 	}
 }
