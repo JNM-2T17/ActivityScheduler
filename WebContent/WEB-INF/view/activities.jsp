@@ -18,6 +18,7 @@
 				<th>Name</th>
 				<th>Venue</th>
 				<th>Length(minutes)</th>
+				<th>Target Groups</th>
 				<th>Days</th>
 				<th>Other Dates</th>
 				<th>Time Range</th>
@@ -29,6 +30,11 @@
 				<td><c:out value="${a.name }"/></td>
 				<td><c:out value="${a.venue.name }"/></td>
 				<td><c:out value="${a.length }"/></td>
+				<td>
+				<c:forEach items="${a.targetGroups }" var="tg">
+				<c:out value="${tg.name }"/><br/>
+				</c:forEach>
+				</td>
 				<td>
 				<c:choose>
 				<c:when test="${empty a.daysString }">
