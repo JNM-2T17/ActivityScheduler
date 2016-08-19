@@ -47,7 +47,7 @@ public class DBManager {
 			}
 			instance = new DBManager("com.mysql.jdbc.DriverManager"
 					,"jdbc:mysql://127.0.0.1:3306/"
-					,"db_genesched","root","");
+					,"db_genesched","root","1234");
 			return instance;
 		}
 	}

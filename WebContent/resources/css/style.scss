@@ -1,3 +1,11 @@
+$accentColor:   rgb(100,200,100);
+$bgColor1:      rgb(230,230,230);
+$bgColor1-fade: rgb(245,245,245);
+$bgColor2:      rgb(255,255,255);
+$fgColor1:      rgb(120,100,100);
+$fgColor1-fade: rgb(200,180,180);
+$fgColor2:      rgb(0,0,0);
+
 @font-face {
   font-family: 'Raleway';
   src: url('../fonts/Raleway-Regular.ttf');
@@ -5,4 +13,111 @@
 
 body{
 	font-family: Raleway;
+	background-color: $bgColor1;
+}
+
+div#header{
+	width: 100%;
+	height: 75px;
+	background-color: $bgColor2;
+	position: fixed;
+		top: 0;
+		left: 0;
+
+	h1{
+		display: inline-block;
+		float: left;
+		color: $accentColor;
+		margin: 15px;
+		vertical-align: middle;
+
+		a{
+			text-decoration: inherit;
+			color: inherit;
+		}
+	}
+
+	ul{
+		list-style: none;
+		float: right;
+		height: 75px;
+		position: relative;
+
+		li{
+			display: inline-block;
+			color: $fgColor1;
+			height: 30px;
+			margin-top: 7.5px;
+			margin-right: 20px;
+
+			a{
+				color: inherit;
+				text-decoration: inherit;
+				height: 30px;
+
+				&:hover{
+					color: $fgColor1-fade;
+				}
+			}
+
+			input[type='submit']{
+				background-color: transparent;
+				border: none;
+				outline: none;
+				color: inherit;
+				font-family: inherit;
+				font-size: inherit;
+				margin-left: 15px;
+			}
+
+			input[type='text'],
+			input[type='password']{
+				font-family: inherit;
+				font-size: 0.8em;
+				padding: 2px;
+			}
+
+			input{
+				height: 30px;
+			}
+		}
+	}
+}
+
+div#content{
+	margin: 125px 30px 30px;
+	
+	div#contentTitle{
+		margin-bottom: 30px;
+
+		h2{
+			float: left;
+			font-size: 2em;
+			text-transform: uppercase;
+			margin: 0;
+		}
+
+		div#sectionOptions{
+			float: right;
+
+			a{
+				text-decoration: none;
+				display: inline-block;
+				padding: 15px;
+				background-color: $bgColor2;
+				color: $accentColor;
+				margin-left: 10px;
+				border-radius: 6px;
+				font-size: 0.9em;
+
+				&:hover{
+					background-color: $bgColor1-fade;
+				}
+			}
+		}
+	}
+}
+
+.clear{
+	clear: both;
 }

@@ -2,12 +2,18 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <jsp:include page="header.jsp"/>
-		<h1>Sessions</h1>
-		<a href="addSession">Add Session</a>
-		<a href="deleteSession">Delete Sessions</a>
+		<div id="contentTitle">
+			<h2>Sessions</h2>
+			<div id="sectionOptions">
+				<a href="addSession">Add Session</a>
+				<a href="deleteSession">Delete Sessions</a>
+			</div>
+			<div class="clear"></div>
+		</div>
+		
 		<c:choose>
 		<c:when test="${empty sessions }">
-		<h2>No Sessions to Display</h2>
+		No sessions to display
 		</c:when>
 		<c:otherwise>
 		<table>

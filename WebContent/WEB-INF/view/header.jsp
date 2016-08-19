@@ -17,20 +17,19 @@
 	</head>
 	<body>
 		<div class="main-container">
-			<nav>
+			<div id="header">
 				<h1><a href=".">CSO Activity Scheduler</a></h1>
 				<ul>
 				<c:choose>
 				<c:when test="${empty sessionUser }">
 					<li id="loginOption">
 						<div id="loginForm">
-						<form action="login" method="POST">
-						Login
-						<input type="hidden" name="token" value="<c:out value="${sessionToken }"/>"/>
-						<input type="text" name="username" placeholder="Username"/>
-						<input type="password" name="password" placeholder="Password"/>
-						<input type="submit" value="Login"/>
-						</form>
+							<form action="login" method="POST">
+								<input type="hidden" name="token" value="<c:out value="${sessionToken }"/>"/>
+								<input type="text" name="username" placeholder="Username"/>
+								<input type="password" name="password" placeholder="Password"/>
+								<input type="submit" value="Login"/>
+							</form>
 						</div>
 					</li>
 					<li id="registerOption"><a href="register">Register</a></li>
@@ -47,6 +46,9 @@
 				</c:otherwise>
 				</c:choose>
 				</ul>
-			</nav>
-			<input type="hidden" id="error" value="<c:out value="${error}"/>"/>
-			<input type="hidden" id="message" value="<c:out value="${message}"/>"/>
+				<input type="hidden" id="error" value="<c:out value="${error}"/>"/>
+				<input type="hidden" id="message" value="<c:out value="${message}"/>"/>
+				<div class="clear"></div>
+			</div>
+
+			<div id="content">
