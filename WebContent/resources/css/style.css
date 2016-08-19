@@ -55,7 +55,8 @@ div#header {
         height: 30px; }
 
 div#content {
-  margin: 125px 30px 30px; }
+  margin: 125px 30px 30px;
+  min-width: 600px; }
   div#content div#contentTitle {
     margin-bottom: 30px; }
     div#content div#contentTitle h2 {
@@ -76,6 +77,40 @@ div#content {
         font-size: 0.9em; }
         div#content div#contentTitle div#sectionOptions a:hover {
           background-color: whitesmoke; }
+  div#content #regForm {
+    width: 400px;
+    border-collapse: collapse; }
+    div#content #regForm td:first-of-type {
+      width: 100px; }
+    div#content #regForm input {
+      width: 300px;
+      border: none;
+      box-sizing: border-box;
+      padding: 3px;
+      font-size: 0.9em;
+      margin: 5px 0; }
+    div#content #regForm #regName input:nth-of-type(1) {
+      width: 125px;
+      margin-right: 10px; }
+    div#content #regForm #regName input:nth-of-type(2) {
+      width: 30px;
+      margin-right: 10px; }
+    div#content #regForm #regName input:nth-of-type(3) {
+      width: 125px; }
+  div#content input#regButton {
+    text-align: right;
+    display: block;
+    width: 400px; }
+
+.submitForm {
+  margin: 20px 0;
+  color: #64c864;
+  font-size: 1.2em;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  padding: 0;
+  font-family: inherit; }
 
 .clear {
   clear: both; }

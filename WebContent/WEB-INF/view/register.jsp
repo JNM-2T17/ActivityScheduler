@@ -2,9 +2,12 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 
 
 <jsp:include page="header.jsp"/>
+		<div id="contentTitle">
+			<h2>Register</h2>
+			<div class="clear"></div>
+		</div>
 				<script src="<c:url value="resources/js/register.js"/>"></script>
 				<form action="register" method="POST" onsubmit="return register.checkSubmit();">
-					<h1>Register</h1>
 					<table id="regForm">
 						<tr>
 							<td>Name</td>
@@ -33,11 +36,11 @@
 						<tr>
 							<td>Confirm</td>
 							<td>
-								<input type="password" name="confirmPassword" placeholder="Confirm Password" id="confirmPassword"/>
+								<input type="password" name="confirmPassword" id="confirmPassword"/>
 							</td>
 						</tr>
 					</table>
 					<input type="hidden" value="${sessionToken }" name="token"/>
-					<input type="submit" value="Register &gt;" id="regButton"/>
+					<input class="submitForm" type="submit" value="Submit" id="regButton"/>
 				</form>
 <jsp:include page="footer.jsp"/>
