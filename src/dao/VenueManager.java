@@ -48,6 +48,22 @@ public class VenueManager {
 		return null;
 	}
 	
+	public static Venue getVenue(String name) throws SQLException {
+		Connection con = DBManager.getInstance().getConnection();
+		String sql = "SELECT id,userId,name FROM gs_venue WHERE name = BINARY ? AND status = 1";
+		PreparedStatement ps = con.prepareStatement(sql);
+		ps.setString(1,name);
+		ResultSet rs = ps.executeQuery();
+		if(rs.next()) {
+			Venue v = new Venue(rs.getInt("id"),rs.getString("name"));
+			v.setUserId(rs.getInt("userId"));
+			con.close();
+			return v;
+		} 
+		con.close();
+		return null;
+	}
+	
 	public static Venue[] getAllVenues(User u) throws SQLException {
 		Connection con = DBManager.getInstance().getConnection();
 		String sql = "SELECT id,userId,name FROM gs_venue WHERE userId = ? AND status = 1";
@@ -64,14 +80,20 @@ public class VenueManager {
 		return tgs.toArray(new Venue[0]);
 	}
 	
-	public static void updateVenue(int venueId, String venue) throws SQLException {
-		Connection con = DBManager.getInstance().getConnection();
-		String sql = "UPDATE gs_venue SET name = ? WHERE id = ? AND status = 1";
-		PreparedStatement ps = con.prepareStatement(sql);
-		ps.setString(1, venue);
-		ps.setInt(2,venueId);
-		ps.execute();
-		con.close();
+	public static boolean updateVenue(int venueId, String venue) throws SQLException {
+		Venue v = getVenue(venue);
+		if( v == null ) {
+			Connection con = DBManager.getInstance().getConnection();
+			String sql = "UPDATE gs_venue SET name = ? WHERE id = ? AND status = 1";
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, venue);
+			ps.setInt(2,venueId);
+			ps.execute();
+			con.close();
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	public static void deleteVenue(int venueId) throws SQLException {

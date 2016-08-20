@@ -144,6 +144,7 @@ public class TheController {
 									request.getSession().invalidate();
 									request.getSession(true).setAttribute("sessionUser",u);
 									request.getSession().setAttribute("activeSession", ss);
+									request.getSession().setAttribute("sessionToken", genHash);
 									AuditManager.addActivity("refreshed their session.");
 								} else {
 									u = null;
@@ -399,6 +400,80 @@ public class TheController {
 		}
 	}
 	
+	@ResponseBody
+	@RequestMapping("/editTG")
+	public void editTG(@RequestParam("token") String token,
+			@RequestParam("id") int id,
+			@RequestParam("name") String name,
+			HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User u = restoreSession(request, response);
+		if( u == null ) {
+			response.getWriter().print(false);
+		} else {
+			try {
+				checkToken(token,request,response);
+				TargetGroup tg = TargetGroupManager.getTargetGroup(id);
+				if( tg.getUserId() == u.getId() ) {
+					if(name.matches("^[A-Za-z0-9.', _\\-]+$") ) {
+						if(TargetGroupManager.updateTargetGroup(id, name) ) {
+							AuditManager.addActivity("updated target group " + id + ".");
+							response.getWriter().print(true);
+						} else {
+							AuditManager.addActivity("failed to update target group " + id + ".");
+							response.getWriter().print("That target group already exists.");
+						}
+					} else {
+						AuditManager.addActivity("ran into data validation errors on edit target group.");
+						response.getWriter().print("Your target group name is invalid.");
+					}
+				} else {
+					AuditManager.addActivity("tried to edit target group " + id + " which isn't theirs.");
+					response.getWriter().print("That target group is not yours.");
+				}
+			} catch (MissingTokenException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				logError(e);
+				response.getWriter().print("An unexpected error occured.");
+			}			
+		}
+	}
+	
+	@ResponseBody
+	@RequestMapping("/deleteTG")
+	public void deleteTG(@RequestParam("token") String token,
+			@RequestParam("id") int id,
+			HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		System.out.println("Getting user");
+		User u = restoreSession(request, response);
+		System.out.println("Got user");
+		if( u == null ) {
+			response.getWriter().print(false);
+		} else {
+			try {
+				checkToken(token,request,response);
+				System.out.println("Getting tg");
+				TargetGroup tg = TargetGroupManager.getTargetGroup(id);
+				System.out.println("Got tg");
+				if( tg.getUserId() == u.getId() ) {
+					System.out.println("Deleting");
+					TargetGroupManager.deleteTargetGroup(id);
+					System.out.println("Deleted");
+					AuditManager.addActivity("deleted target group " + id + ".");
+					response.getWriter().print(true);
+				} else {
+					AuditManager.addActivity("tried to delete target group " + id + " which isn't theirs.");
+					response.getWriter().print("That target group is not yours.");
+				}
+			} catch (MissingTokenException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				logError(e);
+				response.getWriter().print("An unexpected error occured.");
+			}			
+		}
+	}
+	
 	@RequestMapping(value="venue")
 	public void venue(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User u = restoreSession(request, response);
@@ -439,6 +514,74 @@ public class TheController {
 				e.printStackTrace();
 				logError(e);
 				response.getWriter().print("null");
+			}			
+		}
+	}
+	
+	@ResponseBody
+	@RequestMapping("/editVenue")
+	public void editVenue(@RequestParam("token") String token,
+			@RequestParam("id") int id,
+			@RequestParam("name") String name,
+			HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User u = restoreSession(request, response);
+		if( u == null ) {
+			response.getWriter().print(false);
+		} else {
+			try {
+				checkToken(token,request,response);
+				Venue v = VenueManager.getVenue(id);
+				if( v.getUserId() == u.getId() ) {
+					if(name.matches("^[A-Za-z0-9.', _\\-]+$") ) {
+						if(VenueManager.updateVenue(id, name) ) {
+							AuditManager.addActivity("updated venue " + id + ".");
+							response.getWriter().print(true);
+						} else {
+							AuditManager.addActivity("failed to update venue " + id + ".");
+							response.getWriter().print("That venue already exists.");
+						}
+					} else {
+						AuditManager.addActivity("ran into data validation errors on edit venue.");
+						response.getWriter().print("Your venue name is invalid.");
+					}
+				} else {
+					AuditManager.addActivity("tried to edit venue " + id + " which isn't theirs.");
+					response.getWriter().print("That venue is not yours.");
+				}
+			} catch (MissingTokenException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				logError(e);
+				response.getWriter().print("An unexpected error occured.");
+			}			
+		}
+	}
+	
+	@ResponseBody
+	@RequestMapping("/deleteVenue")
+	public void deleteVenue(@RequestParam("token") String token,
+			@RequestParam("id") int id,
+			HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User u = restoreSession(request, response);
+		if( u == null ) {
+			response.getWriter().print(false);
+		} else {
+			try {
+				checkToken(token,request,response);
+				Venue v = VenueManager.getVenue(id);
+				if( v.getUserId() == u.getId() ) {
+					VenueManager.deleteVenue(id);
+					AuditManager.addActivity("deleted venue " + id + ".");
+					response.getWriter().print(true);
+				} else {
+					AuditManager.addActivity("tried to delete venue " + id + " which isn't theirs.");
+					response.getWriter().print("That venue is not yours.");
+				}
+			} catch (MissingTokenException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				logError(e);
+				response.getWriter().print("An unexpected error occured.");
 			}			
 		}
 	}
@@ -872,7 +1015,7 @@ public class TheController {
 			SiteSession ss = (SiteSession)request.getSession().getAttribute("activeSession");
 			if( ss != null ) {
 				try {
-					GeneticScheduleGenerator gsg = new GeneticScheduleGenerator(50, 0.25, 0.2, 0.4, 20000, ActivityManager.getActivities(ss));
+					GeneticScheduleGenerator gsg = new GeneticScheduleGenerator(50, 0.14, 0.2, 0.4, 1000, ActivityManager.getActivities(ss));
 					ScheduleChromosome sc = (ScheduleChromosome)gsg.generate();
 					String json = "[";
 					SimpleDateFormat sdf = new SimpleDateFormat("hh:mm aa");

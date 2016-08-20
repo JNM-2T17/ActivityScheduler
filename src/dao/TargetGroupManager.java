@@ -48,6 +48,23 @@ public class TargetGroupManager {
 		return tg;
 	}
 	
+	public static TargetGroup getTargetGroup(String name) throws SQLException {
+		Connection con = DBManager.getInstance().getConnection();
+		String sql = "SELECT id,userId,name FROM gs_target_group "
+				+ "WHERE name = BINARY ? AND status = 1";
+		PreparedStatement ps = con.prepareStatement(sql);
+		ps.setString(1, name);
+		ResultSet rs = ps.executeQuery();
+		TargetGroup tg = null;
+		if(rs.next()) {
+			tg = new TargetGroup(rs.getInt("id"),rs.getString("name"));
+			tg.setUserId(rs.getInt("userId"));
+		} 
+		con.close();
+		
+		return tg;
+	}
+	
 	public static TargetGroup[] getAllTargetGroups(User u) throws SQLException {
 		Connection con = DBManager.getInstance().getConnection();
 		String sql = "SELECT id,userId,name FROM gs_target_group "
@@ -65,14 +82,20 @@ public class TargetGroupManager {
 		return tgs.toArray(new TargetGroup[0]);
 	}
 	
-	public static void updateTargetGroup(int tgId, String targetGroup) throws SQLException {
-		Connection con = DBManager.getInstance().getConnection();
-		String sql = "UPDATE gs_target_group SET name = ? WHERE id = ? AND status = 1";
-		PreparedStatement ps = con.prepareStatement(sql);
-		ps.setString(1, targetGroup);
-		ps.setInt(2,tgId);
-		ps.execute();
-		con.close();
+	public static boolean updateTargetGroup(int tgId, String targetGroup) throws SQLException {
+		TargetGroup tg = getTargetGroup(targetGroup);
+		if( tg == null ) {
+			Connection con = DBManager.getInstance().getConnection();
+			String sql = "UPDATE gs_target_group SET name = ? WHERE id = ? AND status = 1";
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, targetGroup);
+			ps.setInt(2,tgId);
+			ps.execute();
+			con.close();
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	public static void deleteTargetGroup(int tgId) throws SQLException {
