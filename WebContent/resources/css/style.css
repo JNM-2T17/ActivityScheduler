@@ -9,6 +9,7 @@ div#header {
   width: 100%;
   height: 75px;
   background-color: white;
+  min-width: 860px;
   position: fixed;
   top: 0;
   left: 0; }
@@ -17,7 +18,8 @@ div#header {
     float: left;
     color: #64c864;
     margin: 15px;
-    vertical-align: middle; }
+    vertical-align: middle;
+    font-size: 2em; }
     div#header h1 a {
       text-decoration: inherit;
       color: inherit; }
@@ -50,13 +52,14 @@ div#header {
       div#header ul li input[type='password'] {
         font-family: inherit;
         font-size: 0.8em;
-        padding: 2px; }
+        padding: 2px;
+        width: 120px; }
       div#header ul li input {
         height: 30px; }
 
 div#content {
   margin: 125px 30px 30px;
-  min-width: 600px; }
+  min-width: 860px; }
   div#content div#contentTitle {
     margin-bottom: 30px; }
     div#content div#contentTitle h2 {
@@ -97,6 +100,35 @@ div#content {
       margin-right: 10px; }
     div#content #regForm #regName input:nth-of-type(3) {
       width: 125px; }
+  div#content input#regButton {
+    text-align: right;
+    display: block;
+    width: 400px; }
+  div#content #addSessionForm {
+    width: 500px;
+    border-collapse: collapse; }
+    div#content #addSessionForm td:first-of-type {
+      width: 200px;
+      vertical-align: top; }
+    div#content #addSessionForm input[type='text'],
+    div#content #addSessionForm input[type='password'] {
+      width: 300px;
+      border: none;
+      box-sizing: border-box;
+      padding: 3px;
+      font-size: 0.9em;
+      margin: 5px 0; }
+    div#content #addSessionForm #addSessionDate input {
+      width: 135px; }
+      div#content #addSessionForm #addSessionDate input:nth-of-type(1) {
+        float: left; }
+      div#content #addSessionForm #addSessionDate input:nth-of-type(2) {
+        float: right; }
+    div#content #addSessionForm #addSessionDate .dateMiddle {
+      margin-top: 5px;
+      width: 30px;
+      display: inline-block;
+      text-align: center; }
   div#content input#regButton {
     text-align: right;
     display: block;

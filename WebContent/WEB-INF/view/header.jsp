@@ -35,14 +35,14 @@
 					<li id="registerOption"><a href="register">Register</a></li>
 				</c:when>
 				<c:otherwise>
-					<li id="accountOption">Account</li>
-					<li id="logoutOption"><a href="logout">Logout <c:out value="${sessionUser.username }"/></a></li>
 					<li id="targetGroupOption"><a href="targetGroup">Target Groups</a></li>
 					<li id="venueOption"><a href="venue">Venues</a></li>
 					<c:if test="${not empty activeSession }">
 					<li id="settingsOption"><a href="editSession?sessionId=${activeSession.id }">Settings</a></li>
 					<li id="sessions"><a href="sessions">Sessions</a></li>
 					</c:if>
+					<li id="accountOption">Account</li>
+					<li id="logoutOption"><a href="logout">Logout <c:out value="${sessionUser.username }"/></a></li>
 				</c:otherwise>
 				</c:choose>
 				</ul>
