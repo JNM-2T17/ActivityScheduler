@@ -32,3 +32,44 @@ body{
 	color:rgb(10,11,123);
 	cursor:pointer;	
 }
+
+// Error
+
+#message-display{
+    position: fixed;
+    bottom: 0px;
+    right: 20px;
+    padding: 40px 15px 15px;
+    border-radius: 5px;
+    font-weight: 700;
+    line-height: 1;
+    color: rgba(0, 0, 0, 0.8);
+    width: 200px;
+    opacity: 0;
+    z-index: 1051;
+    cursor: default;
+    display: none;
+}
+
+#message-display .head, #message-display .exit{
+    position: absolute;
+    top: 5px;
+    font-weight: 700;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    filter: alpha(opacity=50);
+    opacity: .50; 
+}
+
+#message-display button.exit{
+    right: 5px;
+    font-size: 0.6em;
+    background-color: transparent;
+    border: none;
+}
+
+#message-display .head{
+    left: 10px;
+    font-size: 1.3em;
+}

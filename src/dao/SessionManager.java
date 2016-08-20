@@ -133,8 +133,8 @@ public class SessionManager {
 			ps.setInt(5,ss.getId());
 			ps.execute();
 			TimeRange[] currentBT = ss.getBlacktimes();
-			blackTimeStarts = blackTimeStarts.length == 0 ? new Calendar[0] : blackTimeStarts;
-			blackTimeEnds = blackTimeEnds.length == 0 ? new Calendar[0] : blackTimeEnds;
+			blackTimeStarts = blackTimeStarts == null || blackTimeStarts.length == 0 ? new Calendar[0] : blackTimeStarts;
+			blackTimeEnds = blackTimeEnds == null || blackTimeEnds.length == 0 ? new Calendar[0] : blackTimeEnds;
 			boolean[] hit1 = new boolean[currentBT.length];
 			boolean[] hit2 = new boolean[blackTimeStarts.length];
 			for(int i = 0; i < currentBT.length; i++ ) {

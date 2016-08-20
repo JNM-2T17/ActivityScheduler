@@ -4,7 +4,6 @@
 <jsp:include page="header.jsp"/>
 		<h1>Sessions</h1>
 		<a href="addSession">Add Session</a>
-		<a href="deleteSession">Delete Sessions</a>
 		<c:choose>
 		<c:when test="${empty sessions }">
 		<h2>No Sessions to Display</h2>

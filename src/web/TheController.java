@@ -785,7 +785,9 @@ public class TheController {
 									CalendarFactory.createCalendar(endDate), bts, bte, bds);
 							((AuditManager)request.getSession().getAttribute("auditor")).addActivity("edited session " + sessionId + ": " + name + ".");
 							SiteSession ss = SessionManager.getSession(sessionId);
-							request.getSession().setAttribute("activeSession", ss);
+							if( ss.getId() == ((SiteSession)request.getSession().getAttribute("activeSession")).getId()) {
+								request.getSession().setAttribute("activeSession", ss);
+							}
 							request.getSession().setAttribute("message", "Session successfully edited.");
 							request.getSession().setAttribute("prompt", true);
 							response.sendRedirect("/ActivityScheduler/.");
@@ -833,7 +835,6 @@ public class TheController {
 					if( ss.getUserId() == u.getId() ) {
 						SessionManager.deleteSession(ss.getId());
 						((AuditManager)request.getSession().getAttribute("auditor")).addActivity("deleted session " + id + ".");
-						response.getWriter().print(true);
 						if( ((SiteSession)request.getSession().getAttribute("activeSession")).getId() == ss.getId() ) {
 							request.getSession().setAttribute("activeSession",null);
 							String genHash = genHash(u, request.getRemoteAddr());
@@ -844,6 +845,9 @@ public class TheController {
 							c.setMaxAge(User.SESSION_EXPIRY * 60);
 							response.addCookie(c);
 						}
+						request.getSession().setAttribute("message", "Session successfully deleted.");
+						request.getSession().setAttribute("prompt", true);
+						response.getWriter().print(true);
 					} else {
 						((AuditManager)request.getSession().getAttribute("auditor")).addActivity("tried to delete session " + id + " which is not theirs.");
 						response.getWriter().print("That session is not yours.");
@@ -934,8 +938,6 @@ public class TheController {
 					c.setSecure(true);
 					response.addCookie(c);
 					((AuditManager)request.getSession().getAttribute("auditor")).addActivity("set their session to session " + ss.getId() + ".");
-					request.getSession().setAttribute("message", "Session " + ss.getId() + " activated.");
-					request.getSession().setAttribute("prompt", true);
 				} else {
 					((AuditManager)request.getSession().getAttribute("auditor")).addActivity("tried to access session " + ss.getId() + " which is not theirs.");
 				}

@@ -4,7 +4,6 @@
 <jsp:include page="header.jsp"/>
 		<h1><c:out value="${activeSession.name }"/></h1>
 		<a href="addActivity">Add Activity</a>
-		<a href="deleteActivity">Delete Activity</a>
 		<button id="genSched">Generate Schedule</button>
 		<script src="<c:url value="resources/js/activities.js"/>"></script>
 		<input type="hidden" name="token" value="${sessionToken }"/>

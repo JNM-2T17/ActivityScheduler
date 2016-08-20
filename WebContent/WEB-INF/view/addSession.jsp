@@ -24,9 +24,9 @@
 			<label for="friday">Friday</label>
 			<input type="checkbox" id="saturday" name="saturday" />
 			<label for="saturday">Saturday</label><br/>
-			Specific Dates: <input type="text" id="blackDate"/> <button type="button" id="addDate">+</button>
+			Specific Restricted Dates: <input type="text" id="blackDate"/> <button type="button" id="addDate">+</button>
 			<div id="blackDates"></div>
-			Specific Times: (Time is in the 24-hour format HHMM )<br/>
+			Specific Restricted Times: (Time is in the 24-hour format HHMM )<br/>
 			<input type="text" id="startTime"/> to <input type="text" id="endTime"> <button type="button" id="addTime">+</button>
 			<div id="blackTimes"></div>
 			<input type="submit" value="Add Session"/>
