@@ -114,7 +114,7 @@ var tg = (function(){
 					success : function(a) {
 						console.log(a);
 						if( a != null ) {
-							if( a.exit == 1 ) {
+							if( a === false ) {
 								location = ".";
 							} else {
 								$("#name").val("");

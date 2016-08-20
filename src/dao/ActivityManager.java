@@ -16,6 +16,7 @@ import model.Activity.Builder;
 import model.CalendarFactory;
 import model.SiteSession;
 import model.TargetGroup;
+import model.User;
 import model.Venue;
 import model.genetic.ScheduleChromosome;
 
@@ -80,33 +81,35 @@ public class ActivityManager {
 			ps.setInt(1,actId);
 			ResultSet rs = ps.executeQuery();
 			if(rs.next() ) {
-				Builder ab = new Activity.Builder(rs.getInt("id"),rs.getString("name"), rs.getInt("length"), rs.getString("days"), CalendarFactory.createCalendar(rs.getTimestamp("startTimeRange").getTime()), 
-									CalendarFactory.createCalendar(rs.getTimestamp("endTimeRange").getTime()), new Venue(rs.getInt("venueId"),rs.getString("venue")), 
-									ss);
-				Timestamp ts = rs.getTimestamp("assignedTime");
-				if( ts != null ) {
-					ab.setStartTime(CalendarFactory.createCalendar(ts.getTime()));
+				if( ss.getId() == rs.getInt("sessionId")) {
+					Builder ab = new Activity.Builder(rs.getInt("id"),rs.getString("name"), rs.getInt("length"), rs.getString("days"), CalendarFactory.createCalendar(rs.getTimestamp("startTimeRange").getTime()), 
+										CalendarFactory.createCalendar(rs.getTimestamp("endTimeRange").getTime()), new Venue(rs.getInt("venueId"),rs.getString("venue")), 
+										ss);
+					Timestamp ts = rs.getTimestamp("assignedTime");
+					if( ts != null ) {
+						ab.setStartTime(CalendarFactory.createCalendar(ts.getTime()));
+					}
+					
+					sql = "SELECT TG.id, TG.name "
+						+ "FROM gs_activity_target_group ATG INNER JOIN gs_target_group TG ON ATG.groupId = TG.id AND ATG.status = 1 AND TG.status = 1 "
+						+ "WHERE actId = ?";
+					ps = con.prepareStatement(sql);
+					ps.setInt(1,actId);
+					rs = ps.executeQuery();
+					while(rs.next()) {
+						ab.addTargetGroup(new TargetGroup(rs.getInt("id"),rs.getString("name")));
+					}
+					sql = "SELECT actDate "
+							+ "FROM gs_activity_date " 
+							+ "WHERE status = 1 AND actId = ?";
+					ps = con.prepareStatement(sql);
+					ps.setInt(1,actId);
+					rs = ps.executeQuery();
+					while(rs.next()) {
+						ab.addDate(CalendarFactory.createCalendar(rs.getTimestamp("actDate").getTime()));
+					}
+					return ab.buildActivity();
 				}
-				
-				sql = "SELECT TG.id, TG.name "
-					+ "FROM gs_activity_target_group ATG INNER JOIN gs_target_group TG ON ATG.groupId = TG.id AND ATG.status = 1 AND TG.status = 1 "
-					+ "WHERE actId = ?";
-				ps = con.prepareStatement(sql);
-				ps.setInt(1,actId);
-				rs = ps.executeQuery();
-				while(rs.next()) {
-					ab.addTargetGroup(new TargetGroup(rs.getInt("id"),rs.getString("name")));
-				}
-				sql = "SELECT actDate "
-						+ "FROM gs_activity_date " 
-						+ "WHERE status = 1 AND actId = ?";
-				ps = con.prepareStatement(sql);
-				ps.setInt(1,actId);
-				rs = ps.executeQuery();
-				while(rs.next()) {
-					ab.addDate(CalendarFactory.createCalendar(rs.getTimestamp("actDate").getTime()));
-				}
-				return ab.buildActivity();
 			}
 			return null;
 		} finally {
@@ -138,5 +141,28 @@ public class ActivityManager {
 			ps.execute();
 		}
 		con.close();
+	}
+	
+	public static void deleteActivity(SiteSession ss, int id) throws SQLException {
+		Activity a = getActivity(ss,id);
+		if( a != null ) {
+			Connection con = DBManager.getInstance().getConnection();
+			String sql = "UPDATE gs_activity SET status = 0 WHERE id = ?";
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setInt(1,id);
+			ps.execute();
+			
+			sql = "UPDATE gs_activity_date SET status = 0 WHERE actID = ?";
+			ps = con.prepareStatement(sql);
+			ps.setInt(1,id);
+			ps.execute();
+			
+			sql = "UPDATE gs_activity_target_group SET status = 0 WHERE actID = ?";
+			ps = con.prepareStatement(sql);
+			ps.setInt(1,id);
+			ps.execute();
+			
+			con.close();
+		}
 	}
 }

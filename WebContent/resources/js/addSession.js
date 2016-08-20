@@ -101,7 +101,7 @@ var addSession = (function() {
 				$("#blackTimes").html(bt);
 				var bd = "";
 				for(x in blackdates) {
-					bd += "<input type='hidden' name='bd[]' value='" + blacktimes[x] + "'/>";
+					bd += "<input type='hidden' name='bd[]' value='" + blackdates[x] + "'/>";
 				}
 				$("#blackDates").html(bd);
 				return true;

@@ -263,6 +263,16 @@ public class Activity {
 		this.startTime = startTime;
 	}
 	
+	
+	
+	public SiteSession getSession() {
+		return session;
+	}
+
+	public void setSession(SiteSession session) {
+		this.session = session;
+	}
+
 	// set date as random date from the date range
 	public void randomizeTime() {
 		int dateCtr = getAllDates().length;

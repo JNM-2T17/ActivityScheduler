@@ -73,6 +73,26 @@ var editSession = (function() {
 	
 	$(document).ready(function() {
 		sessionId = $("#sessionId").val();
+		
+		$("#deleteSession").click(function() {
+			var token = $("#token").val();
+			$.ajax({
+				url : "deleteSession",
+				method : "POST",
+				data : {
+					token : token,
+					id : sessionId
+				},
+				success : function(a){
+					if( a === "true" || a === "false") {
+						window.location = ".";
+					} else {
+						showError(a);
+					}
+				}
+			});
+		});
+		
 		$("#startDate").datepicker({maxDate : endDate})
 			.change(function() {
 			setStartDate($(this).val());
