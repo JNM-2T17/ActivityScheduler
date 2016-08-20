@@ -48,6 +48,8 @@ div#header {
         font-family: inherit;
         font-size: inherit;
         margin-left: 15px; }
+        div#header ul li input[type='submit']:hover {
+          color: #c8b4b4; }
       div#header ul li input[type='text'],
       div#header ul li input[type='password'] {
         font-family: inherit;
@@ -129,10 +131,10 @@ div#content {
       width: 30px;
       display: inline-block;
       text-align: center; }
-  div#content input#regButton {
+  div#content input#addSessionButton {
     text-align: right;
     display: block;
-    width: 400px; }
+    width: 500px; }
 
 .submitForm {
   margin: 20px 0;
