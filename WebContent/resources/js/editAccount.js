@@ -1,30 +1,37 @@
-var register = (function(){
+var editAccount = (function(){
 	var uNameOk = true;
-	var uNameValid = false;
+	var uNameValid = true;
+	var username = null;
 	
 	$(document).ready(function() {
+		username = $("#username").val();
 		$("#username").change(function() {
 			var token = $("#token").val();
-			uNameOk = false;
-			$.ajax({
-				url : "checkUsername",
-				method : "POST",
-				data : {
-					token : token,
-					username : $(this).val()
-				},
-				success : function(a) {
-					uNameValid = a === "true";
-					uNameOk = true;
-				}
-			});
+			console.log($(this).val() + " " + username);
+			if( $(this).val() != username ) {
+				uNameOk = false;
+				$.ajax({
+					url : "checkUsername",
+					method : "POST",
+					data : {
+						token : token,
+						username : $(this).val()
+					},
+					success : function(a) {
+						uNameValid = a === "true";
+						uNameOk = true;
+					}
+				});
+			} else {
+				uNameValid = true;
+			}
 		});
 	});
 	
 	return {
 		checkSubmit : function() {
 			var username = $("#username").val();
-			var password = $("#password").val();
+			var password = $("#newPassword").val();
 			var confirmPassword = $("#confirmPassword").val();
 			var fname = $("#fname").val();
 			var mi = $("#mi").val();

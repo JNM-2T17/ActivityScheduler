@@ -109,7 +109,12 @@ public class TheController {
 			} else {
 				genHash = genHash(u,ss,request.getRemoteAddr());
 			}
-			request.getSession().setAttribute("sessionToken",genHash); 
+			request.getSession().setAttribute("sessionToken",genHash);
+			Cookie c = new Cookie("asSessionToken",genHash);
+			c.setHttpOnly(true);
+			c.setSecure(true);
+			c.setMaxAge(User.SESSION_EXPIRY * 60);
+			response.addCookie(c);
 		}
 		return genHash;
 	}
@@ -241,6 +246,22 @@ public class TheController {
 	}
 	
 	@ResponseBody
+	@RequestMapping("/checkUsername")
+	public void checkUsername(@RequestParam("token") String token,
+			@RequestParam("username") String username,
+			HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User u;
+		try {
+			u = UserManager.getUser(username);
+			response.getWriter().print(u == null);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			logError(e,request);
+			response.getWriter().print(false);
+		}
+		
+	}
+		@ResponseBody
 	@RequestMapping("/login")
 	public void login(@RequestParam("token") String token,
 			@RequestParam("username") String username,
@@ -255,11 +276,6 @@ public class TheController {
 					request.getSession().invalidate();
 					request.getSession(true).setAttribute("sessionUser", u);
 					String genHash = genToken(request,response);
-					Cookie c = new Cookie("asSessionToken",genHash);
-					c.setMaxAge(User.SESSION_EXPIRY * 60);
-					c.setSecure(true);
-					c.setHttpOnly(true);
-					response.addCookie(c);
 					request.getSession().setAttribute("auditor",new AuditManager(u, request));
 					((AuditManager)request.getSession().getAttribute("auditor")).addActivity("logged in.");
 				} else {
@@ -314,7 +330,7 @@ public class TheController {
 	public void register(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User u = restoreSession(request, response);
 		if( u != null ) {
-			home(request,response);
+			response.sendRedirect("/ActivityScheduler/.");
 		} else {
 			request.getRequestDispatcher("WEB-INF/view/register.jsp").forward(request, response);
 		}
@@ -341,9 +357,15 @@ public class TheController {
 						mi.matches("^[A-Za-z]{0,2}.?$") && lname.matches("^[A-Za-z ,.'-]+$") && 
 						email.matches("^([-.a-zA-Z0-9_]+)@([-.a-zA-Z0-9_]+)[.]([a-zA-Z]{2,5})$") && 
 						UserManager.checkPass(password) && password.equals(confirmPassword)) {
-					UserManager.addUser(username, password, fname, mi, lname, email);
-					((AuditManager)request.getSession().getAttribute("auditor")).addActivity("registered account " + username + ".");
-					login(token,username,password,request,response);
+					if(UserManager.addUser(username, password, fname, mi, lname, email)) {
+						((AuditManager)request.getSession().getAttribute("auditor")).addActivity("registered account " + username + ".");
+						login(token,username,password,request,response);
+					} else {
+						((AuditManager)request.getSession().getAttribute("auditor")).addActivity("tried to register account " + username + " which is already registered.");
+						request.getSession().setAttribute("error", "Username is in use.");
+						request.getSession().setAttribute("prompt", true);
+						response.sendRedirect("/ActivityScheduler/register");
+					}
 				} else {
 					((AuditManager)request.getSession().getAttribute("auditor")).addActivity("ran into data validation errors on register.");
 					request.getSession().setAttribute("error","Failed to register account.");
@@ -357,6 +379,73 @@ public class TheController {
 				request.getSession().setAttribute("error","An unexpected error occured.");
 				request.getSession().setAttribute("prompt",true);
 				response.sendRedirect("/ActivityScheduler/register");
+			} 
+		}
+	}
+	
+	@RequestMapping(value="editAccount",method = RequestMethod.GET)
+	public void editAccount(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User u = restoreSession(request, response);
+		if( u == null ) {
+			response.sendRedirect("/ActivityScheduler/.");
+		} else {
+			request.setAttribute("u", u);
+			request.getRequestDispatcher("WEB-INF/view/editAccount.jsp").forward(request, response);
+		}
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="editAccount",method = RequestMethod.POST)
+	public void editAccount(@RequestParam("token") String token,
+						@RequestParam("username") String username,
+						@RequestParam("password") String password,
+						@RequestParam("newPassword") String newPassword,
+						@RequestParam("confirmPassword") String confirmPassword,
+						@RequestParam("fname") String fname,
+						@RequestParam("mi") String mi,
+						@RequestParam("lname") String lname,
+						@RequestParam("email") String email,
+			HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User u = restoreSession(request, response);
+		if( u == null ) {
+			response.sendRedirect("/ActivityScheduler/.");
+		} else {
+			try {
+				checkToken(token,request,response);
+				if( username.matches("^[A-Za-z0-9_-]+$") && fname.matches("^[A-Za-z ,.'-]+$") && 
+						mi.matches("^[A-Za-z]{0,2}.?$") && lname.matches("^[A-Za-z ,.'-]+$") && 
+						email.matches("^([-.a-zA-Z0-9_]+)@([-.a-zA-Z0-9_]+)[.]([a-zA-Z]{2,5})$") && 
+						UserManager.checkPass(newPassword) && newPassword.equals(confirmPassword)) {
+					try {
+						if(UserManager.updateUser(u.getId(),username, password, newPassword, fname, mi, lname, email)) {
+							((AuditManager)request.getSession().getAttribute("auditor")).addActivity("edited their account.");
+							request.getSession().setAttribute("message", "Account successfully edited.");
+							request.getSession().setAttribute("prompt", true);
+							response.sendRedirect("/ActivityScheduler/.");
+						} else {
+							((AuditManager)request.getSession().getAttribute("auditor")).addActivity("tried to register account " + username + " which is already registered.");
+							request.getSession().setAttribute("error", "Username is in use.");
+							request.getSession().setAttribute("prompt", true);
+							response.sendRedirect("/ActivityScheduler/register");
+						}
+					} catch (AuthenticationException e) {
+						// TODO Auto-generated catch block
+						logError(e,request);
+						e.printStackTrace();
+					}
+				} else {
+					((AuditManager)request.getSession().getAttribute("auditor")).addActivity("ran into data validation errors on edit account.");
+					request.getSession().setAttribute("error","Failed to edit account account.");
+					request.getSession().setAttribute("prompt",true);
+					response.sendRedirect("/ActivityScheduler/editAccount");
+				}
+			} catch (SQLException | MissingTokenException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				logError(e,request);
+				request.getSession().setAttribute("error","An unexpected error occured.");
+				request.getSession().setAttribute("prompt",true);
+				response.sendRedirect("/ActivityScheduler/editAccount");
 			} 
 		}
 	}
@@ -676,6 +765,8 @@ public class TheController {
 							((AuditManager)request.getSession().getAttribute("auditor")).addActivity("added session " + name);
 							request.getSession().setAttribute("message", "Session was successfully added.");
 							request.getSession().setAttribute("prompt", true);
+							request.getSession().setAttribute("activeSession", null);
+							genToken(request, response);
 							response.sendRedirect("/ActivityScheduler/.");
 							return;
 						} catch (SQLException e) {
