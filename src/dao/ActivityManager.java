@@ -136,7 +136,11 @@ public class ActivityManager {
 			String sql = "UPDATE gs_activity SET assignedTime = ? WHERE id = ?";
 			PreparedStatement ps = con.prepareStatement(sql);
 			SimpleDateFormat allf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			ps.setString(1,allf.format(sc.getActivity(i).getStartTime().getTime()));
+			if( sc.getActivity(i).getStartTime().getTimeInMillis() == 0 ) {
+				ps.setString(1,null);
+			} else {
+				ps.setString(1,allf.format(sc.getActivity(i).getStartTime().getTime()));
+			}
 			ps.setInt(2, sc.getActivity(i).getId());
 			ps.execute();
 		}

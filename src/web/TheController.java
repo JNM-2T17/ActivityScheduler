@@ -1102,11 +1102,16 @@ public class TheController {
 						if( i > 0 ) {
 							json += ",";
 						}
-						json += "{\"id\":\"" + sc.getActivity(i).getId() + 
-								"\",\"startTime\":\"" + 
-								sdf2.format(sc.getActivity(i).getStartTime().getTime()) + 
-								"\",\"endTime\":\"" + 
-								sdf.format(sc.getActivity(i).getEndTime().getTime()) +"\"}";
+						if( sc.getActivity(i).getStartTime().getTimeInMillis() == 0 ){
+							json += "{\"id\":\"" + sc.getActivity(i).getId() + 
+									"\",\"startTime\":\"null\",\"endTime\":\"null\"}";
+						} else {
+							json += "{\"id\":\"" + sc.getActivity(i).getId() + 
+									"\",\"startTime\":\"" + 
+									sdf2.format(sc.getActivity(i).getStartTime().getTime()) + 
+									"\",\"endTime\":\"" + 
+									sdf.format(sc.getActivity(i).getEndTime().getTime()) +"\"}";
+						}
 					}
 					json += "]";
 					ActivityManager.assignDates(sc);
