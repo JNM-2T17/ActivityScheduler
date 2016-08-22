@@ -6,11 +6,9 @@
 			<h2>Sessions</h2>
 			<div id="sectionOptions">
 				<a href="addSession">Add Session</a>
-				<a href="deleteSession">Delete Sessions</a>
 			</div>
 			<div class="clear"></div>
 		</div>
-		
 		<c:choose>
 		<c:when test="${empty sessions }">
 		No sessions to display

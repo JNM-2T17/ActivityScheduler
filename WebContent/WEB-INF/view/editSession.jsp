@@ -4,6 +4,7 @@
 <jsp:include page="header.jsp"/>
 		<h1>Edit Session</h1>
 		<script src="<c:url value="resources/js/editSession.js"/>"></script>
+		<button id="deleteSession">Delete Session</button>
 		<form action="editSession" method="POST" onsubmit="return editSession.checkSubmit();">
 			<input type="hidden" name="token" id="token" value="<c:out value="${sessionToken }"/>"/>
 			<input type="hidden" name="sessionId" id="sessionId" value="${sessionId }"/>

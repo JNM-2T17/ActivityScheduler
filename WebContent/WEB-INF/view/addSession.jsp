@@ -11,6 +11,7 @@
 		<script src="<c:url value="resources/js/addSession.js"/>"></script>
 		<form action="addSession" method="POST" onsubmit="return addSession.checkSubmit();">
 			<input type="hidden" name="token" value="${sessionToken }"/>
+<<<<<<< HEAD
 			<table id="addSessionForm">
 				<tr>
 					<td>Name</td>

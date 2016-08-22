@@ -133,8 +133,8 @@ public class SessionManager {
 			ps.setInt(5,ss.getId());
 			ps.execute();
 			TimeRange[] currentBT = ss.getBlacktimes();
-			blackTimeStarts = blackTimeStarts.length == 0 ? new Calendar[0] : blackTimeStarts;
-			blackTimeEnds = blackTimeEnds.length == 0 ? new Calendar[0] : blackTimeEnds;
+			blackTimeStarts = blackTimeStarts == null || blackTimeStarts.length == 0 ? new Calendar[0] : blackTimeStarts;
+			blackTimeEnds = blackTimeEnds == null || blackTimeEnds.length == 0 ? new Calendar[0] : blackTimeEnds;
 			boolean[] hit1 = new boolean[currentBT.length];
 			boolean[] hit2 = new boolean[blackTimeStarts.length];
 			for(int i = 0; i < currentBT.length; i++ ) {
@@ -255,27 +255,30 @@ public class SessionManager {
 	}
 	
 	public static void deleteSession(int sessionId) throws SQLException {
-		SiteSession ss = null;
-		Connection con = DBManager.getInstance().getConnection();
-		String sql = "UPDATE gs_session SET status = 0 WHERE id = ? AND status = 1";
-		PreparedStatement ps = con.prepareStatement(sql);
-		ps.setInt(1,sessionId);
-		sql = "UPDATE gs_blacktime SET status = 0 WHERE sessionId = ? AND status = 1";
-		ps = con.prepareStatement(sql);
-		ps.setInt(1,sessionId);
-		ps.execute();
-		sql = "UPDATE gs_blackdate SET status = 0 WHERE sessionId = ? AND status = 1";
-		ps = con.prepareStatement(sql);
-		ps.setInt(1,sessionId);
-		ps.execute();
-		sql = "SELECT id FROM gs_activity WHERE sessionId = ? AND status = 1";
-		ps = con.prepareStatement(sql);
-		ps.setInt(1,sessionId);
-		ResultSet rs = ps.executeQuery();
-//		while(rs.next()) {
-//			ActivityManager.deleteActivity(rs.getInt("id"));
-//		}
-		con.close();
+		SiteSession ss = getSession(sessionId);
+		if( ss != null ) {
+			Connection con = DBManager.getInstance().getConnection();
+			String sql = "UPDATE gs_session SET status = 0 WHERE id = ? AND status = 1";
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setInt(1,sessionId);
+			ps.execute();
+			sql = "UPDATE gs_blacktime SET status = 0 WHERE sessionId = ? AND status = 1";
+			ps = con.prepareStatement(sql);
+			ps.setInt(1,sessionId);
+			ps.execute();
+			sql = "UPDATE gs_blackdate SET status = 0 WHERE sessionId = ? AND status = 1";
+			ps = con.prepareStatement(sql);
+			ps.setInt(1,sessionId);
+			ps.execute();
+			sql = "SELECT id FROM gs_activity WHERE sessionId = ? AND status = 1";
+			ps = con.prepareStatement(sql);
+			ps.setInt(1,sessionId);
+			ResultSet rs = ps.executeQuery();
+			while(rs.next()) {
+				ActivityManager.deleteActivity(ss,rs.getInt("id"));
+			}
+			con.close();
+		}
 	}
 	
 	public static String stringifyDays(boolean[] days) {

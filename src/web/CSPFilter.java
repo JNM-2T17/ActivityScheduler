@@ -60,6 +60,14 @@ public class CSPFilter implements Filter {
 		httpResponse.addHeader("X-Content-Type-Options", "nosniff");
 		httpResponse.addHeader("Content-Type", "text/html; charset=utf-8");
 		
+		Boolean prompt = (Boolean)httpRequest.getSession().getAttribute("prompt");
+		if( prompt != null && !prompt ) {
+			httpRequest.getSession().setAttribute("error",null);
+			httpRequest.getSession().setAttribute("message",null);
+		} else {
+			httpRequest.getSession().setAttribute("prompt",false);
+		}
+		
 		/* Step 1 : Detect if target resource is a Frame */
 		// Customize here according to your context...
 		boolean isFrame = false;
