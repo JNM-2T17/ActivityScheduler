@@ -82,7 +82,7 @@
 				</c:otherwise>
 				</c:choose>
 				</td>
-				<td><a href="editActivity?actId=${a.id }"><i class="fa fa-edit"></i></a></td>
+				<td><a href="editActivity?id=${a.id }"><i class="fa fa-edit"></i></a></td>
 			</tr>
 			</c:forEach>
 		</table>

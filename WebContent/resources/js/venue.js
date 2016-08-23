@@ -2,13 +2,13 @@ var venue = (function(){
 var currId = null;
 	
 	function showPopup() {
-		$("#popup-overlay").show();
-		$("#popup-frame").show();
+		$("#popup-overlay").fadeIn(250);
+		$("#popup-frame").fadeIn(250);
 	}
 	
 	function hidePopup() {
-		$("#popup-overlay").hide();
-		$("#popup-frame").hide();
+		$("#popup-overlay").fadeOut(250);
+		$("#popup-frame").fadeOut(250);
 	}
 	
 	function editVenue() {
