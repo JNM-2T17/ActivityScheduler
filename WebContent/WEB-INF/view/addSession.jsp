@@ -29,7 +29,7 @@
 					<td>Restricted Activity Days</td>
 					<td>
 						<input class="restrictedDay" type="checkbox" id="sunday" name="sunday" /><label for="sunday">Sunday<br/></label>
-						<input class="restrictedDay" type="checkbox" id="monday" name="monday" /><label for="monday">Monday<br/><br/></label>
+						<input class="restrictedDay" type="checkbox" id="monday" name="monday" /><label for="monday">Monday<br/></label>
 						<input class="restrictedDay" type="checkbox" id="tuesday" name="tuesday" /><label for="tuesday">Tuesday<br/></label>
 						<input class="restrictedDay" type="checkbox" id="wednesday" name="wednesday" /><label for="wednesday">Wednesday<br/></label>
 						<input class="restrictedDay" type="checkbox" id="thursday" name="thursday" /><label for="thursday">Thursday<br/></label>
