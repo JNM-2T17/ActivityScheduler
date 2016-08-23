@@ -20,7 +20,8 @@ div#header {
   min-width: 980px;
   position: fixed;
   top: 0;
-  left: 0; }
+  left: 0;
+  z-index: 99; }
   div#header span#usernameTop {
     max-width: 80px;
     text-overflow: ellipsis;
@@ -74,7 +75,9 @@ div#header {
         height: 30px; }
 
 div#content {
-  margin: 125px 30px 30px; }
+  margin: 125px 30px 30px;
+  positive: relative;
+  z-index: 0; }
   div#content div#contentTitle {
     margin-bottom: 30px; }
     div#content div#contentTitle h2 {
