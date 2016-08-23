@@ -134,6 +134,9 @@ div#content {
         div#content table#sessionTable th:first-of-type a:hover,
         div#content table#sessionTable td:first-of-type a:hover {
           color: #c8b4b4; }
+      div#content table#sessionTable th:nth-of-type(4),
+      div#content table#sessionTable td:nth-of-type(4) {
+        width: 160px; }
       div#content table#sessionTable th:last-of-type,
       div#content table#sessionTable td:last-of-type {
         width: 50px;

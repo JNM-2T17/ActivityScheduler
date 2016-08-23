@@ -210,6 +210,11 @@ div#content{
 					}
 				}
 			}
+
+			&:nth-of-type(4){
+				width: 160px;
+			}
+
 			&:last-of-type{
 				width: 50px;
 				text-align: right;
