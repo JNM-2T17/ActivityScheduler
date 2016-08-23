@@ -83,6 +83,9 @@ var tg = (function(){
 				success : function(a) {
 					if(a === "true") {
 						$("#tg-" + currId).remove();
+						if($("li[id^='tg-']").length == 0 ) {
+							$("#itemList").html("<li id='empty-prompt'>No Target Groups</li>");
+						}
 						currId = null;
 						hidePopup();
 						showMessage(name + " has been deleted.");
@@ -125,7 +128,7 @@ var tg = (function(){
 								location = ".";
 							} else {
 								$("#name").val("");
-								$("#empty-prompt").remove();
+								$("#empty-prompt").hide();
 								$("ul#itemList").append("<li id='tg-" + a.id + "'><span class='name'>" + escapeHtml(a.name) + 
 															"</span> <span class='editTG' data-id='" + a.id + "'><i class='fa fa-edit'></i></span></li>");
 								$("#tg-" + a.id + " .editTG").click(editTG);

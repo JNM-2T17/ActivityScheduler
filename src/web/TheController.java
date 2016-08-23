@@ -595,7 +595,7 @@ public class TheController {
 		} else {
 			try {
 				checkToken(token,request,response);
-				if(name.matches("^[A-Za-z0-9.', _\\-]+$") && VenueManager.addVenue(u, name) ) {
+				if(name.matches("^[A-Za-z0-9.', _\\-()]+$") && VenueManager.addVenue(u, name) ) {
 					Venue[] venues = VenueManager.getAllVenues(u);
 					response.getWriter().print((new Gson()).toJson(venues[venues.length - 1]));
 					((AuditManager)request.getSession().getAttribute("auditor")).addActivity("added venue " + name + ".");
@@ -626,7 +626,7 @@ public class TheController {
 				checkToken(token,request,response);
 				Venue v = VenueManager.getVenue(id);
 				if( v.getUserId() == u.getId() ) {
-					if(name.matches("^[A-Za-z0-9.', _\\-]+$") ) {
+					if(name.matches("^[A-Za-z0-9.', _\\-()]+$") ) {
 						if(VenueManager.updateVenue(id, name) ) {
 							((AuditManager)request.getSession().getAttribute("auditor")).addActivity("updated venue " + id + ".");
 							response.getWriter().print(true);
@@ -1168,7 +1168,7 @@ public class TheController {
 				SiteSession ss = (SiteSession)request.getSession().getAttribute("activeSession");
 				
 				
-				if( name.matches("^[A-Za-z0-9.,' \\-]+$") && str.matches(timeRegex) && etr.matches(timeRegex) &&
+				if( name.matches("^[A-Za-z0-9.,' \\-:&]+$") && str.matches(timeRegex) && etr.matches(timeRegex) &&
 						v.getUserId() == u.getId() ) {
 					boolean error = false;
 					
@@ -1319,7 +1319,7 @@ public class TheController {
 				Venue v = VenueManager.getVenue(venue);
 				SiteSession ss = (SiteSession)request.getSession().getAttribute("activeSession");
 				
-				if( name.matches("^[A-Za-z0-9.,' \\-]+$") && str.matches(timeRegex) && etr.matches(timeRegex) &&
+				if( name.matches("^[A-Za-z0-9.,' \\-:&]+$") && str.matches(timeRegex) && etr.matches(timeRegex) &&
 						v.getUserId() == u.getId() ) {
 					boolean error = false;
 					

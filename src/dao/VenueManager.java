@@ -15,22 +15,17 @@ import model.Venue;
 
 public class VenueManager {
 	public static boolean addVenue(User u, String venue) throws SQLException {
-		Connection con = DBManager.getInstance().getConnection();
-		String sql = "SELECT id FROM gs_venue WHERE userId = ? AND name = ? AND status = 1";
-		PreparedStatement ps = con.prepareStatement(sql);
-		ps.setInt(1,u.getId());
-		ps.setString(2,venue);
-		ResultSet rs = ps.executeQuery();
-		if( !rs.next() ) {
-			sql = "INSERT INTO gs_venue(userId,name) VALUES (?,?)";
-			ps = con.prepareStatement(sql);
+		Venue v = getVenue(venue);
+		if( v == null || v.getUserId() != u.getId() ) {
+			Connection con = DBManager.getInstance().getConnection();
+			String sql = "INSERT INTO gs_venue(userId,name) VALUES (?,?)";
+			PreparedStatement ps = con.prepareStatement(sql);
 			ps.setInt(1, u.getId());
 			ps.setString(2, venue);
 			ps.execute();
 			con.close();
 			return true;
 		} 
-		con.close();
 		return false;
 	}
 	

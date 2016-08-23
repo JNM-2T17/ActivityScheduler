@@ -42,7 +42,7 @@
 		<ul id="itemList">
 			<c:choose>
 			<c:when test="${empty tgs }">
-			No Target Groups
+			<li id="empty-prompt">No Target Groups</li>
 			</c:when>
 			<c:otherwise>
 			<c:forEach items="${tgs }" var="tg">

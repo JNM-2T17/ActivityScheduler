@@ -103,7 +103,7 @@ var addActivity = (function() {
 			var startTimeRange = $("#startTime").val();
 			var endTimeRange = $("#endTime").val();
 			var message = "";
-			if( !/^[A-Za-z0-9.,' \-]+$/.test(name)) {
+			if( !/^[A-Za-z0-9.,' \-:&]+$/.test(name)) {
 				message = appendMessage(message,"Name is invalid.");
 			} 
 			
@@ -123,7 +123,7 @@ var addActivity = (function() {
 				ok = false;
 			} 
 			
-			if( ok && startTimeRange > endTimeRange ) {
+			if( ok && startTimeRange * 1 > endTimeRange * 1 ) {
 				message = appendMessage(message,"Start Time must be before End Time.");
 			}
 			

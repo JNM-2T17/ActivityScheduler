@@ -14,22 +14,17 @@ import model.User;
 
 public class TargetGroupManager {
 	public static boolean addTargetGroup(User u, String targetGroup) throws SQLException {
-		Connection con = DBManager.getInstance().getConnection();
-		String sql = "SELECT id FROM gs_target_group WHERE name = ? AND userId = ? AND status = 1";
-		PreparedStatement ps = con.prepareStatement(sql);
-		ps.setString(1,targetGroup);
-		ps.setInt(2, u.getId());
-		ResultSet rs = ps.executeQuery();
-		if( !rs.next() ) {
-			sql = "INSERT INTO gs_target_group(userId,name) VALUES (?,?)";
-			ps = con.prepareStatement(sql);
+		TargetGroup tg = getTargetGroup(u.getId(),targetGroup);
+		if( tg == null ) {
+			Connection con = DBManager.getInstance().getConnection();
+			String sql = "INSERT INTO gs_target_group(userId,name) VALUES (?,?)";
+			PreparedStatement ps = con.prepareStatement(sql);
 			ps.setInt(1,u.getId());
 			ps.setString(2, targetGroup);
 			ps.execute();
 			con.close();
 			return true;
 		} 
-		con.close();
 		return false;
 	}
 	
@@ -56,6 +51,24 @@ public class TargetGroupManager {
 				+ "WHERE name = BINARY ? AND status = 1";
 		PreparedStatement ps = con.prepareStatement(sql);
 		ps.setString(1, name);
+		ResultSet rs = ps.executeQuery();
+		TargetGroup tg = null;
+		if(rs.next()) {
+			tg = new TargetGroup(rs.getInt("id"),rs.getString("name"));
+			tg.setUserId(rs.getInt("userId"));
+		} 
+		con.close();
+		
+		return tg;
+	}
+	
+	public static TargetGroup getTargetGroup(int userId, String name) throws SQLException {
+		Connection con = DBManager.getInstance().getConnection();
+		String sql = "SELECT id,userId,name FROM gs_target_group "
+				+ "WHERE name = BINARY ? AND userId = ? AND status = 1";
+		PreparedStatement ps = con.prepareStatement(sql);
+		ps.setString(1, name);
+		ps.setInt(2, userId);
 		ResultSet rs = ps.executeQuery();
 		TargetGroup tg = null;
 		if(rs.next()) {

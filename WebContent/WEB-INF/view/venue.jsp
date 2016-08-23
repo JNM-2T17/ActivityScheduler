@@ -38,7 +38,7 @@
 		<ul id="itemList">
 			<c:choose>
 			<c:when test="${empty venues }">
-			No Venues
+			<li id="empty-prompt">No Venues</li>
 			</c:when>
 			<c:otherwise>
 			<c:forEach items="${venues }" var="v">
