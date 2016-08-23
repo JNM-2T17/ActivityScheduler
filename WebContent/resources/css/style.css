@@ -1,6 +1,11 @@
 @font-face {
   font-family: 'Raleway';
   src: url("../fonts/Raleway-Regular.ttf"); }
+html,
+body {
+  min-width: 860px;
+  min-height: 300px; }
+
 body {
   font-family: "Raleway";
   background-color: #e6e6e6; }
@@ -72,7 +77,8 @@ div#content {
     div#content div#contentTitle div#sectionOptions {
       float: right; }
       div#content div#contentTitle div#sectionOptions a,
-      div#content div#contentTitle div#sectionOptions button {
+      div#content div#contentTitle div#sectionOptions button,
+      div#content div#contentTitle div#sectionOptions input[type='submit'] {
         text-decoration: none;
         display: inline-block;
         padding: 15px;
@@ -84,8 +90,23 @@ div#content {
         border: none;
         outline: none; }
         div#content div#contentTitle div#sectionOptions a:hover,
-        div#content div#contentTitle div#sectionOptions button:hover {
+        div#content div#contentTitle div#sectionOptions button:hover,
+        div#content div#contentTitle div#sectionOptions input[type='submit']:hover {
           background-color: whitesmoke; }
+        div#content div#contentTitle div#sectionOptions a#cancelAdd,
+        div#content div#contentTitle div#sectionOptions button#cancelAdd,
+        div#content div#contentTitle div#sectionOptions input[type='submit']#cancelAdd {
+          color: #fa9696; }
+      div#content div#contentTitle div#sectionOptions input[type='text'] {
+        display: inline-block;
+        padding: 15px;
+        background-color: white;
+        color: #786464;
+        margin-left: 10px;
+        border-radius: 6px;
+        font-size: 0.9em;
+        border: none;
+        outline: none; }
   div#content #regForm {
     width: 400px;
     border-collapse: collapse; }
@@ -233,6 +254,97 @@ div#content {
     text-align: right;
     display: block;
     width: 500px; }
+  div#content #addForm,
+  div#content #popup-frame,
+  div#content #popup-overlay {
+    display: none; }
+  div#content form#addForm {
+    display: inline-block;
+    margin: 0; }
+  div#content #itemList {
+    padding: 0 0 0 10px;
+    width: 500px;
+    list-style: none; }
+    div#content #itemList li {
+      position: relative;
+      padding: 3px 0 3px 40px;
+      min-height: 30px; }
+    div#content #itemList .editTG,
+    div#content #itemList .editVenue {
+      cursor: pointer;
+      position: absolute;
+      left: 0;
+      top: 0;
+      border-radius: 50%;
+      height: 30px;
+      width: 30px;
+      display: inline-block;
+      box-sizing: border-box;
+      padding: 8px;
+      background-color: white;
+      border: none;
+      outline: none; }
+      div#content #itemList .editTG:hover,
+      div#content #itemList .editVenue:hover {
+        color: #c8b4b4; }
+  div#content #popup-overlay {
+    top: 0;
+    left: 0;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    background-color: rgba(100, 100, 100, 0.6); }
+  div#content #popup-frame {
+    position: fixed;
+    top: calc(50% - 150px);
+    left: calc(50% - 200px);
+    boz-sizing: border-box;
+    height: 250px;
+    width: 400px;
+    z-index: 2000;
+    background-color: white;
+    padding: 20px;
+    border-radius: 6px; }
+    div#content #popup-frame #popup-title {
+      margin-bottom: 20px; }
+      div#content #popup-frame #popup-title h3 {
+        color: #786464;
+        float: left;
+        margin: 0;
+        font-size: 1.8em; }
+      div#content #popup-frame #popup-title #popup-options {
+        float: right; }
+        div#content #popup-frame #popup-title #popup-options button {
+          border-radius: 50%;
+          width: 40px;
+          height: 40px;
+          border: none;
+          outline: none;
+          background-color: #786464;
+          font-size: 1.2em;
+          color: white; }
+          div#content #popup-frame #popup-title #popup-options button:hover {
+            background-color: #c8b4b4; }
+    div#content #popup-frame input,
+    div#content #popup-frame button {
+      height: 30px;
+      padding: 10px; }
+    div#content #popup-frame input {
+      width: 250px; }
+    div#content #popup-frame button#edit {
+      position: absolute;
+      bottom: 20px;
+      right: 15px;
+      border: none;
+      outline: none;
+      font-size: 1.1em;
+      text-transform: uppercase;
+      font-weight: bold;
+      color: #64c864;
+      background-color: transparent; }
+      div#content #popup-frame button#edit:hover {
+        color: #c8b4b4; }
 
 .fromToDate input, div#content #addSessionForm .fromToDate input, div#content #addSessionForm #addRestrictedDate.fromToDate input,
 div#content #addSessionForm #blackDate input {
@@ -268,29 +380,6 @@ div#content #addSessionForm #blackDate .dateMiddle {
 input,
 button {
   font-family: "Raleway"; }
-
-#popup-overlay {
-  top: 0;
-  left: 0;
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  z-index: 1000;
-  background-color: rgba(100, 100, 100, 0.6); }
-
-#popup-frame {
-  position: fixed;
-  top: 27.5%;
-  left: 27.5%;
-  width: 45%;
-  height: 45%;
-  z-index: 2000;
-  background-color: white;
-  padding: 20px; }
-
-.editTG, .editVenue {
-  color: #0a0b7b;
-  cursor: pointer; }
 
 #message-display {
   position: fixed;

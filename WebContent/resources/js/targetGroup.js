@@ -19,12 +19,19 @@ var tg = (function(){
 	
 	$(document).ready(function() {
 		$("#addForm").hide();
+		$("#cancelAdd").hide();
 		$("#addButton").click(function() {
 			$("#addButton").hide();
+			$("#cancelAdd").show();
 			$("#addForm").show();
 		});
+		$("#cancelAdd").click(function() {
+			$("#addButton").show();
+			$("#cancelAdd").hide();
+			$("#addForm").hide();
+			$("#targetGroupName").val("");
+		});
 		
-		hidePopup();
 		$(".editTG").click(editTG);
 		
 		$("#popup-overlay").click(function() {
