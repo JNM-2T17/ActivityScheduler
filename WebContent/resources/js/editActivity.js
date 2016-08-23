@@ -7,6 +7,15 @@ var editActivity = (function() {
 	var endDate = null;
 	var actId = null;
 	var blackdates = [];
+	var days = [
+	    		'sunday',
+	    		'monday',
+	    		'tuesday',
+	    		'wednesday',
+	    		'thursday',
+	    		'friday',
+	    		'saturday'
+	    	];
 	
 	function setStartDate(sd) {
 		if( dateRegex.test(sd)) {
@@ -21,6 +30,9 @@ var editActivity = (function() {
 													date.getUTCFullYear() == blackdates[x].year) {
 													return [false];
 												}
+											}
+											if($("#" + days[date.getDay()]).length == 0 ) {
+												return [false];
 											}
 											return [true];
 										}});
@@ -41,7 +53,9 @@ var editActivity = (function() {
 													return [false];
 												}
 											}
-											
+											if($("#" + days[date.getDay()]).length == 0 ) {
+												return [false];
+											}											
 											return [true];
 										}});
 		}

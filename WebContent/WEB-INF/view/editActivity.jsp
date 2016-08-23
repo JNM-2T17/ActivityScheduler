@@ -79,6 +79,7 @@
 					</td>
 				</tr>
 			</table>
+			<div id="targets"></div>
 			<input class="submitForm" type="submit" value="Submit" id="addActivityButton"/>
 		</form>
 		

@@ -74,6 +74,7 @@
 					</td>
 				</tr>
 			</table>
+			<div id="targets"></div>
 			<input type="hidden" name="token" value="${sessionToken }"/>
 			<input class="submitForm" type="submit" value="Submit" id="addActivityButton"/>
 		</form>
