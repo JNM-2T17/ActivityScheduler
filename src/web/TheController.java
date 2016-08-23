@@ -539,23 +539,22 @@ public class TheController {
 	public void deleteTG(@RequestParam("token") String token,
 			@RequestParam("id") int id,
 			HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("Getting user");
 		User u = restoreSession(request, response);
-		System.out.println("Got user");
 		if( u == null ) {
 			response.getWriter().print(false);
 		} else {
 			try {
 				checkToken(token,request,response);
-				System.out.println("Getting tg");
 				TargetGroup tg = TargetGroupManager.getTargetGroup(id);
-				System.out.println("Got tg");
 				if( tg.getUserId() == u.getId() ) {
-					System.out.println("Deleting");
-					TargetGroupManager.deleteTargetGroup(id);
-					System.out.println("Deleted");
-					((AuditManager)request.getSession().getAttribute("auditor")).addActivity("deleted target group " + id + ".");
-					response.getWriter().print(true);
+					if( TargetGroupManager.canDelete(u, id)) {
+						TargetGroupManager.deleteTargetGroup(id);
+						((AuditManager)request.getSession().getAttribute("auditor")).addActivity("deleted target group " + id + ".");
+						response.getWriter().print(true);
+					} else {
+						((AuditManager)request.getSession().getAttribute("auditor")).addActivity("tried to delete target group " + id + " which is in use.");
+						response.getWriter().print("That target group is in use. Please remove it from all activities before deleting.");
+					}
 				} else {
 					((AuditManager)request.getSession().getAttribute("auditor")).addActivity("tried to delete target group " + id + " which isn't theirs.");
 					response.getWriter().print("That target group is not yours.");
@@ -665,9 +664,14 @@ public class TheController {
 				checkToken(token,request,response);
 				Venue v = VenueManager.getVenue(id);
 				if( v.getUserId() == u.getId() ) {
-					VenueManager.deleteVenue(id);
-					((AuditManager)request.getSession().getAttribute("auditor")).addActivity("deleted venue " + id + ".");
-					response.getWriter().print(true);
+					if( VenueManager.canDelete(u, id)) {
+						VenueManager.deleteVenue(id);
+						((AuditManager)request.getSession().getAttribute("auditor")).addActivity("deleted venue " + id + ".");
+						response.getWriter().print(true);
+					} else {
+						((AuditManager)request.getSession().getAttribute("auditor")).addActivity("tried to delete venue " + id + " which is in use.");
+						response.getWriter().print("That venue is in use. Please move all activities set here before deleting.");
+					}
 				} else {
 					((AuditManager)request.getSession().getAttribute("auditor")).addActivity("tried to delete venue " + id + " which isn't theirs.");
 					response.getWriter().print("That venue is not yours.");

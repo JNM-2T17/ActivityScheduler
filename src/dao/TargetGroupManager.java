@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import model.Activity;
+import model.SiteSession;
 import model.TargetGroup;
 import model.User;
 
@@ -84,7 +86,7 @@ public class TargetGroupManager {
 	
 	public static boolean updateTargetGroup(int tgId, String targetGroup) throws SQLException {
 		TargetGroup tg = getTargetGroup(targetGroup);
-		if( tg == null ) {
+		if( tg == null || tg.getId() == tgId) {
 			Connection con = DBManager.getInstance().getConnection();
 			String sql = "UPDATE gs_target_group SET name = ? WHERE id = ? AND status = 1";
 			PreparedStatement ps = con.prepareStatement(sql);
@@ -105,5 +107,20 @@ public class TargetGroupManager {
 		ps.setInt(1,tgId);
 		ps.execute();
 		con.close();
+	}
+	
+	public static boolean canDelete(User u,int tgId) throws SQLException {
+		SiteSession[] sss = SessionManager.getSessions(u);
+		for(SiteSession ss : sss) {
+			Activity[] as = ActivityManager.getActivities(ss);
+			for(Activity a : as) {
+				for(TargetGroup tg : a.getTargetGroups()) {
+					if( tg.getId() == tgId) {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
 	}
 }

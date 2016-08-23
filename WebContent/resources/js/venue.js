@@ -1,5 +1,5 @@
 var venue = (function(){
-var currId = null;
+	var currId = null;
 	
 	function showPopup() {
 		$("#popup-overlay").fadeIn(250);
@@ -12,7 +12,7 @@ var currId = null;
 	}
 	
 	function editVenue() {
-		currId = $(this).data("id");
+		currId = $(this).data("id");		
 		$("#newName").val($("#venue-" + currId + " .name").text());
 		showPopup();
 	}

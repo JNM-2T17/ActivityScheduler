@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import model.Activity;
+import model.SiteSession;
 import model.TargetGroup;
 import model.User;
 import model.Venue;
@@ -82,7 +84,7 @@ public class VenueManager {
 	
 	public static boolean updateVenue(int venueId, String venue) throws SQLException {
 		Venue v = getVenue(venue);
-		if( v == null ) {
+		if( v == null || v.getId() == venueId) {
 			Connection con = DBManager.getInstance().getConnection();
 			String sql = "UPDATE gs_venue SET name = ? WHERE id = ? AND status = 1";
 			PreparedStatement ps = con.prepareStatement(sql);
@@ -94,6 +96,19 @@ public class VenueManager {
 		} else {
 			return false;
 		}
+	}
+	
+	public static boolean canDelete(User u,int venueId) throws SQLException {
+		SiteSession[] sss = SessionManager.getSessions(u);
+		for(SiteSession ss : sss) {
+			Activity[] as = ActivityManager.getActivities(ss);
+			for(Activity a : as) {
+				if( a.getVenue().getId() == venueId) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 	
 	public static void deleteVenue(int venueId) throws SQLException {
