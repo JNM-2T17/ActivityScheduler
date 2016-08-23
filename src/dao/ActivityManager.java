@@ -117,12 +117,45 @@ public class ActivityManager {
 		}
 	}
 	
-	public static void blackoutDates(Calendar[] blackdates,Calendar start, Calendar end, SiteSession ss) throws SQLException {
-		if( blackdates != null & blackdates.length > 0 ) {
-			Activity[] acts = getActivities(ss);
-			if( acts.length > 0 ) {
-				Connection con = DBManager.getInstance().getConnection();
-				String sql = "UPDATE gs_activity_date SET status = 0 WHERE actID IN (";
+	public static void blackoutDates(boolean[] blackdays, Calendar[] blackdates,Calendar start, Calendar end, SiteSession ss) throws SQLException {
+		Activity[] acts = getActivities(ss);
+		if( acts.length > 0 ) {
+			Connection con = DBManager.getInstance().getConnection();
+			String sql = "SELECT id, days FROM gs_activity WHERE status = 1 AND sessionId = ?";
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setInt(1, ss.getId());
+			ResultSet rs = ps.executeQuery();
+			while(rs.next()) {
+				String days = rs.getString("days");
+				for(int i = 0; i < blackdays.length; i++) {
+					if(blackdays[i]) {
+						days = days.substring(0,2 * i) + "0" + days.substring(2 * i + 1);
+					}
+				}
+				sql = "UPDATE gs_activity SET days = ? WHERE id = ?";
+				ps = con.prepareStatement(sql);
+				ps.setString(1,days);
+				ps.setInt(2, rs.getInt("id"));
+				ps.execute();
+			}
+			
+			ArrayList<Calendar> cals = new ArrayList<Calendar>();
+			for(int i = 0; i < blackdays.length; i++) {
+				if( blackdays[i]) {
+					Calendar c = CalendarFactory.createCalendar(ss.getStartDate().getTimeInMillis());
+					if(c.get(Calendar.DAY_OF_WEEK) > i + 1 ) {
+						c.add(Calendar.DAY_OF_MONTH, i + 8 - c.get(Calendar.DAY_OF_WEEK) );
+					} else if( c.get(Calendar.DAY_OF_WEEK) < i + 1 ) {
+						c.add(Calendar.DAY_OF_MONTH, i + 1 - c.get(Calendar.DAY_OF_WEEK) );
+					}
+					while(c.compareTo(ss.getEndDate()) <= 0) {
+						cals.add(CalendarFactory.createCalendar(c.getTimeInMillis()));
+						c.add(Calendar.WEEK_OF_YEAR, 1);
+					}
+				}
+			}
+			if( blackdates != null & blackdates.length > 0 ) {
+				sql = "UPDATE gs_activity_date SET status = 0 WHERE actID IN (";
 				int i = 0;
 				for(Activity a : acts ) {
 					if( i > 0 ) {
@@ -141,27 +174,30 @@ public class ActivityManager {
 					sql += "?"; 
 					i++;
 				}
-				sql += ") OR actDate < ? OR actDate > ? )";
-				PreparedStatement ps = con.prepareStatement(sql);
-				i = 1;
-				for(Activity a : acts) {
-					ps.setInt(i,a.getId());
+				for(Calendar c : cals) {
+					if( i > 0 ) {
+						sql += ",";
+					}
+					sql += "?"; 
 					i++;
 				}
+				sql += ") OR actDate < ? OR actDate > ? )";
+				ps = con.prepareStatement(sql);
+				i = 1;
+				for(Activity a : acts) {
+					ps.setInt(i++,a.getId());
+				}
 				for(Calendar c : blackdates) {
-					ps.setString(i,sdf.format(c.getTime()));
-					i++;
+					ps.setString(i++,sdf.format(c.getTime()));
+				}
+				for(Calendar c : cals) {
+					ps.setString(i++,sdf.format(c.getTime()));
 				}
 				ps.setString(i++, sdf.format(start.getTime()));
 				ps.setString(i++, sdf.format(end.getTime()));
-				System.out.println(ps);
 				ps.execute();
-			}
-		}  else {
-			Activity[] acts = getActivities(ss);
-			if( acts.length > 0 ) {
-				Connection con = DBManager.getInstance().getConnection();
-				String sql = "UPDATE gs_activity_date SET status = 0 WHERE actID IN (";
+			}  else {
+				sql = "UPDATE gs_activity_date SET status = 0 WHERE actID IN (";
 				int i = 0;
 				for(Activity a : acts ) {
 					if( i > 0 ) {
@@ -170,19 +206,29 @@ public class ActivityManager {
 					sql += "?";
 					i++;
 				}
-				sql += ") AND (actDate < ? OR actDate > ? )";
+				sql += ") AND (actDate IN (";
+				i = 0;
+				for( Calendar c : cals ) {
+					if(i > 0 ) {
+						sql += ",";
+					}
+					sql += "?";
+				}
+				sql += ") OR actDate < ? OR actDate > ? )";
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-				PreparedStatement ps = con.prepareStatement(sql);
+				ps = con.prepareStatement(sql);
 				i = 1;
 				for(Activity a : acts) {
-					ps.setInt(i,a.getId());
-					i++;
+					ps.setInt(i++,a.getId());
+				}
+				for(Calendar c : cals) {
+					ps.setString(i++,sdf.format(c.getTime()));
 				}
 				ps.setString(i++, sdf.format(start.getTime()));
 				ps.setString(i++, sdf.format(end.getTime()));
-				System.out.println(ps);
 				ps.execute();
 			}
+			con.close();
 		}
 	}
 	
