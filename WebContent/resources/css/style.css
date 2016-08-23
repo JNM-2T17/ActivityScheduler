@@ -107,6 +107,55 @@ div#content {
     text-align: right;
     display: block;
     width: 400px; }
+  div#content table#sessionTable {
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: fixed; }
+    div#content table#sessionTable tr:nth-of-type(2) td {
+      padding-top: 20px; }
+    div#content table#sessionTable th {
+      border-bottom: 2px #786464 solid; }
+    div#content table#sessionTable th,
+    div#content table#sessionTable td {
+      padding: 10px;
+      text-align: left;
+      vertical-align: top; }
+      div#content table#sessionTable th:first-of-type a,
+      div#content table#sessionTable td:first-of-type a {
+        text-decoration: none;
+        font-weight: bold;
+        color: black;
+        border-radius: 6px;
+        padding: 10px;
+        background-color: white;
+        border: none;
+        outline: none;
+        display: inline-block; }
+        div#content table#sessionTable th:first-of-type a:hover,
+        div#content table#sessionTable td:first-of-type a:hover {
+          color: #c8b4b4; }
+      div#content table#sessionTable th:last-of-type,
+      div#content table#sessionTable td:last-of-type {
+        width: 50px;
+        text-align: right; }
+        div#content table#sessionTable th:last-of-type a,
+        div#content table#sessionTable td:last-of-type a {
+          border-radius: 50%;
+          box-sizing: border-box;
+          height: 40px;
+          width: 40px;
+          background-color: white;
+          border: none;
+          outline: none;
+          color: black;
+          display: inline-block;
+          padding-top: 10px;
+          padding-left: 3px;
+          text-align: center;
+          font-size: 1.3em; }
+          div#content table#sessionTable th:last-of-type a:hover,
+          div#content table#sessionTable td:last-of-type a:hover {
+            color: #c8b4b4; }
   div#content #addSessionForm {
     width: 500px;
     border-collapse: collapse; }

@@ -170,6 +170,73 @@ div#content{
 		width: 400px;
 	}
 
+	// View Sessions
+
+	table#sessionTable{
+		border-collapse: collapse;
+		width: 100%;
+		table-layout: fixed;
+
+		tr:nth-of-type(2){
+			td{
+				padding-top: 20px;
+			}
+		}
+
+		th{
+			border-bottom: 2px $fgColor1 solid;
+		}
+
+		th,
+		td{
+			padding: 10px;
+			text-align: left;
+			vertical-align: top;
+
+			&:first-of-type{
+				a{
+					text-decoration: none;
+					font-weight: bold;
+					color: $fgColor2;
+					border-radius: 6px;
+					padding: 10px;
+					background-color: $bgColor2;
+					border: none;
+					outline: none;
+					display: inline-block;
+
+					&:hover{
+						color: $fgColor1-fade;
+					}
+				}
+			}
+			&:last-of-type{
+				width: 50px;
+				text-align: right;
+
+				a{
+					border-radius: 50%;
+					box-sizing: border-box;
+					height: 40px;
+					width: 40px;
+					background-color: $bgColor2;
+					border: none;
+					outline: none;
+					color: $fgColor2;
+					display: inline-block;
+					padding-top: 10px;
+					padding-left: 3px;
+					text-align: center;
+					font-size: 1.3em;
+
+					&:hover{
+						color: $fgColor1-fade;
+					}
+				}
+			}
+		}
+	}
+
 	// Add Session
 
 	#addSessionForm{
