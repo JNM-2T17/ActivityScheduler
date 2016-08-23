@@ -6,13 +6,24 @@ var editActivity = (function() {
 	var startDate = null;
 	var endDate = null;
 	var actId = null;
+	var blackdates = [];
 	
 	function setStartDate(sd) {
 		if( dateRegex.test(sd)) {
 			var parts = sd.split(/[/]/);
 			startDate = new Date(parts[2],parts[0] - 1,parts[1]);
 			$("#dateRange").datepicker("destroy");
-			$("#dateRange").datepicker({minDate : startDate,maxDate : endDate});
+			$("#dateRange").datepicker({minDate : startDate,maxDate : endDate,
+										beforeShowDay : function(date) {
+											for(x in blackdates ) {
+												if( date.getUTCDate() + 1 == blackdates[x].day &&
+													date.getUTCMonth() == blackdates[x].month && 
+													date.getUTCFullYear() == blackdates[x].year) {
+													return [false];
+												}
+											}
+											return [true];
+										}});
 		}
 	}
 	
@@ -21,15 +32,37 @@ var editActivity = (function() {
 			var parts = ed.split(/[/]/);
 			endDate = new Date(parts[2],parts[0] - 1,parts[1]);
 			$("#dateRange").datepicker("destroy");
-			$("#dateRange").datepicker({minDate : startDate,maxDate : endDate});
+			$("#dateRange").datepicker({minDate : startDate,maxDate : endDate,
+										beforeShowDay : function(date) {
+											for(x in blackdates ) {
+												if( date.getUTCDate() + 1 == blackdates[x].day &&
+													date.getUTCMonth() == blackdates[x].month && 
+													date.getUTCFullYear() == blackdates[x].year) {
+													return [false];
+												}
+											}
+											
+											return [true];
+										}});
 		}
 	}
 	
 	function addDate(bd) {
 		if( dateRegex.test(bd)) {
 			for(x in dateRange) {
+				console.log(dateRange[x] + " " + bd);
 				if( dateRange[x] === bd ) {
 					showError("You have already added that date.");
+					return;
+				}
+			}
+			for(x in blackdates) {
+				var d = blackdates[x];
+				var month = (d.month * 1 + 1);
+				var str = (month < 10 ? "0" + month : month) + "/" + d.day + "/" + d.year;
+				console.log(str + " " + bd);
+				if( str == bd) {
+					showError("That date is blacked out.");
 					return;
 				}
 			}
@@ -43,6 +76,8 @@ var editActivity = (function() {
 	} 
 	
 	$(document).ready(function() {
+		console.log($("#blackdates").val());
+		blackdates = JSON.parse($("#blackdates").val());
 		actId = $("#actId").val();
 		$.ajax({
 			url : "getActivity",

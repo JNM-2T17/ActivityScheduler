@@ -247,6 +247,8 @@ public class SessionManager {
 				}
 				ps.execute();
 			}
+			
+			ActivityManager.blackoutDates(blackDates, startDate,endDate, ss);
 			return true;
 		} else {
 			con.close();

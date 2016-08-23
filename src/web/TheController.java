@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -217,9 +218,6 @@ public class TheController {
 		} else {
 			try {
 				Activity[] acts = ActivityManager.getActivities(ss);
-				for(Activity a:acts) {
-					System.out.println(a);
-				}
 				request.setAttribute("activities",acts);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -1124,6 +1122,7 @@ public class TheController {
 				request.setAttribute("startDate",sdf.format(ss.getStartDate().getTime()));
 				request.setAttribute("endDate",sdf.format(ss.getEndDate().getTime()));
 				request.setAttribute("blackdays", ss.getBlackDaysString());
+				request.setAttribute("blackdates", ss.getBlackdatesString());
 				request.getRequestDispatcher("WEB-INF/view/addActivity.jsp").forward(request, response);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -1162,6 +1161,8 @@ public class TheController {
 				String dateRegex = "^(0?[1-9]|1[0-2])\\/(0?[1-9]|[1-2][0-9]|3[0-1])\\/2[0-9]{3}$";
 				String timeRegex = "^((0?|1)[0-9]|2[0-3])([0-5][0-9])$";
 				Venue v = VenueManager.getVenue(venue);
+				SiteSession ss = (SiteSession)request.getSession().getAttribute("activeSession");
+				
 				
 				if( name.matches("^[A-Za-z0-9.,' \\-]+$") && str.matches(timeRegex) && etr.matches(timeRegex) &&
 						v.getUserId() == u.getId() ) {
@@ -1172,19 +1173,27 @@ public class TheController {
 						bds = new Calendar[dateRange.length];
 						int i = 0;
 						for(String s : dateRange ) {
-							System.out.println(s + s.matches(dateRegex));
 							if( !s.matches(dateRegex) ) {
 								error = true;
 								break;
 							} else {
 								bds[i] = CalendarFactory.createCalendar(s);
+								for(Calendar c : ss.getBlackdates() ) {
+									if( bds[i].equals(c)) {
+										error = true;
+										break;
+									}
+								}
+								if( error ) {
+									break;
+								}
 								i++;
 							}
 						}
 					}
 					
 					TargetGroup[] tgs = new TargetGroup[0];
-					if(targets != null ) {
+					if(!error && targets != null ) {
 						tgs = new TargetGroup[targets.length];
 						for(int i = 0; !error && i < targets.length; i++) {
 							TargetGroup tg = TargetGroupManager.getTargetGroup(targets[i]);
@@ -1260,6 +1269,7 @@ public class TheController {
 					request.setAttribute("startDate",sdf.format(ss.getStartDate().getTime()));
 					request.setAttribute("endDate",sdf.format(ss.getEndDate().getTime()));
 					request.setAttribute("blackdays", ss.getBlackDaysString());
+					request.setAttribute("blackdates", ss.getBlackdatesString());
 					request.getRequestDispatcher("WEB-INF/view/editActivity.jsp").forward(request, response);
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
@@ -1303,6 +1313,7 @@ public class TheController {
 				String dateRegex = "^(0?[1-9]|1[0-2])\\/(0?[1-9]|[1-2][0-9]|3[0-1])\\/2[0-9]{3}$";
 				String timeRegex = "^((0?|1)[0-9]|2[0-3])([0-5][0-9])$";
 				Venue v = VenueManager.getVenue(venue);
+				SiteSession ss = (SiteSession)request.getSession().getAttribute("activeSession");
 				
 				if( name.matches("^[A-Za-z0-9.,' \\-]+$") && str.matches(timeRegex) && etr.matches(timeRegex) &&
 						v.getUserId() == u.getId() ) {
@@ -1319,13 +1330,22 @@ public class TheController {
 								break;
 							} else {
 								bds[i] = CalendarFactory.createCalendar(s);
+								for(Calendar c : ss.getBlackdates() ) {
+									if( bds[i].equals(c)) {
+										error = true;
+										break;
+									}
+								}
+								if( error ) {
+									break;
+								}
 								i++;
 							}
 						}
 					}
 					
 					TargetGroup[] tgs = new TargetGroup[0];
-					if(targets != null ) {
+					if(!error && targets != null ) {
 						tgs = new TargetGroup[targets.length];
 						for(int i = 0; !error && i < targets.length; i++) {
 							TargetGroup tg = TargetGroupManager.getTargetGroup(targets[i]);

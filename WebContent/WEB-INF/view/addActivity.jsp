@@ -10,6 +10,7 @@
 		<script src="<c:url value="resources/js/addActivity.js"/>"></script>
 		<input type="hidden" id="startDate" value="${startDate }"/>
 		<input type="hidden" id="endDate" value="${endDate }"/>
+		<input type="hidden" id="blackdates" value='${blackdates }'/>
 		<c:forEach items="${blackdays }" var="bd">
 		<input type="hidden" class="blackDays" value="${bd }"/>
 		</c:forEach>

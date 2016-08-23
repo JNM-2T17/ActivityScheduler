@@ -35,8 +35,8 @@ var addSession = (function() {
 		$("#addDate").click(function() {
 			var bd = $("#blackDate").val();
 			if( dateRegex.test(bd)) {
-				for(x in blackDates) {
-					if( blackDates[x] === bd ) {
+				for(x in blackdates) {
+					if( blackdates[x] === bd ) {
 						showError("You have already added that date.");
 						return;
 					}

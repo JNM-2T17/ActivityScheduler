@@ -110,6 +110,20 @@ public class SiteSession {
 	public ArrayList<Calendar> getBlackdates() {
 		return blackdates;
 	}
+	
+	public String getBlackdatesString() {
+		String bd = "[";
+		int i = 0;
+		for(Calendar c : getBlackdates()) {
+			if( i > 0 ) {
+				bd += ",";
+			}
+			bd += "{\"month\":\"" + c.get(Calendar.MONTH) + "\",\"day\":\"" + c.get(Calendar.DAY_OF_MONTH) + 
+					"\",\"year\":\"" + c.get(Calendar.YEAR) + "\"}";
+			i++;
+		}
+		return bd + "]";
+	}
 
 	public void setBlackdates(ArrayList<Calendar> blackdates) {
 		this.blackdates = blackdates;
