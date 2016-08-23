@@ -71,7 +71,8 @@ div#content {
       margin: 0; }
     div#content div#contentTitle div#sectionOptions {
       float: right; }
-      div#content div#contentTitle div#sectionOptions a {
+      div#content div#contentTitle div#sectionOptions a,
+      div#content div#contentTitle div#sectionOptions button {
         text-decoration: none;
         display: inline-block;
         padding: 15px;
@@ -79,8 +80,11 @@ div#content {
         color: #64c864;
         margin-left: 10px;
         border-radius: 6px;
-        font-size: 0.9em; }
-        div#content div#contentTitle div#sectionOptions a:hover {
+        font-size: 0.9em;
+        border: none;
+        outline: none; }
+        div#content div#contentTitle div#sectionOptions a:hover,
+        div#content div#contentTitle div#sectionOptions button:hover {
           background-color: whitesmoke; }
   div#content #regForm {
     width: 400px;
@@ -222,7 +226,7 @@ div#content {
         outline: none; }
         div#content #addSessionForm #blackDates button:hover,
         div#content #addSessionForm #blackTimes button:hover {
-          color: div#content #addSessionForm #blackDates button:hover, div#content #addSessionForm #blackTimes button:hover fgColor1-fade; }
+          color: #c8b4b4; }
     div#content #addSessionForm .restrictedDay {
       margin: 3px 5px 3px 10px; }
   div#content input#addSessionButton {
@@ -261,7 +265,8 @@ div#content #addSessionForm #blackDate .dateMiddle {
 .clear {
   clear: both; }
 
-input {
+input,
+button {
   font-family: "Raleway"; }
 
 #popup-overlay {

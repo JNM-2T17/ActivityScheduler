@@ -110,7 +110,8 @@ div#content{
 		div#sectionOptions{
 			float: right;
 
-			a{
+			a,
+			button{
 				text-decoration: none;
 				display: inline-block;
 				padding: 15px;
@@ -119,6 +120,8 @@ div#content{
 				margin-left: 10px;
 				border-radius: 6px;
 				font-size: 0.9em;
+				border: none;
+				outline: none;
 
 				&:hover{
 					background-color: $bgColor1-fade;
@@ -323,7 +326,7 @@ div#content{
 				outline: none;
 
 				&:hover{
-					color: &fgColor1-fade;
+					color: $fgColor1-fade;
 				}
 			}
 		}
@@ -381,7 +384,8 @@ div#content{
 	clear: both;
 }
 
-input{
+input,
+button{
 	font-family: $mainFont;
 }
 
