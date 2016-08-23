@@ -2,7 +2,7 @@
   font-family: 'Raleway';
   src: url("../fonts/Raleway-Regular.ttf"); }
 body {
-  font-family: Raleway;
+  font-family: "Raleway";
   background-color: #e6e6e6; }
 
 div#header {
@@ -71,7 +71,8 @@ div#content {
       margin: 0; }
     div#content div#contentTitle div#sectionOptions {
       float: right; }
-      div#content div#contentTitle div#sectionOptions a {
+      div#content div#contentTitle div#sectionOptions a,
+      div#content div#contentTitle div#sectionOptions button {
         text-decoration: none;
         display: inline-block;
         padding: 15px;
@@ -79,14 +80,18 @@ div#content {
         color: #64c864;
         margin-left: 10px;
         border-radius: 6px;
-        font-size: 0.9em; }
-        div#content div#contentTitle div#sectionOptions a:hover {
+        font-size: 0.9em;
+        border: none;
+        outline: none; }
+        div#content div#contentTitle div#sectionOptions a:hover,
+        div#content div#contentTitle div#sectionOptions button:hover {
           background-color: whitesmoke; }
   div#content #regForm {
     width: 400px;
     border-collapse: collapse; }
     div#content #regForm td:first-of-type {
-      width: 100px; }
+      width: 100px;
+      font-weight: bold; }
     div#content #regForm input {
       width: 300px;
       border: none;
@@ -106,35 +111,144 @@ div#content {
     text-align: right;
     display: block;
     width: 400px; }
+  div#content table#sessionTable {
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: fixed; }
+    div#content table#sessionTable tr:nth-of-type(2) td {
+      padding-top: 20px; }
+    div#content table#sessionTable th {
+      border-bottom: 2px #786464 solid; }
+    div#content table#sessionTable th,
+    div#content table#sessionTable td {
+      padding: 10px;
+      text-align: left;
+      vertical-align: top; }
+      div#content table#sessionTable th:first-of-type a,
+      div#content table#sessionTable td:first-of-type a {
+        text-decoration: none;
+        font-weight: bold;
+        color: black;
+        border-radius: 6px;
+        padding: 10px;
+        background-color: white;
+        border: none;
+        outline: none;
+        display: inline-block; }
+        div#content table#sessionTable th:first-of-type a:hover,
+        div#content table#sessionTable td:first-of-type a:hover {
+          color: #c8b4b4; }
+      div#content table#sessionTable th:nth-of-type(4),
+      div#content table#sessionTable td:nth-of-type(4) {
+        width: 160px; }
+      div#content table#sessionTable th:last-of-type,
+      div#content table#sessionTable td:last-of-type {
+        width: 50px;
+        text-align: right; }
+        div#content table#sessionTable th:last-of-type a,
+        div#content table#sessionTable td:last-of-type a {
+          border-radius: 50%;
+          box-sizing: border-box;
+          height: 40px;
+          width: 40px;
+          background-color: white;
+          border: none;
+          outline: none;
+          color: black;
+          display: inline-block;
+          padding-top: 10px;
+          padding-left: 3px;
+          text-align: center;
+          font-size: 1.3em; }
+          div#content table#sessionTable th:last-of-type a:hover,
+          div#content table#sessionTable td:last-of-type a:hover {
+            color: #c8b4b4; }
   div#content #addSessionForm {
     width: 500px;
     border-collapse: collapse; }
     div#content #addSessionForm td:first-of-type {
       width: 200px;
-      vertical-align: top; }
+      vertical-align: top;
+      font-weight: bold;
+      padding-top: 4px; }
     div#content #addSessionForm input[type='text'],
     div#content #addSessionForm input[type='password'] {
       width: 300px;
+      height: 20px;
       border: none;
       box-sizing: border-box;
       padding: 3px;
       font-size: 0.9em;
       margin: 5px 0; }
-    div#content #addSessionForm #addSessionDate input {
-      width: 135px; }
-      div#content #addSessionForm #addSessionDate input:nth-of-type(1) {
-        float: left; }
-      div#content #addSessionForm #addSessionDate input:nth-of-type(2) {
-        float: right; }
-    div#content #addSessionForm #addSessionDate .dateMiddle {
-      margin-top: 5px;
-      width: 30px;
-      display: inline-block;
-      text-align: center; }
+    div#content #addSessionForm .fromToDate, div#content #addSessionForm #addRestrictedDate.fromToDate,
+    div#content #addSessionForm #blackDate {
+      width: 300px; }
+    div#content #addSessionForm .restrictedSection {
+      clear: both;
+      display: block;
+      padding-top: 15px;
+      font-weight: bold; }
+    div#content #addSessionForm #addRestrictedDate.fromToDate,
+    div#content #addSessionForm #blackDate {
+      width: 260px;
+      float: left; }
+    div#content #addSessionForm #addDate,
+    div#content #addSessionForm #addTime {
+      float: right;
+      margin-top: 4px;
+      background: none;
+      border: none;
+      outline: none;
+      font-size: 1.2em; }
+      div#content #addSessionForm #addDate:hover,
+      div#content #addSessionForm #addTime:hover {
+        color: #64c864; }
+    div#content #addSessionForm #blackDates,
+    div#content #addSessionForm #blackTimes {
+      padding: 0 0 0 10px;
+      width: 140px;
+      list-style: none; }
+      div#content #addSessionForm #blackDates li,
+      div#content #addSessionForm #blackTimes li {
+        position: relative;
+        padding: 3px 0 3px 30px;
+        height: 20px; }
+      div#content #addSessionForm #blackDates button,
+      div#content #addSessionForm #blackTimes button {
+        position: absolute;
+        left: 0;
+        top: 0;
+        border-radius: 50%;
+        height: 20px;
+        width: 20px;
+        background-color: white;
+        border: none;
+        outline: none; }
+        div#content #addSessionForm #blackDates button:hover,
+        div#content #addSessionForm #blackTimes button:hover {
+          color: #c8b4b4; }
+    div#content #addSessionForm .restrictedDay {
+      margin: 3px 5px 3px 10px; }
   div#content input#addSessionButton {
     text-align: right;
     display: block;
     width: 500px; }
+
+.fromToDate input, div#content #addSessionForm .fromToDate input, div#content #addSessionForm #addRestrictedDate.fromToDate input,
+div#content #addSessionForm #blackDate input {
+  width: calc(50% - 15px); }
+  .fromToDate input:nth-of-type(1), div#content #addSessionForm .fromToDate input:nth-of-type(1), div#content #addSessionForm #addRestrictedDate.fromToDate input:nth-of-type(1),
+  div#content #addSessionForm #blackDate input:nth-of-type(1) {
+    float: left; }
+  .fromToDate input:nth-of-type(2), div#content #addSessionForm .fromToDate input:nth-of-type(2), div#content #addSessionForm #addRestrictedDate.fromToDate input:nth-of-type(2),
+  div#content #addSessionForm #blackDate input:nth-of-type(2) {
+    float: right; }
+.fromToDate .dateMiddle, div#content #addSessionForm .fromToDate .dateMiddle, div#content #addSessionForm #addRestrictedDate.fromToDate .dateMiddle,
+div#content #addSessionForm #blackDate .dateMiddle {
+  margin-top: 5px;
+  width: 30px;
+  display: inline-block;
+  text-align: center; }
 
 .submitForm {
   margin: 20px 0;
@@ -145,9 +259,15 @@ div#content {
   outline: none;
   padding: 0;
   font-family: inherit; }
+  .submitForm:hover {
+    color: #c8b4b4; }
 
 .clear {
   clear: both; }
+
+input,
+button {
+  font-family: "Raleway"; }
 
 #popup-overlay {
   top: 0;

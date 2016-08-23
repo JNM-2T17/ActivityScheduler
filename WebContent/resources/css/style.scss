@@ -6,13 +6,15 @@ $fgColor1:      rgb(120,100,100);
 $fgColor1-fade: rgb(200,180,180);
 $fgColor2:      rgb(0,0,0);
 
+$mainFont: 'Raleway';
+
 @font-face {
   font-family: 'Raleway';
   src: url('../fonts/Raleway-Regular.ttf');
 }
 
 body{
-	font-family: Raleway;
+	font-family: $mainFont;
 	background-color: $bgColor1;
 }
 
@@ -108,7 +110,8 @@ div#content{
 		div#sectionOptions{
 			float: right;
 
-			a{
+			a,
+			button{
 				text-decoration: none;
 				display: inline-block;
 				padding: 15px;
@@ -117,6 +120,8 @@ div#content{
 				margin-left: 10px;
 				border-radius: 6px;
 				font-size: 0.9em;
+				border: none;
+				outline: none;
 
 				&:hover{
 					background-color: $bgColor1-fade;
@@ -133,6 +138,7 @@ div#content{
 
 		td:first-of-type{
 			width: 100px;
+			font-weight: bold;
 		}
 
 		input{
@@ -167,6 +173,78 @@ div#content{
 		width: 400px;
 	}
 
+	// View Sessions
+
+	table#sessionTable{
+		border-collapse: collapse;
+		width: 100%;
+		table-layout: fixed;
+
+		tr:nth-of-type(2){
+			td{
+				padding-top: 20px;
+			}
+		}
+
+		th{
+			border-bottom: 2px $fgColor1 solid;
+		}
+
+		th,
+		td{
+			padding: 10px;
+			text-align: left;
+			vertical-align: top;
+
+			&:first-of-type{
+				a{
+					text-decoration: none;
+					font-weight: bold;
+					color: $fgColor2;
+					border-radius: 6px;
+					padding: 10px;
+					background-color: $bgColor2;
+					border: none;
+					outline: none;
+					display: inline-block;
+
+					&:hover{
+						color: $fgColor1-fade;
+					}
+				}
+			}
+
+			&:nth-of-type(4){
+				width: 160px;
+			}
+
+			&:last-of-type{
+				width: 50px;
+				text-align: right;
+
+				a{
+					border-radius: 50%;
+					box-sizing: border-box;
+					height: 40px;
+					width: 40px;
+					background-color: $bgColor2;
+					border: none;
+					outline: none;
+					color: $fgColor2;
+					display: inline-block;
+					padding-top: 10px;
+					padding-left: 3px;
+					text-align: center;
+					font-size: 1.3em;
+
+					&:hover{
+						color: $fgColor1-fade;
+					}
+				}
+			}
+		}
+	}
+
 	// Add Session
 
 	#addSessionForm{
@@ -176,11 +254,14 @@ div#content{
 		td:first-of-type{
 			width: 200px;
 			vertical-align: top;
+			font-weight: bold;
+			padding-top: 4px;
 		}
 
 		input[type='text'],
 		input[type='password']{
 			width: 300px;
+			height: 20px;
 			border: none;
 			box-sizing: border-box;
 			padding: 3px;
@@ -188,32 +269,99 @@ div#content{
 			margin: 5px 0;
 		}
 
-		#addSessionDate{
-			input{
-				width: 135px;
+		.fromToDate{
+			width: 300px;
+			@extend .fromToDate;
+		}
 
-				&:nth-of-type(1){
-					float: left;
-				}
+		.restrictedSection{
+			clear: both;
+			display: block;
+			padding-top: 15px;
+			font-weight: bold;
+		}
 
-				&:nth-of-type(2){
-					float: right;
-				}
-			}
+		#addRestrictedDate.fromToDate,
+		#blackDate{
+			width: 260px;
+			float: left;
+			@extend .fromToDate;
+		}
 
-			.dateMiddle{
-				margin-top: 5px;
-				width: 30px;
-				display: inline-block;
-				text-align: center;
+		#addDate,
+		#addTime{
+			float: right;
+			margin-top: 4px;
+			background: none;
+			border: none;
+			outline: none;
+			font-size: 1.2em;
+
+			&:hover{
+				color: $accentColor;
 			}
 		}
+
+		#blackDates,
+		#blackTimes{
+			padding: 0 0 0 10px;
+			width: 140px;
+			list-style: none;
+
+			li{
+				position: relative;
+				padding: 3px 0 3px 30px;
+				height: 20px;
+			}
+
+			button{
+				position: absolute;
+					left: 0;
+					top: 0;
+				border-radius: 50%;
+				height: 20px;
+				width: 20px;
+				background-color: $bgColor2;
+				border: none;
+				outline: none;
+
+				&:hover{
+					color: $fgColor1-fade;
+				}
+			}
+		}
+
+		.restrictedDay{
+			margin: 3px 5px 3px 10px;
+		}
+
 	}
 
 	input#addSessionButton{
 		text-align: right;
 		display: block;
 		width: 500px;
+	}
+}
+
+.fromToDate{
+	input{
+		width: calc(50% - 15px);
+
+		&:nth-of-type(1){
+			float: left;
+		}
+
+		&:nth-of-type(2){
+			float: right;
+		}
+	}
+
+	.dateMiddle{
+		margin-top: 5px;
+		width: 30px;
+		display: inline-block;
+		text-align: center;
 	}
 }
 
@@ -226,10 +374,19 @@ div#content{
 	outline: none;
 	padding: 0;
 	font-family: inherit;
+
+	&:hover{
+		color: $fgColor1-fade;
+	}
 }
 
 .clear{
 	clear: both;
+}
+
+input,
+button{
+	font-family: $mainFont;
 }
 
 #popup-overlay {

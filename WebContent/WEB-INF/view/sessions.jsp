@@ -5,7 +5,7 @@
 		<div id="contentTitle">
 			<h2>Sessions</h2>
 			<div id="sectionOptions">
-				<a href="addSession">Add Session</a>
+				<a href="addSession">Add Session&nbsp;&nbsp;&nbsp;<i class="fa fa-plus"></i></a>
 			</div>
 			<div class="clear"></div>
 		</div>
@@ -14,7 +14,7 @@
 		No sessions to display
 		</c:when>
 		<c:otherwise>
-		<table>
+		<table id="sessionTable">
 			<tr>
 				<th>Name</th>
 				<th>Blackout Days</th>
@@ -35,7 +35,7 @@
 				<c:otherwise>
 				<c:set var="i" value="0"/>
 				<c:forEach items="${s.blackDaysString }" var="d">
-				<c:if test="${i > 0 }">,</c:if>
+				<c:if test="${i > 0 }"><br/></c:if>
 				<c:if test="${i > 0 && i % 4 == 0 }"><br/></c:if>
 					${d }
 				<c:set var="i" value="${i + 1 }"/>
