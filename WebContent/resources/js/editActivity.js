@@ -34,7 +34,7 @@ var editActivity = (function() {
 				}
 			}
 			dateRange[did] = bd;
-			$("#dates").append("<div id='d-" + did + "'>" + bd + "<button type='button' onclick='editActivity.removeDate(" + did + ");'><i class='fa fa-trash'/></button></div>");
+			$("#dates").append("<li id='d-" + did + "'>" + bd + "<button type='button' onclick='editActivity.removeDate(" + did + ");'><i class='fa fa-trash'/></button></li>");
 			$("#dateRange").val("");
 			did++;
 		} else {
