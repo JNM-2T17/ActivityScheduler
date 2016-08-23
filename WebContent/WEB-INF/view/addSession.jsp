@@ -28,13 +28,13 @@
 				<tr>
 					<td>Restricted Activity Days</td>
 					<td>
-						<input class="restrictedDay" type="checkbox" id="sunday" name="sunday" /><label for="sunday">Sunday</label><br/>
-						<input class="restrictedDay" type="checkbox" id="monday" name="monday" /><label for="monday">Monday</label><br/>
-						<input class="restrictedDay" type="checkbox" id="tuesday" name="tuesday" /><label for="tuesday">Tuesday</label><br/>
-						<input class="restrictedDay" type="checkbox" id="wednesday" name="wednesday" /><label for="wednesday">Wednesday</label><br/>
-						<input class="restrictedDay" type="checkbox" id="thursday" name="thursday" /><label for="thursday">Thursday</label><br/>
-						<input class="restrictedDay" type="checkbox" id="friday" name="friday" /><label for="friday">Friday</label><br/>
-						<input class="restrictedDay" type="checkbox" id="saturday" name="saturday" /><label for="saturday">Saturday</label><br/>
+						<input class="restrictedDay" type="checkbox" id="sunday" name="sunday" /><label for="sunday">Sunday<br/></label>
+						<input class="restrictedDay" type="checkbox" id="monday" name="monday" /><label for="monday">Monday<br/><br/></label>
+						<input class="restrictedDay" type="checkbox" id="tuesday" name="tuesday" /><label for="tuesday">Tuesday<br/></label>
+						<input class="restrictedDay" type="checkbox" id="wednesday" name="wednesday" /><label for="wednesday">Wednesday<br/></label>
+						<input class="restrictedDay" type="checkbox" id="thursday" name="thursday" /><label for="thursday">Thursday<br/></label>
+						<input class="restrictedDay" type="checkbox" id="friday" name="friday" /><label for="friday">Friday<br/></label>
+						<input class="restrictedDay" type="checkbox" id="saturday" name="saturday" /><label for="saturday">Saturday<br/></label>
 						
 						<span class="restrictedSection">Specific Dates:</span>
 						<ul id="blackDates"></ul>

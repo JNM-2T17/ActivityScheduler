@@ -279,90 +279,6 @@ div#content{
 		}
 	}
 
-	// Activities
-
-	table#activitiesTable{
-		border-collapse: collapse;
-		width: 100%;
-		table-layout: fixed;
-
-		tr:nth-of-type(2){
-			td{
-				padding-top: 20px;
-			}
-		}
-
-		th{
-			border-bottom: 2px $fgColor1 solid;
-		}
-
-		th,
-		td{
-			padding: 10px;
-			text-align: left;
-			vertical-align: top;
-
-			&:first-of-type{
-				a{
-					text-decoration: none;
-					font-weight: bold;
-					color: $fgColor2;
-					border-radius: 6px;
-					padding: 10px;
-					background-color: $bgColor2;
-					border: none;
-					outline: none;
-					display: inline-block;
-
-					&:hover{
-						color: $fgColor1-fade;
-					}
-				}
-			}
-
-			&:nth-of-type(2){
-				width: 100px;
-			}
-
-			&:nth-of-type(3){
-				width: 100px;
-			}
-
-			&:nth-of-type(5){
-				width: 100px;
-			}
-
-			&:nth-of-type(7){
-				width: 170px;
-			}
-
-			&:last-of-type{
-				width: 50px;
-				text-align: right;
-
-				a{
-					border-radius: 50%;
-					box-sizing: border-box;
-					height: 40px;
-					width: 40px;
-					background-color: $bgColor2;
-					border: none;
-					outline: none;
-					color: $fgColor2;
-					display: inline-block;
-					padding-top: 10px;
-					padding-left: 3px;
-					text-align: center;
-					font-size: 1.3em;
-
-					&:hover{
-						color: $fgColor1-fade;
-					}
-				}
-			}
-		}
-	}
-
 	// Add Session
 
 	#addSessionForm{
@@ -459,6 +375,187 @@ div#content{
 		text-align: right;
 		display: block;
 		width: 500px;
+	}
+
+	// Activities
+
+	table#activitiesTable{
+		border-collapse: collapse;
+		width: 100%;
+		table-layout: fixed;
+
+		tr:nth-of-type(2){
+			td{
+				padding-top: 20px;
+			}
+		}
+
+		th{
+			border-bottom: 2px $fgColor1 solid;
+		}
+
+		th,
+		td{
+			padding: 10px;
+			text-align: left;
+			vertical-align: top;
+
+			&:first-of-type{
+				a{
+					text-decoration: none;
+					font-weight: bold;
+					color: $fgColor2;
+					border-radius: 6px;
+					padding: 10px;
+					background-color: $bgColor2;
+					border: none;
+					outline: none;
+					display: inline-block;
+
+					&:hover{
+						color: $fgColor1-fade;
+					}
+				}
+			}
+
+			&:nth-of-type(2){
+				width: 100px;
+			}
+
+			&:nth-of-type(3){
+				width: 100px;
+			}
+
+			&:nth-of-type(5){
+				width: 100px;
+			}
+
+			&:nth-of-type(7){
+				width: 170px;
+			}
+
+			&:last-of-type{
+				width: 50px;
+				text-align: right;
+
+				a{
+					border-radius: 50%;
+					box-sizing: border-box;
+					height: 40px;
+					width: 40px;
+					background-color: $bgColor2;
+					border: none;
+					outline: none;
+					color: $fgColor2;
+					display: inline-block;
+					padding-top: 10px;
+					padding-left: 3px;
+					text-align: center;
+					font-size: 1.3em;
+
+					&:hover{
+						color: $fgColor1-fade;
+					}
+				}
+			}
+		}
+	}
+
+	// Add Activity
+
+	#addActivityForm{
+		width: 600px;
+		border-collapse: collapse;
+
+		td:first-of-type{
+			width: 250px;
+			vertical-align: top;
+			font-weight: bold;
+			padding-top: 4px;
+		}
+
+		input[type='text'],
+		input[type='password'],
+		input[type='number'],
+		select{
+			width: 350px;
+			height: 20px;
+			border: none;
+			box-sizing: border-box;
+			padding: 3px;
+			font-size: 0.9em;
+			margin: 5px 0;
+		}
+
+		.fromToDate{
+			width: 300px;
+			@extend .fromToDate;
+		}
+
+		.possibleSection{
+			clear: both;
+			display: block;
+			padding-top: 15px;
+			font-weight: bold;
+		}
+
+		#dateRange{
+			width: 310px;
+			float: left;
+			margin-bottom: 15px;
+		}
+
+		#addDate{
+			float: right;
+			margin-top: 4px;
+			background: none;
+			border: none;
+			outline: none;
+			font-size: 1.2em;
+
+			&:hover{
+				color: $accentColor;
+			}
+		}
+
+		#dates{
+			padding: 0 0 0 10px;
+			width: 140px;
+			list-style: none;
+
+			li{
+				position: relative;
+				padding: 3px 0 3px 30px;
+				height: 20px;
+			}
+
+			button{
+				position: absolute;
+					left: 0;
+					top: 0;
+				border-radius: 50%;
+				height: 20px;
+				width: 20px;
+				background-color: $bgColor2;
+				border: none;
+				outline: none;
+
+				&:hover{
+					color: $fgColor1-fade;
+				}
+			}
+		}
+
+		.possibleCheck{
+			margin: 3px 5px 3px 10px;
+		}
+
+	}
+
+	input#addActivityButton{
+		text-align: right;
+		display: block;
+		width: 600px;
 	}
 
 	// Target Groups and Venues
@@ -629,8 +726,21 @@ div#content{
 }
 
 input,
-button{
+button,
+select{
 	font-family: $mainFont;
+}
+
+select{
+	-webkit-padding-end: 16px;
+	-webkit-padding-start: 8px;
+	-webkit-appearance: button;
+	-webkit-border-radius: 0;
+	-webkit-box-shadow: none;
+	background-image: url('../images/arrow-down.png');
+	background-repeat: no-repeat;
+	background-size: 10px 10px;
+	background-position: center right 5px;
 }
 
 // Error

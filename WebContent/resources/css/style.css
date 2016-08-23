@@ -192,67 +192,6 @@ div#content {
           div#content table#sessionTable th:last-of-type a:hover,
           div#content table#sessionTable td:last-of-type a:hover {
             color: #c8b4b4; }
-  div#content table#activitiesTable {
-    border-collapse: collapse;
-    width: 100%;
-    table-layout: fixed; }
-    div#content table#activitiesTable tr:nth-of-type(2) td {
-      padding-top: 20px; }
-    div#content table#activitiesTable th {
-      border-bottom: 2px #786464 solid; }
-    div#content table#activitiesTable th,
-    div#content table#activitiesTable td {
-      padding: 10px;
-      text-align: left;
-      vertical-align: top; }
-      div#content table#activitiesTable th:first-of-type a,
-      div#content table#activitiesTable td:first-of-type a {
-        text-decoration: none;
-        font-weight: bold;
-        color: black;
-        border-radius: 6px;
-        padding: 10px;
-        background-color: white;
-        border: none;
-        outline: none;
-        display: inline-block; }
-        div#content table#activitiesTable th:first-of-type a:hover,
-        div#content table#activitiesTable td:first-of-type a:hover {
-          color: #c8b4b4; }
-      div#content table#activitiesTable th:nth-of-type(2),
-      div#content table#activitiesTable td:nth-of-type(2) {
-        width: 100px; }
-      div#content table#activitiesTable th:nth-of-type(3),
-      div#content table#activitiesTable td:nth-of-type(3) {
-        width: 100px; }
-      div#content table#activitiesTable th:nth-of-type(5),
-      div#content table#activitiesTable td:nth-of-type(5) {
-        width: 100px; }
-      div#content table#activitiesTable th:nth-of-type(7),
-      div#content table#activitiesTable td:nth-of-type(7) {
-        width: 170px; }
-      div#content table#activitiesTable th:last-of-type,
-      div#content table#activitiesTable td:last-of-type {
-        width: 50px;
-        text-align: right; }
-        div#content table#activitiesTable th:last-of-type a,
-        div#content table#activitiesTable td:last-of-type a {
-          border-radius: 50%;
-          box-sizing: border-box;
-          height: 40px;
-          width: 40px;
-          background-color: white;
-          border: none;
-          outline: none;
-          color: black;
-          display: inline-block;
-          padding-top: 10px;
-          padding-left: 3px;
-          text-align: center;
-          font-size: 1.3em; }
-          div#content table#activitiesTable th:last-of-type a:hover,
-          div#content table#activitiesTable td:last-of-type a:hover {
-            color: #c8b4b4; }
   div#content #addSessionForm {
     width: 500px;
     border-collapse: collapse; }
@@ -323,6 +262,134 @@ div#content {
     text-align: right;
     display: block;
     width: 500px; }
+  div#content table#activitiesTable {
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: fixed; }
+    div#content table#activitiesTable tr:nth-of-type(2) td {
+      padding-top: 20px; }
+    div#content table#activitiesTable th {
+      border-bottom: 2px #786464 solid; }
+    div#content table#activitiesTable th,
+    div#content table#activitiesTable td {
+      padding: 10px;
+      text-align: left;
+      vertical-align: top; }
+      div#content table#activitiesTable th:first-of-type a,
+      div#content table#activitiesTable td:first-of-type a {
+        text-decoration: none;
+        font-weight: bold;
+        color: black;
+        border-radius: 6px;
+        padding: 10px;
+        background-color: white;
+        border: none;
+        outline: none;
+        display: inline-block; }
+        div#content table#activitiesTable th:first-of-type a:hover,
+        div#content table#activitiesTable td:first-of-type a:hover {
+          color: #c8b4b4; }
+      div#content table#activitiesTable th:nth-of-type(2),
+      div#content table#activitiesTable td:nth-of-type(2) {
+        width: 100px; }
+      div#content table#activitiesTable th:nth-of-type(3),
+      div#content table#activitiesTable td:nth-of-type(3) {
+        width: 100px; }
+      div#content table#activitiesTable th:nth-of-type(5),
+      div#content table#activitiesTable td:nth-of-type(5) {
+        width: 100px; }
+      div#content table#activitiesTable th:nth-of-type(7),
+      div#content table#activitiesTable td:nth-of-type(7) {
+        width: 170px; }
+      div#content table#activitiesTable th:last-of-type,
+      div#content table#activitiesTable td:last-of-type {
+        width: 50px;
+        text-align: right; }
+        div#content table#activitiesTable th:last-of-type a,
+        div#content table#activitiesTable td:last-of-type a {
+          border-radius: 50%;
+          box-sizing: border-box;
+          height: 40px;
+          width: 40px;
+          background-color: white;
+          border: none;
+          outline: none;
+          color: black;
+          display: inline-block;
+          padding-top: 10px;
+          padding-left: 3px;
+          text-align: center;
+          font-size: 1.3em; }
+          div#content table#activitiesTable th:last-of-type a:hover,
+          div#content table#activitiesTable td:last-of-type a:hover {
+            color: #c8b4b4; }
+  div#content #addActivityForm {
+    width: 600px;
+    border-collapse: collapse; }
+    div#content #addActivityForm td:first-of-type {
+      width: 250px;
+      vertical-align: top;
+      font-weight: bold;
+      padding-top: 4px; }
+    div#content #addActivityForm input[type='text'],
+    div#content #addActivityForm input[type='password'],
+    div#content #addActivityForm input[type='number'],
+    div#content #addActivityForm select {
+      width: 350px;
+      height: 20px;
+      border: none;
+      box-sizing: border-box;
+      padding: 3px;
+      font-size: 0.9em;
+      margin: 5px 0; }
+    div#content #addActivityForm #addSessionForm #addRestrictedDate.fromToDate, div#content #addSessionForm #addActivityForm #addRestrictedDate.fromToDate,
+    div#content #addActivityForm #addSessionForm #blackDate,
+    div#content #addSessionForm #addActivityForm #blackDate, div#content #addActivityForm .fromToDate {
+      width: 300px; }
+    div#content #addActivityForm .possibleSection {
+      clear: both;
+      display: block;
+      padding-top: 15px;
+      font-weight: bold; }
+    div#content #addActivityForm #dateRange {
+      width: 310px;
+      float: left;
+      margin-bottom: 15px; }
+    div#content #addActivityForm #addDate {
+      float: right;
+      margin-top: 4px;
+      background: none;
+      border: none;
+      outline: none;
+      font-size: 1.2em; }
+      div#content #addActivityForm #addDate:hover {
+        color: #64c864; }
+    div#content #addActivityForm #dates {
+      padding: 0 0 0 10px;
+      width: 140px;
+      list-style: none; }
+      div#content #addActivityForm #dates li {
+        position: relative;
+        padding: 3px 0 3px 30px;
+        height: 20px; }
+      div#content #addActivityForm #dates button {
+        position: absolute;
+        left: 0;
+        top: 0;
+        border-radius: 50%;
+        height: 20px;
+        width: 20px;
+        background-color: white;
+        border: none;
+        outline: none; }
+        div#content #addActivityForm #dates button:hover {
+          color: #c8b4b4; }
+    div#content #addActivityForm .possibleCheck {
+      margin: 3px 5px 3px 10px; }
+  div#content input#addActivityButton {
+    text-align: right;
+    display: block;
+    width: 600px; }
   div#content #addForm,
   div#content #popup-frame,
   div#content #popup-overlay {
@@ -416,16 +483,16 @@ div#content {
         color: #c8b4b4; }
 
 .fromToDate input, div#content #addSessionForm .fromToDate input, div#content #addSessionForm #addRestrictedDate.fromToDate input,
-div#content #addSessionForm #blackDate input {
+div#content #addSessionForm #blackDate input, div#content #addActivityForm .fromToDate input {
   width: calc(50% - 15px); }
   .fromToDate input:nth-of-type(1), div#content #addSessionForm .fromToDate input:nth-of-type(1), div#content #addSessionForm #addRestrictedDate.fromToDate input:nth-of-type(1),
-  div#content #addSessionForm #blackDate input:nth-of-type(1) {
+  div#content #addSessionForm #blackDate input:nth-of-type(1), div#content #addActivityForm .fromToDate input:nth-of-type(1) {
     float: left; }
   .fromToDate input:nth-of-type(2), div#content #addSessionForm .fromToDate input:nth-of-type(2), div#content #addSessionForm #addRestrictedDate.fromToDate input:nth-of-type(2),
-  div#content #addSessionForm #blackDate input:nth-of-type(2) {
+  div#content #addSessionForm #blackDate input:nth-of-type(2), div#content #addActivityForm .fromToDate input:nth-of-type(2) {
     float: right; }
 .fromToDate .dateMiddle, div#content #addSessionForm .fromToDate .dateMiddle, div#content #addSessionForm #addRestrictedDate.fromToDate .dateMiddle,
-div#content #addSessionForm #blackDate .dateMiddle {
+div#content #addSessionForm #blackDate .dateMiddle, div#content #addActivityForm .fromToDate .dateMiddle {
   margin-top: 5px;
   width: 30px;
   display: inline-block;
@@ -447,8 +514,20 @@ div#content #addSessionForm #blackDate .dateMiddle {
   clear: both; }
 
 input,
-button {
+button,
+select {
   font-family: "Raleway"; }
+
+select {
+  -webkit-padding-end: 16px;
+  -webkit-padding-start: 8px;
+  -webkit-appearance: button;
+  -webkit-border-radius: 0;
+  -webkit-box-shadow: none;
+  background-image: url("../images/arrow-down.png");
+  background-repeat: no-repeat;
+  background-size: 10px 10px;
+  background-position: center right 5px; }
 
 #message-display {
   position: fixed;
