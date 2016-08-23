@@ -1063,7 +1063,7 @@ public class TheController {
 				if( a != null ) {
 					SimpleDateFormat sdf = new SimpleDateFormat("HHmm");
 					String json = "{\"name\":\"" + a.getName() + "\",\"length\":\"" + a.getLength() + 
-									"\",\"startTime\":\"" + sdf.format(a.getStartTimeRange().getTime()) + "\",\"endTime\":\"" + 
+									"\",\"venue\":\"" + a.getVenue().getId() + "\",\"startTime\":\"" + sdf.format(a.getStartTimeRange().getTime()) + "\",\"endTime\":\"" + 
 									sdf.format(a.getEndTimeRange().getTime()) + "\",\"days\":[";
 					int i = 0;
 					for(String s : a.getDaysString()) {

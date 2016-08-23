@@ -105,6 +105,7 @@ var editActivity = (function() {
 				if( a !== null ) {
 					$("#name").val(a.name);
 					$("#length").val(a.length);
+					$("#venue").val(a.venue);
 					$("#startTime").val(a.startTime);
 					$("#endTime").val(a.endTime);
 					for(x in a.days) {
