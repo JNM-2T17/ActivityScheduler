@@ -5,13 +5,24 @@ var addActivity = (function() {
 	var timeRegex = /^((0?|1)[0-9]|2[0-3])([0-5][0-9])$/;
 	var startDate = null;
 	var endDate = null;
+	var blackdates = [];
 	
 	function setStartDate(sd) {
 		if( dateRegex.test(sd)) {
 			var parts = sd.split(/[/]/);
 			startDate = new Date(parts[2],parts[0] - 1,parts[1]);
 			$("#dateRange").datepicker("destroy");
-			$("#dateRange").datepicker({minDate : startDate,maxDate : endDate});
+			$("#dateRange").datepicker({minDate : startDate,maxDate : endDate,
+										beforeShowDay : function(date) {
+											for(x in blackdates ) {
+												if( date.getUTCDate() + 1 == blackdates[x].day &&
+													date.getUTCMonth() == blackdates[x].month && 
+													date.getUTCFullYear() == blackdates[x].year) {
+													return [false];
+												}
+											}
+											return [true];
+										}});
 		}
 	}
 	
@@ -20,11 +31,24 @@ var addActivity = (function() {
 			var parts = ed.split(/[/]/);
 			endDate = new Date(parts[2],parts[0] - 1,parts[1]);
 			$("#dateRange").datepicker("destroy");
-			$("#dateRange").datepicker({minDate : startDate,maxDate : endDate});
+			$("#dateRange").datepicker({minDate : startDate,maxDate : endDate,
+										beforeShowDay : function(date) {
+											for(x in blackdates ) {
+												if( date.getUTCDate() + 1 == blackdates[x].day &&
+													date.getUTCMonth() == blackdates[x].month && 
+													date.getUTCFullYear() == blackdates[x].year) {
+													return [false];
+												}
+											}
+											return [true];
+										}});
 		}
 	}
 	
 	$(document).ready(function() {
+		System.out.println()
+		blackdates = JSON.parse($("#blackdates").val());
+		
 		setStartDate($("#startDate").val());
 		setEndDate($("#endDate").val());
 		$(".blackDays").each(function() {
@@ -37,6 +61,14 @@ var addActivity = (function() {
 				for(x in dateRange) {
 					if( dateRange[x] === bd ) {
 						showError("You have already added that date.");
+						return;
+					}
+				}
+				for(x in blackdates) {
+					var d = blackdates[x];
+					var str = (d.month + 1) + "/" + d.day + "/" + d.year;
+					if( str == bd) {
+						showError("That date is blacked out.");
 						return;
 					}
 				}

@@ -117,6 +117,47 @@ public class ActivityManager {
 		}
 	}
 	
+	public static void blackoutDates(Calendar[] blackdates,SiteSession ss) throws SQLException {
+		if( blackdates != null & blackdates.length > 0 ) {
+			Activity[] acts = getActivities(ss);
+			if( acts.length > 0 ) {
+				Connection con = DBManager.getInstance().getConnection();
+				String sql = "UPDATE gs_activity_date SET status = 0 WHERE actID IN (";
+				int i = 0;
+				for(Activity a : acts ) {
+					if( i > 0 ) {
+						sql += ",";
+					}
+					sql += "?";
+					i++;
+				}
+				sql += ") AND actDate IN (";
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				i = 0;
+				for(Calendar c : blackdates) {
+					if( i > 0 ) {
+						sql += ",";
+					}
+					sql += "?"; 
+					i++;
+				}
+				sql += ")";
+				PreparedStatement ps = con.prepareStatement(sql);
+				i = 1;
+				for(Activity a : acts) {
+					ps.setInt(i,a.getId());
+					i++;
+				}
+				for(Calendar c : blackdates) {
+					ps.setString(i,sdf.format(c.getTime()));
+					i++;
+				}
+				System.out.println(ps);
+				ps.execute();
+			}
+		} 
+	}
+	
 	public static Activity[] getActivities(SiteSession ss) throws SQLException {
 		Connection con = DBManager.getInstance().getConnection();
 		String sql = "SELECT id FROM gs_activity WHERE status = 1 AND sessionId = ? ORDER BY assignedTime";
