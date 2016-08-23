@@ -117,7 +117,7 @@ public class ActivityManager {
 		}
 	}
 	
-	public static void blackoutDates(Calendar[] blackdates,SiteSession ss) throws SQLException {
+	public static void blackoutDates(Calendar[] blackdates,Calendar start, Calendar end, SiteSession ss) throws SQLException {
 		if( blackdates != null & blackdates.length > 0 ) {
 			Activity[] acts = getActivities(ss);
 			if( acts.length > 0 ) {
@@ -131,7 +131,7 @@ public class ActivityManager {
 					sql += "?";
 					i++;
 				}
-				sql += ") AND actDate IN (";
+				sql += ") AND (actDate IN (";
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 				i = 0;
 				for(Calendar c : blackdates) {
@@ -141,7 +141,7 @@ public class ActivityManager {
 					sql += "?"; 
 					i++;
 				}
-				sql += ")";
+				sql += ") OR actDate < ? OR actDate > ? )";
 				PreparedStatement ps = con.prepareStatement(sql);
 				i = 1;
 				for(Activity a : acts) {
@@ -152,10 +152,38 @@ public class ActivityManager {
 					ps.setString(i,sdf.format(c.getTime()));
 					i++;
 				}
+				ps.setString(i++, sdf.format(start.getTime()));
+				ps.setString(i++, sdf.format(end.getTime()));
 				System.out.println(ps);
 				ps.execute();
 			}
-		} 
+		}  else {
+			Activity[] acts = getActivities(ss);
+			if( acts.length > 0 ) {
+				Connection con = DBManager.getInstance().getConnection();
+				String sql = "UPDATE gs_activity_date SET status = 0 WHERE actID IN (";
+				int i = 0;
+				for(Activity a : acts ) {
+					if( i > 0 ) {
+						sql += ",";
+					}
+					sql += "?";
+					i++;
+				}
+				sql += ") AND (actDate < ? OR actDate > ? )";
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				PreparedStatement ps = con.prepareStatement(sql);
+				i = 1;
+				for(Activity a : acts) {
+					ps.setInt(i,a.getId());
+					i++;
+				}
+				ps.setString(i++, sdf.format(start.getTime()));
+				ps.setString(i++, sdf.format(end.getTime()));
+				System.out.println(ps);
+				ps.execute();
+			}
+		}
 	}
 	
 	public static Activity[] getActivities(SiteSession ss) throws SQLException {

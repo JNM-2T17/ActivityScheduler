@@ -52,6 +52,6 @@
 			Specific Dates: <input type="text" id="dateRange"/> <button type="button" id="addDate">+</button>
 			<div id="dates"></div>
 			<div id="targets"></div>
-			<input type="submit" value="Add Activity"/>
+			<input type="submit" value="Edit Activity"/>
 		</form>
 <jsp:include page="footer.jsp"/>

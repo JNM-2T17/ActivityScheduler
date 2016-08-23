@@ -50,6 +50,7 @@ var editActivity = (function() {
 	function addDate(bd) {
 		if( dateRegex.test(bd)) {
 			for(x in dateRange) {
+				console.log(dateRange[x] + " " + bd);
 				if( dateRange[x] === bd ) {
 					showError("You have already added that date.");
 					return;

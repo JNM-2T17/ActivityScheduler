@@ -46,7 +46,6 @@ var addActivity = (function() {
 	}
 	
 	$(document).ready(function() {
-		System.out.println()
 		blackdates = JSON.parse($("#blackdates").val());
 		
 		setStartDate($("#startDate").val());
