@@ -213,6 +213,7 @@ public class ActivityManager {
 						sql += ",";
 					}
 					sql += "?";
+					i++;
 				}
 				sql += ") OR actDate < ? OR actDate > ? )";
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
