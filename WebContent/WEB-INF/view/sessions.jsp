@@ -5,7 +5,7 @@
 		<div id="contentTitle">
 			<h2>Sessions</h2>
 			<div id="sectionOptions">
-				<a href="addSession">Add Session</a>
+				<a href="addSession">Add Session&nbsp;&nbsp;&nbsp;<i class="fa fa-plus"></i></a>
 			</div>
 			<div class="clear"></div>
 		</div>
