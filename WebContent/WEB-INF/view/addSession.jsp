@@ -20,7 +20,7 @@
 				</tr>
 				<tr>
 					<td>Start and End Date</td>
-					<td id="addSessionDate">
+					<td class="fromToDate">
 						<input type="text" id="startDate" name="startDate"/><div class="dateMiddle"> to </div><input type="text" id="endDate" name="endDate"/>
 						<div class="clear"></div>
 					</td>
@@ -28,18 +28,25 @@
 				<tr>
 					<td>Restricted Activity Days</td>
 					<td>
-						<input type="checkbox" id="sunday" name="sunday" /><label for="sunday">Sunday</label><br/>
-						<input type="checkbox" id="monday" name="monday" /><label for="monday">Monday</label><br/>
-						<input type="checkbox" id="tuesday" name="tuesday" /><label for="tuesday">Tuesday</label><br/>
-						<input type="checkbox" id="wednesday" name="wednesday" /><label for="wednesday">Wednesday</label><br/>
-						<input type="checkbox" id="thursday" name="thursday" /><label for="thursday">Thursday</label><br/>
-						<input type="checkbox" id="friday" name="friday" /><label for="friday">Friday</label><br/>
-						<input type="checkbox" id="saturday" name="saturday" /><label for="saturday">Saturday</label><br/>
-						Specific Dates: <input type="text" id="blackDate"/> <button type="button" id="addDate">+</button>
-						<div id="blackDates"></div>
-						Specific Times: (In 24-hour format HHMM) <button type="button" id="addTime">+</button>
-						<input type="text" id="startTime"/> to <input type="text" id="endTime">
-						<div id="blackTimes"></div>
+						<input class="restrictedDay" type="checkbox" id="sunday" name="sunday" /><label for="sunday">Sunday</label><br/>
+						<input class="restrictedDay" type="checkbox" id="monday" name="monday" /><label for="monday">Monday</label><br/>
+						<input class="restrictedDay" type="checkbox" id="tuesday" name="tuesday" /><label for="tuesday">Tuesday</label><br/>
+						<input class="restrictedDay" type="checkbox" id="wednesday" name="wednesday" /><label for="wednesday">Wednesday</label><br/>
+						<input class="restrictedDay" type="checkbox" id="thursday" name="thursday" /><label for="thursday">Thursday</label><br/>
+						<input class="restrictedDay" type="checkbox" id="friday" name="friday" /><label for="friday">Friday</label><br/>
+						<input class="restrictedDay" type="checkbox" id="saturday" name="saturday" /><label for="saturday">Saturday</label><br/>
+						
+						<span class="restrictedSection">Specific Dates:</span>
+						<ul id="blackDates"></ul>
+						<input type="text" id="blackDate"/> <button type="button" id="addDate"><i class="fa fa-plus"></i></button>
+						
+						<span class="restrictedSection">Specific Times (In 24-hour format HHMM):</span>
+						<ul id="blackTimes"></ul>
+						<div id="addRestrictedDate" class="fromToDate">
+							<input type="text" id="startTime"/><div class="dateMiddle"> to </div><input type="text" id="endTime">
+							<div class="clear"></div>
+						</div>
+						<button type="button" id="addTime"><i class="fa fa-plus"></i></button>
 					</td>
 				</tr>
 			</table>

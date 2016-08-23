@@ -6,13 +6,15 @@ $fgColor1:      rgb(120,100,100);
 $fgColor1-fade: rgb(200,180,180);
 $fgColor2:      rgb(0,0,0);
 
+$mainFont: 'Raleway';
+
 @font-face {
   font-family: 'Raleway';
   src: url('../fonts/Raleway-Regular.ttf');
 }
 
 body{
-	font-family: Raleway;
+	font-family: $mainFont;
 	background-color: $bgColor1;
 }
 
@@ -133,6 +135,7 @@ div#content{
 
 		td:first-of-type{
 			width: 100px;
+			font-weight: bold;
 		}
 
 		input{
@@ -176,11 +179,14 @@ div#content{
 		td:first-of-type{
 			width: 200px;
 			vertical-align: top;
+			font-weight: bold;
+			padding-top: 4px;
 		}
 
 		input[type='text'],
 		input[type='password']{
 			width: 300px;
+			height: 20px;
 			border: none;
 			box-sizing: border-box;
 			padding: 3px;
@@ -188,32 +194,99 @@ div#content{
 			margin: 5px 0;
 		}
 
-		#addSessionDate{
-			input{
-				width: 135px;
+		.fromToDate{
+			width: 300px;
+			@extend .fromToDate;
+		}
 
-				&:nth-of-type(1){
-					float: left;
-				}
+		.restrictedSection{
+			clear: both;
+			display: block;
+			padding-top: 15px;
+			font-weight: bold;
+		}
 
-				&:nth-of-type(2){
-					float: right;
-				}
-			}
+		#addRestrictedDate.fromToDate,
+		#blackDate{
+			width: 260px;
+			float: left;
+			@extend .fromToDate;
+		}
 
-			.dateMiddle{
-				margin-top: 5px;
-				width: 30px;
-				display: inline-block;
-				text-align: center;
+		#addDate,
+		#addTime{
+			float: right;
+			margin-top: 4px;
+			background: none;
+			border: none;
+			outline: none;
+			font-size: 1.2em;
+
+			&:hover{
+				color: $accentColor;
 			}
 		}
+
+		#blackDates,
+		#blackTimes{
+			padding: 0 0 0 10px;
+			width: 140px;
+			list-style: none;
+
+			li{
+				position: relative;
+				padding: 3px 0 3px 30px;
+				height: 20px;
+			}
+
+			button{
+				position: absolute;
+					left: 0;
+					top: 0;
+				border-radius: 50%;
+				height: 20px;
+				width: 20px;
+				background-color: $bgColor2;
+				border: none;
+				outline: none;
+
+				&:hover{
+					color: &fgColor1-fade;
+				}
+			}
+		}
+
+		.restrictedDay{
+			margin: 3px 5px 3px 10px;
+		}
+
 	}
 
 	input#addSessionButton{
 		text-align: right;
 		display: block;
 		width: 500px;
+	}
+}
+
+.fromToDate{
+	input{
+		width: calc(50% - 15px);
+
+		&:nth-of-type(1){
+			float: left;
+		}
+
+		&:nth-of-type(2){
+			float: right;
+		}
+	}
+
+	.dateMiddle{
+		margin-top: 5px;
+		width: 30px;
+		display: inline-block;
+		text-align: center;
 	}
 }
 
@@ -226,10 +299,18 @@ div#content{
 	outline: none;
 	padding: 0;
 	font-family: inherit;
+
+	&:hover{
+		color: $fgColor1-fade;
+	}
 }
 
 .clear{
 	clear: both;
+}
+
+input{
+	font-family: $mainFont;
 }
 
 #popup-overlay {
