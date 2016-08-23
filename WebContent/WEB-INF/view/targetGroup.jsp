@@ -26,10 +26,15 @@
 			<div id="sectionOptions">
 				<form id="addForm" onsubmit="return tg.checkSubmit();">
 					<input type="hidden" id="token" value="<c:out value="${sessionToken }"/>"/>
+					<input type="text" placeholder="Target Group Name" id="name"/>
+					<input type="submit" value="Confirm"/>
+				</form><%-- 
+				<form id="addForm" onsubmit="return tg.checkSubmit();">
+					<input type="hidden" id="token" value="<c:out value="${sessionToken }"/>"/>
 					<input type="text" id="targetGroupName" placeholder="Target Group Name" id="name"/>
 					<input type="submit" value="Confirm"/>
-				</form> <button id="cancelAdd">Cancel</button>
-				<button id="addButton">Add Target Group&nbsp;&nbsp;&nbsp;<i class="fa fa-trash"></i></button>
+				</form>  --%><button id="cancelAdd">Cancel</button>
+				<button id="addButton">Add Target Group&nbsp;&nbsp;&nbsp;<i class="fa fa-plus"></i></button>
 			</div>
 			<div class="clear"></div>
 		</div>
@@ -37,7 +42,7 @@
 		<ul id="itemList">
 			<c:choose>
 			<c:when test="${empty tgs }">
-			<tr id="empty-prompt"><td colspan="2">No Target Groups</td></tr>
+			No Target Groups
 			</c:when>
 			<c:otherwise>
 			<c:forEach items="${tgs }" var="tg">

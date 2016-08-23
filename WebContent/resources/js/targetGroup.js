@@ -126,11 +126,12 @@ var tg = (function(){
 							} else {
 								$("#name").val("");
 								$("#empty-prompt").remove();
-								$("table tbody").append("<tr id='tg-" + a.id + "'><td class='name'>" + escapeHtml(a.name) + 
-															"</td><td><span class='editTG' data-id='" + a.id + "'><i class='fa fa-edit'></i></span></td></tr>");
+								$("ul#itemList").append("<li id='tg-" + a.id + "'><span class='name'>" + escapeHtml(a.name) + 
+															"</span> <span class='editTG' data-id='" + a.id + "'><i class='fa fa-edit'></i></span></li>");
 								$("#tg-" + a.id + " .editTG").click(editTG);
 								$("#addButton").show();
 								$("#addForm").hide();
+								$("#cancelAdd").hide();
 								showMessage("Target group successfully added.");
 							} 
 						} else {

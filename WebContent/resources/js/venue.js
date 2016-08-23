@@ -19,12 +19,21 @@ var currId = null;
 	
 	$(document).ready(function() {
 		$("#addForm").hide();
+		$("#cancelAdd").hide();
+		
 		$("#addButton").click(function() {
 			$("#addButton").hide();
+			$("#cancelAdd").show();
 			$("#addForm").show();
 		});
 		
-		hidePopup();
+		$("#cancelAdd").click(function() {
+			$("#addButton").show();
+			$("#cancelAdd").hide();
+			$("#addForm").hide();
+			$("#targetGroupName").val("");
+		});
+		
 		$(".editVenue").click(editVenue);
 		
 		$("#popup-overlay").click(function() {
@@ -118,10 +127,11 @@ var currId = null;
 							} else {
 								$("#name").val("");
 								$("#empty-prompt").remove();
-								$("table tbody").append("<tr id='venue-" + a.id + "'><td class='name'>" + escapeHtml(a.name) + "</td><td><span class='editVenue' data-id='" + a.id + "'><i class='fa fa-edit'></i></span></tr>");
+								$("ul#itemList").append("<li id='venue-" + a.id + "'><span class='name'>" + escapeHtml(a.name) + "</span> <span class='editVenue' data-id='" + a.id + "'><i class='fa fa-edit'></i></span></li>");
 								$("#venue-" + a.id + " .editVenue").click(editVenue);
 								$("#addButton").show();
 								$("#addForm").hide();
+								$("#cancelAdd").hide();
 								showMessage("Venue successfully added.");
 							} 
 						} else {
