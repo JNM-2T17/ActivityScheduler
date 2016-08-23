@@ -16,9 +16,9 @@
 		<script src="<c:url value="resources/js/script.js"/>"></script>
 	</head>
 	<body>
-		<div class="main-container">
+		<div id="main-container">
 			<div id="header">
-				<h1><a href=".">CSO Activity Scheduler</a></h1>
+				<h1><a href=".">Activity Scheduler</a></h1>
 				<ul>
 				<c:choose>
 				<c:when test="${empty sessionUser }">
@@ -42,7 +42,7 @@
 					</c:if>
 					<li id="sessions"><a href="sessions">Sessions</a></li>
 					<li id="accountOption"><a href="editAccount">Account</a></li>
-					<li id="logoutOption"><a href="logout">Logout <c:out value="${sessionUser.username }"/></a></li>
+					<li id="logoutOption"><a href="logout">Logout <span id="usernameTop"><c:out value="${sessionUser.username }"/></span></a></li>
 				</c:otherwise>
 				</c:choose>
 				</ul>

@@ -3,21 +3,30 @@
   src: url("../fonts/Raleway-Regular.ttf"); }
 html,
 body {
-  min-width: 860px;
+  min-width: 980px;
   min-height: 300px; }
 
 body {
   font-family: "Raleway";
   background-color: #e6e6e6; }
 
+div#mainContainer {
+  width: 980px; }
+
 div#header {
   width: 100%;
   height: 75px;
   background-color: white;
-  min-width: 860px;
+  min-width: 980px;
   position: fixed;
   top: 0;
   left: 0; }
+  div#header span#usernameTop {
+    max-width: 80px;
+    text-overflow: ellipsis;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden; }
   div#header h1 {
     display: inline-block;
     float: left;
@@ -65,8 +74,7 @@ div#header {
         height: 30px; }
 
 div#content {
-  margin: 125px 30px 30px;
-  min-width: 860px; }
+  margin: 125px 30px 30px; }
   div#content div#contentTitle {
     margin-bottom: 30px; }
     div#content div#contentTitle h2 {
@@ -183,6 +191,67 @@ div#content {
           font-size: 1.3em; }
           div#content table#sessionTable th:last-of-type a:hover,
           div#content table#sessionTable td:last-of-type a:hover {
+            color: #c8b4b4; }
+  div#content table#activitiesTable {
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: fixed; }
+    div#content table#activitiesTable tr:nth-of-type(2) td {
+      padding-top: 20px; }
+    div#content table#activitiesTable th {
+      border-bottom: 2px #786464 solid; }
+    div#content table#activitiesTable th,
+    div#content table#activitiesTable td {
+      padding: 10px;
+      text-align: left;
+      vertical-align: top; }
+      div#content table#activitiesTable th:first-of-type a,
+      div#content table#activitiesTable td:first-of-type a {
+        text-decoration: none;
+        font-weight: bold;
+        color: black;
+        border-radius: 6px;
+        padding: 10px;
+        background-color: white;
+        border: none;
+        outline: none;
+        display: inline-block; }
+        div#content table#activitiesTable th:first-of-type a:hover,
+        div#content table#activitiesTable td:first-of-type a:hover {
+          color: #c8b4b4; }
+      div#content table#activitiesTable th:nth-of-type(2),
+      div#content table#activitiesTable td:nth-of-type(2) {
+        width: 100px; }
+      div#content table#activitiesTable th:nth-of-type(3),
+      div#content table#activitiesTable td:nth-of-type(3) {
+        width: 100px; }
+      div#content table#activitiesTable th:nth-of-type(5),
+      div#content table#activitiesTable td:nth-of-type(5) {
+        width: 100px; }
+      div#content table#activitiesTable th:nth-of-type(7),
+      div#content table#activitiesTable td:nth-of-type(7) {
+        width: 170px; }
+      div#content table#activitiesTable th:last-of-type,
+      div#content table#activitiesTable td:last-of-type {
+        width: 50px;
+        text-align: right; }
+        div#content table#activitiesTable th:last-of-type a,
+        div#content table#activitiesTable td:last-of-type a {
+          border-radius: 50%;
+          box-sizing: border-box;
+          height: 40px;
+          width: 40px;
+          background-color: white;
+          border: none;
+          outline: none;
+          color: black;
+          display: inline-block;
+          padding-top: 10px;
+          padding-left: 3px;
+          text-align: center;
+          font-size: 1.3em; }
+          div#content table#activitiesTable th:last-of-type a:hover,
+          div#content table#activitiesTable td:last-of-type a:hover {
             color: #c8b4b4; }
   div#content #addSessionForm {
     width: 500px;

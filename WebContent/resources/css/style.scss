@@ -15,7 +15,7 @@ $mainFont: 'Raleway';
 
 html,
 body{
-	min-width: 860px;
+	min-width: 980px;
 	min-height: 300px;
 }
 
@@ -24,14 +24,26 @@ body{
 	background-color: $bgColor1;
 }
 
+div#mainContainer{
+	width: 980px;
+}
+
 div#header{
 	width: 100%;
 	height: 75px;
 	background-color: $bgColor2;
-	min-width: 860px;
+	min-width: 980px;
 	position: fixed;
 		top: 0;
 		left: 0;
+
+	span#usernameTop{
+		max-width: 80px;
+		text-overflow: ellipsis;
+		display: inline-block;
+		white-space: nowrap;
+		overflow: hidden;
+	}
 
 	h1{
 		display: inline-block;
@@ -101,7 +113,6 @@ div#header{
 
 div#content{
 	margin: 125px 30px 30px;
-	min-width: 860px;
 	
 	div#contentTitle{
 		margin-bottom: 30px;
@@ -239,6 +250,90 @@ div#content{
 
 			&:nth-of-type(4){
 				width: 160px;
+			}
+
+			&:last-of-type{
+				width: 50px;
+				text-align: right;
+
+				a{
+					border-radius: 50%;
+					box-sizing: border-box;
+					height: 40px;
+					width: 40px;
+					background-color: $bgColor2;
+					border: none;
+					outline: none;
+					color: $fgColor2;
+					display: inline-block;
+					padding-top: 10px;
+					padding-left: 3px;
+					text-align: center;
+					font-size: 1.3em;
+
+					&:hover{
+						color: $fgColor1-fade;
+					}
+				}
+			}
+		}
+	}
+
+	// Activities
+
+	table#activitiesTable{
+		border-collapse: collapse;
+		width: 100%;
+		table-layout: fixed;
+
+		tr:nth-of-type(2){
+			td{
+				padding-top: 20px;
+			}
+		}
+
+		th{
+			border-bottom: 2px $fgColor1 solid;
+		}
+
+		th,
+		td{
+			padding: 10px;
+			text-align: left;
+			vertical-align: top;
+
+			&:first-of-type{
+				a{
+					text-decoration: none;
+					font-weight: bold;
+					color: $fgColor2;
+					border-radius: 6px;
+					padding: 10px;
+					background-color: $bgColor2;
+					border: none;
+					outline: none;
+					display: inline-block;
+
+					&:hover{
+						color: $fgColor1-fade;
+					}
+				}
+			}
+
+			&:nth-of-type(2){
+				width: 100px;
+			}
+
+			&:nth-of-type(3){
+				width: 100px;
+			}
+
+			&:nth-of-type(5){
+				width: 100px;
+			}
+
+			&:nth-of-type(7){
+				width: 170px;
 			}
 
 			&:last-of-type{

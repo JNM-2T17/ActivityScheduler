@@ -2,21 +2,25 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <jsp:include page="header.jsp"/>
-		<h1><c:out value="${activeSession.name }"/></h1>
-		<a href="addActivity">Add Activity</a>
-		<button id="genSched">Generate Schedule</button>
+		<div id="contentTitle">
+			<h2><c:out value="${activeSession.name }"/></h2>
+			<div id="sectionOptions">
+				<a href="addActivity">Add Activity&nbsp;&nbsp;&nbsp;<i class="fa fa-plus"></i></a> <button id="genSched">Generate Schedule&nbsp;&nbsp;&nbsp;<i class="fa fa-calendar"></i></button>
+			</div>
+			<div class="clear"></div>
+		</div>
 		<script src="<c:url value="resources/js/activities.js"/>"></script>
 		<input type="hidden" name="token" value="${sessionToken }"/>
 		<c:choose>
 		<c:when test="${empty activities }">
-		<h2>No Activities to Display</h2>
+		No activities to display
 		</c:when>
 		<c:otherwise>
-		<table>
+		<table id="activitiesTable">
 			<tr>
 				<th>Name</th>
 				<th>Venue</th>
-				<th>Length(minutes)</th>
+				<th>Length</th>
 				<th>Target Groups</th>
 				<th>Days</th>
 				<th>Other Dates</th>
@@ -28,17 +32,14 @@
 			<tr>
 				<td><c:out value="${a.name }"/></td>
 				<td><c:out value="${a.venue.name }"/></td>
-				<td><c:out value="${a.length }"/></td>
+				<td><c:out value="${a.length }"/> mins</td>
 				<td>
-				<table>
-				<tr>
 				<c:set var="i" value="0"/>
 				<c:forEach items="${a.targetGroups }" var="tg">
-				<c:if test="${i > 0 && i % 3 == 0 }"></tr><tr></c:if>
-					<td><c:out value="${tg.name }"/></td>
+				<c:if test="${i > 0 && i % 3 == 0 }"></c:if>
+					<c:out value="${tg.name }"/><br/>
 				<c:set var="i" value="${i + 1 }"/>
 				</c:forEach>
-				</tr></table>
 				</td>
 				<td>
 				<c:choose>
@@ -48,7 +49,7 @@
 				<c:otherwise>
 				<c:set var="i" value="0"/>
 				<c:forEach items="${a.daysString }" var="d">
-				<c:if test="${i > 0 }">,</c:if>
+				<c:if test="${i > 0 }"><br/></c:if>
 				<!-- <c:if test="${i > 0 && i % 3 == 0 }"><br/></c:if> -->
 					${d }
 				<c:set var="i" value="${i + 1 }"/>
@@ -88,5 +89,13 @@
 		</table>
 		</c:otherwise>
 		</c:choose>
+		
+		
+		
+		
+		
+		
+		
+		
 		
 <jsp:include page="footer.jsp"/>

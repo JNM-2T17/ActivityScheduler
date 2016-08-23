@@ -12,12 +12,12 @@
 		<form action="addActivity" method="POST" onsubmit="return addActivity.checkSubmit();">
 			<input type="hidden" name="token" value="${sessionToken }"/>
 			Name: <input type="text" name="name" id="name"/><br/>
-			Venue : <select id="venue" name="venue">
+			Venue: <select id="venue" name="venue">
 			<c:forEach items="${venues }" var="v">
 			<option value="${v.id }"><c:out value="${v.name }"/></option>
 			</c:forEach>
 			</select><br/>
-			Length: <input type="number" name="length" id="length"/><br/>
+			Length (in minutes): <input type="number" name="length" id="length"/><br/>
 			Possible Activity Days:
 			<input type="checkbox" id="sunday" name="sunday" />
 			<label for="sunday">Sunday</label>
