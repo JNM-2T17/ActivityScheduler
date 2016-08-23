@@ -25,6 +25,7 @@ var venue = (function(){
 			$("#addButton").hide();
 			$("#cancelAdd").show();
 			$("#addForm").show();
+			$("#name").focus();
 		});
 		
 		$("#cancelAdd").click(function() {

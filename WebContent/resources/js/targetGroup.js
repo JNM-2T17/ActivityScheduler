@@ -24,6 +24,7 @@ var tg = (function(){
 			$("#addButton").hide();
 			$("#cancelAdd").show();
 			$("#addForm").show();
+			$("#name").focus();
 		});
 		$("#cancelAdd").click(function() {
 			$("#addButton").show();
