@@ -61,7 +61,7 @@
 						<button class="selectAllButton"  type="button" onclick="$('.targetGroup').prop('checked',true);">Select All</button>
 						<c:set var="i" value="0"/>
 						<c:forEach items="${targetGroups }" var="tg">
-						<br/><input class="possibleCheck targetGroup" type="checkbox" id="tg-${tg.id }"><c:out value="${tg.name }"/></input>
+						<br/><input type="checkbox" id="tg-${tg.id }" class="possibleCheck targetGroup"><c:out value="${tg.name }"/></input>
 						<c:set var="i" value="${i + 1 }"/>
 						</c:forEach>
 					</td>

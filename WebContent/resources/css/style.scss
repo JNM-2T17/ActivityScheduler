@@ -36,6 +36,7 @@ div#header{
 	position: fixed;
 		top: 0;
 		left: 0;
+	z-index: 99;
 
 	span#usernameTop{
 		max-width: 80px;
@@ -113,6 +114,8 @@ div#header{
 
 div#content{
 	margin: 125px 30px 30px;
+	positive: relative;
+	z-index: 0;
 	
 	div#contentTitle{
 		margin-bottom: 30px;
