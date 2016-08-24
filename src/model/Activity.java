@@ -137,10 +137,19 @@ public class Activity {
 			ArrayList<Calendar> dates = new ArrayList<Calendar>();
 			for(Calendar c : dateRange) {
 				if( c.compareTo(session.getStartDate()) >= 0 && c.compareTo(session.getEndDate()) <= 0 ) {
-					c.set(Calendar.HOUR_OF_DAY, 0);
-					c.set(Calendar.MINUTE, 0);
-					c.set(Calendar.SECOND, 0);
-					dates.add(c);
+					boolean found = false;
+					for(Calendar c2 : session.getBlackdates()) {
+						if( c.equals(c2)) {
+							found = true;
+							break;
+						}
+					}
+					if( !found ) {
+						c.set(Calendar.HOUR_OF_DAY, 0);
+						c.set(Calendar.MINUTE, 0);
+						c.set(Calendar.SECOND, 0);
+						dates.add(c);
+					}
 				}
 			}
 			//for each day
@@ -159,6 +168,12 @@ public class Activity {
 						boolean found = false;
 						for(Calendar x : dates) {
 							if( x.compareTo(c) == 0 ) {
+								found = true;
+								break;
+							}
+						}
+						for(Calendar x : session.getBlackdates() ) {
+							if( x.equals(c)) {
 								found = true;
 								break;
 							}
@@ -390,6 +405,7 @@ public class Activity {
 		ab.setStartTime(startTime);
 		Activity copy = ab.buildActivity();
 		copy.possibleTimes = possibleTimes;
+		copy.allDates = allDates;
 		return copy;
 	}
 	

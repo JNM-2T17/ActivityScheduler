@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -109,7 +110,12 @@ public class TheController {
 			} else {
 				genHash = genHash(u,ss,request.getRemoteAddr());
 			}
-			request.getSession().setAttribute("sessionToken",genHash); 
+			request.getSession().setAttribute("sessionToken",genHash);
+			Cookie c = new Cookie("asSessionToken",genHash);
+			c.setHttpOnly(true);
+			c.setSecure(true);
+			c.setMaxAge(User.SESSION_EXPIRY * 60);
+			response.addCookie(c);
 		}
 		return genHash;
 	}
@@ -241,6 +247,22 @@ public class TheController {
 	}
 	
 	@ResponseBody
+	@RequestMapping("/checkUsername")
+	public void checkUsername(@RequestParam("token") String token,
+			@RequestParam("username") String username,
+			HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User u;
+		try {
+			u = UserManager.getUser(username);
+			response.getWriter().print(u == null);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			logError(e,request);
+			response.getWriter().print(false);
+		}
+		
+	}
+		@ResponseBody
 	@RequestMapping("/login")
 	public void login(@RequestParam("token") String token,
 			@RequestParam("username") String username,
@@ -255,11 +277,6 @@ public class TheController {
 					request.getSession().invalidate();
 					request.getSession(true).setAttribute("sessionUser", u);
 					String genHash = genToken(request,response);
-					Cookie c = new Cookie("asSessionToken",genHash);
-					c.setMaxAge(User.SESSION_EXPIRY * 60);
-					c.setSecure(true);
-					c.setHttpOnly(true);
-					response.addCookie(c);
 					request.getSession().setAttribute("auditor",new AuditManager(u, request));
 					((AuditManager)request.getSession().getAttribute("auditor")).addActivity("logged in.");
 				} else {
@@ -314,7 +331,7 @@ public class TheController {
 	public void register(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User u = restoreSession(request, response);
 		if( u != null ) {
-			home(request,response);
+			response.sendRedirect("/ActivityScheduler/.");
 		} else {
 			request.getRequestDispatcher("WEB-INF/view/register.jsp").forward(request, response);
 		}
@@ -341,9 +358,15 @@ public class TheController {
 						mi.matches("^[A-Za-z]{0,2}.?$") && lname.matches("^[A-Za-z ,.'-]+$") && 
 						email.matches("^([-.a-zA-Z0-9_]+)@([-.a-zA-Z0-9_]+)[.]([a-zA-Z]{2,5})$") && 
 						UserManager.checkPass(password) && password.equals(confirmPassword)) {
-					UserManager.addUser(username, password, fname, mi, lname, email);
-					((AuditManager)request.getSession().getAttribute("auditor")).addActivity("registered account " + username + ".");
-					login(token,username,password,request,response);
+					if(UserManager.addUser(username, password, fname, mi, lname, email)) {
+						((AuditManager)request.getSession().getAttribute("auditor")).addActivity("registered account " + username + ".");
+						login(token,username,password,request,response);
+					} else {
+						((AuditManager)request.getSession().getAttribute("auditor")).addActivity("tried to register account " + username + " which is already registered.");
+						request.getSession().setAttribute("error", "Username is in use.");
+						request.getSession().setAttribute("prompt", true);
+						response.sendRedirect("/ActivityScheduler/register");
+					}
 				} else {
 					((AuditManager)request.getSession().getAttribute("auditor")).addActivity("ran into data validation errors on register.");
 					request.getSession().setAttribute("error","Failed to register account.");
@@ -357,6 +380,73 @@ public class TheController {
 				request.getSession().setAttribute("error","An unexpected error occured.");
 				request.getSession().setAttribute("prompt",true);
 				response.sendRedirect("/ActivityScheduler/register");
+			} 
+		}
+	}
+	
+	@RequestMapping(value="editAccount",method = RequestMethod.GET)
+	public void editAccount(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User u = restoreSession(request, response);
+		if( u == null ) {
+			response.sendRedirect("/ActivityScheduler/.");
+		} else {
+			request.setAttribute("u", u);
+			request.getRequestDispatcher("WEB-INF/view/editAccount.jsp").forward(request, response);
+		}
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="editAccount",method = RequestMethod.POST)
+	public void editAccount(@RequestParam("token") String token,
+						@RequestParam("username") String username,
+						@RequestParam("password") String password,
+						@RequestParam("newPassword") String newPassword,
+						@RequestParam("confirmPassword") String confirmPassword,
+						@RequestParam("fname") String fname,
+						@RequestParam("mi") String mi,
+						@RequestParam("lname") String lname,
+						@RequestParam("email") String email,
+			HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User u = restoreSession(request, response);
+		if( u == null ) {
+			response.sendRedirect("/ActivityScheduler/.");
+		} else {
+			try {
+				checkToken(token,request,response);
+				if( username.matches("^[A-Za-z0-9_-]+$") && fname.matches("^[A-Za-z ,.'-]+$") && 
+						mi.matches("^[A-Za-z]{0,2}.?$") && lname.matches("^[A-Za-z ,.'-]+$") && 
+						email.matches("^([-.a-zA-Z0-9_]+)@([-.a-zA-Z0-9_]+)[.]([a-zA-Z]{2,5})$") && 
+						UserManager.checkPass(newPassword) && newPassword.equals(confirmPassword)) {
+					try {
+						if(UserManager.updateUser(u.getId(),username, password, newPassword, fname, mi, lname, email)) {
+							((AuditManager)request.getSession().getAttribute("auditor")).addActivity("edited their account.");
+							request.getSession().setAttribute("message", "Account successfully edited.");
+							request.getSession().setAttribute("prompt", true);
+							response.sendRedirect("/ActivityScheduler/.");
+						} else {
+							((AuditManager)request.getSession().getAttribute("auditor")).addActivity("tried to register account " + username + " which is already registered.");
+							request.getSession().setAttribute("error", "Username is in use.");
+							request.getSession().setAttribute("prompt", true);
+							response.sendRedirect("/ActivityScheduler/register");
+						}
+					} catch (AuthenticationException e) {
+						// TODO Auto-generated catch block
+						logError(e,request);
+						e.printStackTrace();
+					}
+				} else {
+					((AuditManager)request.getSession().getAttribute("auditor")).addActivity("ran into data validation errors on edit account.");
+					request.getSession().setAttribute("error","Failed to edit account account.");
+					request.getSession().setAttribute("prompt",true);
+					response.sendRedirect("/ActivityScheduler/editAccount");
+				}
+			} catch (SQLException | MissingTokenException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				logError(e,request);
+				request.getSession().setAttribute("error","An unexpected error occured.");
+				request.getSession().setAttribute("prompt",true);
+				response.sendRedirect("/ActivityScheduler/editAccount");
 			} 
 		}
 	}
@@ -449,23 +539,22 @@ public class TheController {
 	public void deleteTG(@RequestParam("token") String token,
 			@RequestParam("id") int id,
 			HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("Getting user");
 		User u = restoreSession(request, response);
-		System.out.println("Got user");
 		if( u == null ) {
 			response.getWriter().print(false);
 		} else {
 			try {
 				checkToken(token,request,response);
-				System.out.println("Getting tg");
 				TargetGroup tg = TargetGroupManager.getTargetGroup(id);
-				System.out.println("Got tg");
 				if( tg.getUserId() == u.getId() ) {
-					System.out.println("Deleting");
-					TargetGroupManager.deleteTargetGroup(id);
-					System.out.println("Deleted");
-					((AuditManager)request.getSession().getAttribute("auditor")).addActivity("deleted target group " + id + ".");
-					response.getWriter().print(true);
+					if( TargetGroupManager.canDelete(u, id)) {
+						TargetGroupManager.deleteTargetGroup(id);
+						((AuditManager)request.getSession().getAttribute("auditor")).addActivity("deleted target group " + id + ".");
+						response.getWriter().print(true);
+					} else {
+						((AuditManager)request.getSession().getAttribute("auditor")).addActivity("tried to delete target group " + id + " which is in use.");
+						response.getWriter().print("That target group is in use. Please remove it from all activities before deleting.");
+					}
 				} else {
 					((AuditManager)request.getSession().getAttribute("auditor")).addActivity("tried to delete target group " + id + " which isn't theirs.");
 					response.getWriter().print("That target group is not yours.");
@@ -506,7 +595,7 @@ public class TheController {
 		} else {
 			try {
 				checkToken(token,request,response);
-				if(name.matches("^[A-Za-z0-9.', _\\-]+$") && VenueManager.addVenue(u, name) ) {
+				if(name.matches("^[A-Za-z0-9.', _\\-()]+$") && VenueManager.addVenue(u, name) ) {
 					Venue[] venues = VenueManager.getAllVenues(u);
 					response.getWriter().print((new Gson()).toJson(venues[venues.length - 1]));
 					((AuditManager)request.getSession().getAttribute("auditor")).addActivity("added venue " + name + ".");
@@ -537,7 +626,7 @@ public class TheController {
 				checkToken(token,request,response);
 				Venue v = VenueManager.getVenue(id);
 				if( v.getUserId() == u.getId() ) {
-					if(name.matches("^[A-Za-z0-9.', _\\-]+$") ) {
+					if(name.matches("^[A-Za-z0-9.', _\\-()]+$") ) {
 						if(VenueManager.updateVenue(id, name) ) {
 							((AuditManager)request.getSession().getAttribute("auditor")).addActivity("updated venue " + id + ".");
 							response.getWriter().print(true);
@@ -575,9 +664,14 @@ public class TheController {
 				checkToken(token,request,response);
 				Venue v = VenueManager.getVenue(id);
 				if( v.getUserId() == u.getId() ) {
-					VenueManager.deleteVenue(id);
-					((AuditManager)request.getSession().getAttribute("auditor")).addActivity("deleted venue " + id + ".");
-					response.getWriter().print(true);
+					if( VenueManager.canDelete(u, id)) {
+						VenueManager.deleteVenue(id);
+						((AuditManager)request.getSession().getAttribute("auditor")).addActivity("deleted venue " + id + ".");
+						response.getWriter().print(true);
+					} else {
+						((AuditManager)request.getSession().getAttribute("auditor")).addActivity("tried to delete venue " + id + " which is in use.");
+						response.getWriter().print("That venue is in use. Please move all activities set here before deleting.");
+					}
 				} else {
 					((AuditManager)request.getSession().getAttribute("auditor")).addActivity("tried to delete venue " + id + " which isn't theirs.");
 					response.getWriter().print("That venue is not yours.");
@@ -676,6 +770,8 @@ public class TheController {
 							((AuditManager)request.getSession().getAttribute("auditor")).addActivity("added session " + name);
 							request.getSession().setAttribute("message", "Session was successfully added.");
 							request.getSession().setAttribute("prompt", true);
+							request.getSession().setAttribute("activeSession", null);
+							genToken(request, response);
 							response.sendRedirect("/ActivityScheduler/.");
 							return;
 						} catch (SQLException e) {
@@ -952,6 +1048,67 @@ public class TheController {
 		}
 	}
 	
+	@ResponseBody
+	@RequestMapping("getActivity")
+	public void getActivity(@RequestParam("token") String token,
+							@RequestParam("actId") int actId,
+			HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User u = restoreSession(request,response);
+		if( u == null || request.getSession().getAttribute("activeSession")== null ) {
+			response.getWriter().print(false);
+		} else {
+			try {
+				checkToken(token,request,response);
+				Activity a = ActivityManager.getActivity((SiteSession)request.getSession().getAttribute("activeSession"), actId);
+				if( a != null ) {
+					SimpleDateFormat sdf = new SimpleDateFormat("HHmm");
+					String json = "{\"name\":\"" + a.getName() + "\",\"length\":\"" + a.getLength() + 
+									"\",\"venue\":\"" + a.getVenue().getId() + "\",\"startTime\":\"" + sdf.format(a.getStartTimeRange().getTime()) + "\",\"endTime\":\"" + 
+									sdf.format(a.getEndTimeRange().getTime()) + "\",\"days\":[";
+					int i = 0;
+					for(String s : a.getDaysString()) {
+						if( i > 0 ) {
+							json += ",";
+						}
+						json += "\"" + s + "\"";
+						
+						i++;
+					}
+					json += "],\"tgs\":[";
+					i = 0;
+					for(TargetGroup tg : a.getTargetGroups()) {
+						if( i > 0 ) {
+							json += ",";
+						}
+						json += "\"" + tg.getId() + "\"";
+						
+						i++;
+					}
+					json += "],\"dateRange\":[";
+					SimpleDateFormat sdf2 = new SimpleDateFormat("MM/dd/yyyy");
+					i = 0;
+					for(Calendar d : a.getDateRange()) {
+						if( i > 0 ) {
+							json += ",";
+						}
+						json += "\"" + sdf2.format(d.getTime()) + "\"";
+						
+						i++;
+					}
+					json += "]}";
+					response.getWriter().print(json);
+				} else {
+					response.getWriter().print("null");
+				}
+			} catch (MissingTokenException | SQLException e) {
+				// TODO Auto-generated catch block
+				logError(e,request);
+				response.getWriter().print("null");
+			}
+			
+		}
+	}
+	
 	@RequestMapping(value="addActivity",method=RequestMethod.GET)
 	public void addActivity(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User u = restoreSession(request,response);
@@ -969,6 +1126,7 @@ public class TheController {
 				request.setAttribute("startDate",sdf.format(ss.getStartDate().getTime()));
 				request.setAttribute("endDate",sdf.format(ss.getEndDate().getTime()));
 				request.setAttribute("blackdays", ss.getBlackDaysString());
+				request.setAttribute("blackdates", ss.getBlackdatesString());
 				request.getRequestDispatcher("WEB-INF/view/addActivity.jsp").forward(request, response);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -1007,8 +1165,10 @@ public class TheController {
 				String dateRegex = "^(0?[1-9]|1[0-2])\\/(0?[1-9]|[1-2][0-9]|3[0-1])\\/2[0-9]{3}$";
 				String timeRegex = "^((0?|1)[0-9]|2[0-3])([0-5][0-9])$";
 				Venue v = VenueManager.getVenue(venue);
+				SiteSession ss = (SiteSession)request.getSession().getAttribute("activeSession");
 				
-				if( name.matches("^[A-Za-z0-9.,' \\-]+$") && str.matches(timeRegex) && etr.matches(timeRegex) &&
+				
+				if( name.matches("^[A-Za-z0-9.,' \\-:&]+$") && str.matches(timeRegex) && etr.matches(timeRegex) &&
 						v.getUserId() == u.getId() ) {
 					boolean error = false;
 					
@@ -1017,19 +1177,27 @@ public class TheController {
 						bds = new Calendar[dateRange.length];
 						int i = 0;
 						for(String s : dateRange ) {
-							System.out.println(s + s.matches(dateRegex));
 							if( !s.matches(dateRegex) ) {
 								error = true;
 								break;
 							} else {
 								bds[i] = CalendarFactory.createCalendar(s);
+								for(Calendar c : ss.getBlackdates() ) {
+									if( bds[i].equals(c)) {
+										error = true;
+										break;
+									}
+								}
+								if( error ) {
+									break;
+								}
 								i++;
 							}
 						}
 					}
 					
 					TargetGroup[] tgs = new TargetGroup[0];
-					if(targets != null ) {
+					if(!error && targets != null ) {
 						tgs = new TargetGroup[targets.length];
 						for(int i = 0; !error && i < targets.length; i++) {
 							TargetGroup tg = TargetGroupManager.getTargetGroup(targets[i]);
@@ -1065,21 +1233,210 @@ public class TheController {
 				((AuditManager)request.getSession().getAttribute("auditor")).addActivity("ran into data validation errors on add activity.");
 				request.getSession().setAttribute("error", "Data validation error.");
 				request.getSession().setAttribute("prompt",true);
-				response.sendRedirect("/ActivityScheduler/addSession");
+				response.sendRedirect("/ActivityScheduler/addActivity");
 			} catch (MissingTokenException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 				((AuditManager)request.getSession().getAttribute("auditor")).addActivity("had an invalid token on Add Activity.");
 				request.getSession().setAttribute("error", "An unexpected error occured.");
 				request.getSession().setAttribute("prompt",true);
-				response.sendRedirect("/ActivityScheduler/addSession");
+				response.sendRedirect("/ActivityScheduler/addActivity");
 			} catch (SQLException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 				logError(e1,request);
 				request.getSession().setAttribute("error", "Adding Activity Failed");
 				request.getSession().setAttribute("prompt",true);
-				response.sendRedirect("/ActivityScheduler/addSession");
+				response.sendRedirect("/ActivityScheduler/addActivity");
+			}
+		}
+	}
+	
+	@RequestMapping(value="editActivity",method=RequestMethod.GET)
+	public void editActivity(@RequestParam("id") String idS,
+			HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User u = restoreSession(request,response);
+		if( u == null ) {
+			response.sendRedirect("/ActivityScheduler/.");
+		} else {
+			try {
+				int id = Integer.parseInt(idS);
+				request.setAttribute("actId", id);
+				Venue[] vs;
+				try {
+					vs = VenueManager.getAllVenues(u);
+					TargetGroup[] tgs = TargetGroupManager.getAllTargetGroups(u);
+					request.setAttribute("venues", vs);
+					request.setAttribute("targetGroups", tgs);
+					SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+					SiteSession ss = (SiteSession)request.getSession().getAttribute("activeSession");
+					request.setAttribute("startDate",sdf.format(ss.getStartDate().getTime()));
+					request.setAttribute("endDate",sdf.format(ss.getEndDate().getTime()));
+					request.setAttribute("blackdays", ss.getBlackDaysString());
+					request.setAttribute("blackdates", ss.getBlackdatesString());
+					request.getRequestDispatcher("WEB-INF/view/editActivity.jsp").forward(request, response);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					logError(e,request);
+					request.getSession().setAttribute("error", "An unexpected error occured");
+					request.getSession().setAttribute("prompt",true);
+					response.sendRedirect("/ActivityScheduler/.");
+				}
+			} catch (NumberFormatException nfe) {
+				logError(nfe,request);
+				response.sendRedirect("/ActivityScheduler/.");
+			}
+		}
+	}
+	
+	@RequestMapping(value="editActivity",method=RequestMethod.POST)
+	public void editActivity(@RequestParam("token") String token,
+			@RequestParam("actId") int id,
+			@RequestParam("name") String name,
+			@RequestParam("venue") int venue,
+			@RequestParam("length") int length,
+			@RequestParam("startTime") String str,
+			@RequestParam("endTime") String etr,
+			@RequestParam(value="sunday",required=false) boolean sunday,
+			@RequestParam(value="monday",required=false) boolean monday,
+			@RequestParam(value="tuesday",required=false) boolean tuesday,
+			@RequestParam(value="wednesday",required=false) boolean wednesday,
+			@RequestParam(value="thursday",required=false) boolean thursday,
+			@RequestParam(value="friday",required=false) boolean friday,
+			@RequestParam(value="saturday",required=false) boolean saturday,
+			@RequestParam(value="dr[]",required=false) String[] dateRange,
+			@RequestParam(value="tg[]",required=false) int[] targets,
+			HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User u = restoreSession(request,response);
+		if( u == null ) {
+			response.sendRedirect("/ActivityScheduler/.");
+		} else {
+			try {
+				checkToken(token,request,response);
+				String dateRegex = "^(0?[1-9]|1[0-2])\\/(0?[1-9]|[1-2][0-9]|3[0-1])\\/2[0-9]{3}$";
+				String timeRegex = "^((0?|1)[0-9]|2[0-3])([0-5][0-9])$";
+				Venue v = VenueManager.getVenue(venue);
+				SiteSession ss = (SiteSession)request.getSession().getAttribute("activeSession");
+				
+				if( name.matches("^[A-Za-z0-9.,' \\-:&]+$") && str.matches(timeRegex) && etr.matches(timeRegex) &&
+						v.getUserId() == u.getId() ) {
+					boolean error = false;
+					
+					Calendar[] bds = null;
+					if( dateRange != null ) {
+						bds = new Calendar[dateRange.length];
+						int i = 0;
+						for(String s : dateRange ) {
+							System.out.println(s + s.matches(dateRegex));
+							if( !s.matches(dateRegex) ) {
+								error = true;
+								break;
+							} else {
+								bds[i] = CalendarFactory.createCalendar(s);
+								for(Calendar c : ss.getBlackdates() ) {
+									if( bds[i].equals(c)) {
+										error = true;
+										break;
+									}
+								}
+								if( error ) {
+									break;
+								}
+								i++;
+							}
+						}
+					}
+					
+					TargetGroup[] tgs = new TargetGroup[0];
+					if(!error && targets != null ) {
+						tgs = new TargetGroup[targets.length];
+						for(int i = 0; !error && i < targets.length; i++) {
+							TargetGroup tg = TargetGroupManager.getTargetGroup(targets[i]);
+							if( tg.getUserId() != u.getId()) {
+								error = true;
+							} else {
+								tgs[i] = tg;
+							}
+						}
+					}
+					
+					if( !error ) {
+						try {
+							ActivityManager.editActivity(id,(SiteSession)request.getSession().getAttribute("activeSession"), venue, name, length, new boolean[] {
+									sunday, monday, tuesday, wednesday, thursday, friday, saturday
+							}, CalendarFactory.createCalendarTime(str), CalendarFactory.createCalendarTime(etr), tgs, bds);
+							((AuditManager)request.getSession().getAttribute("auditor")).addActivity("edited activity " + name + ".");
+							request.getSession().setAttribute("message", "Activity successfully edited.");
+							request.getSession().setAttribute("prompt", true);
+							response.sendRedirect("/ActivityScheduler/.");
+							return;
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							logError(e,request);
+							request.getSession().setAttribute("error", "Editing Activity Failed");
+							request.getSession().setAttribute("prompt",true);
+							response.sendRedirect("/ActivityScheduler/editActivity");
+							return;
+						}
+					}
+				}
+				((AuditManager)request.getSession().getAttribute("auditor")).addActivity("ran into data validation errors on edit activity.");
+				request.getSession().setAttribute("error", "Data validation error.");
+				request.getSession().setAttribute("prompt",true);
+				response.sendRedirect("/ActivityScheduler/editActivity?id=" + id);
+			} catch (MissingTokenException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				((AuditManager)request.getSession().getAttribute("auditor")).addActivity("had an invalid token on Add Activity.");
+				request.getSession().setAttribute("error", "An unexpected error occured.");
+				request.getSession().setAttribute("prompt",true);
+				response.sendRedirect("/ActivityScheduler/editActivity?id=" + id);
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				logError(e1,request);
+				request.getSession().setAttribute("error", "Editing Activity Failed");
+				request.getSession().setAttribute("prompt",true);
+				response.sendRedirect("/ActivityScheduler/editActivity?id=" + id);
+			}
+		}
+	}
+	
+	@ResponseBody
+	@RequestMapping("deleteActivity")
+	public void deleteActivity(@RequestParam("token") String token,
+			@RequestParam("id") int id,
+			HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+		User u = restoreSession(request,response);
+		if( u == null ) {
+			response.getWriter().print(false);
+		} else {
+			SiteSession ss = (SiteSession)request.getSession().getAttribute("activeSession");
+			if( ss == null ) {
+				response.getWriter().print(false);
+				return;
+			} else {
+				try {
+					checkToken(token,request,response);
+					Activity a = ActivityManager.getActivity(ss, id);
+					if( a != null ) {
+						ActivityManager.deleteActivity(ss,a.getId());
+						((AuditManager)request.getSession().getAttribute("auditor")).addActivity("deleted activity " + id + ".");
+						request.getSession().setAttribute("message", "Activity successfully deleted.");
+						request.getSession().setAttribute("prompt", true);
+						response.getWriter().print(true);
+					} else {
+						((AuditManager)request.getSession().getAttribute("auditor")).addActivity("tried to delete a nonexistent activity " + id + ".");
+						response.getWriter().print("That activity does not exist within this session.");
+					}
+				} catch (SQLException | MissingTokenException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					logError(e,request);
+					response.getWriter().print("An unexpected error occured.");
+				}
 			}
 		}
 	}

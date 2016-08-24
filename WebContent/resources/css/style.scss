@@ -1,36 +1,749 @@
+$accentColor:   rgb(100,200,100);
+$bgColor1:      rgb(230,230,230);
+$bgColor1-fade: rgb(245,245,245);
+$bgColor2:      rgb(255,255,255);
+$fgColor1:      rgb(120,100,100);
+$fgColor1-fade: rgb(200,180,180);
+$fgColor2:      rgb(0,0,0);
+
+$mainFont: 'Raleway';
+
 @font-face {
   font-family: 'Raleway';
   src: url('../fonts/Raleway-Regular.ttf');
 }
 
+html,
 body{
-	font-family: Raleway;
+	min-width: 980px;
+	min-height: 300px;
 }
 
-#popup-overlay {
-	top:0;
-	left:0;
+body{
+	font-family: $mainFont;
+	background-color: $bgColor1;
+}
+
+div#mainContainer{
+	width: 980px;
+}
+
+div#header{
+	width: 100%;
+	height: 75px;
+	background-color: $bgColor2;
+	min-width: 980px;
 	position: fixed;
-	width:100%;
-	height:100%;
-	z-index:1000;
-	background-color:rgba(100,100,100,0.6);
+		top: 0;
+		left: 0;
+	z-index: 99;
+
+	span#usernameTop{
+		max-width: 80px;
+		text-overflow: ellipsis;
+		display: inline-block;
+		white-space: nowrap;
+		overflow: hidden;
+	}
+
+	h1{
+		display: inline-block;
+		float: left;
+		color: $accentColor;
+		margin: 15px;
+		vertical-align: middle;
+		font-size: 2em;
+
+		a{
+			text-decoration: inherit;
+			color: inherit;
+		}
+	}
+
+	ul{
+		list-style: none;
+		float: right;
+		height: 75px;
+		position: relative;
+
+		li{
+			display: inline-block;
+			color: $fgColor1;
+			height: 30px;
+			margin-top: 7.5px;
+			margin-right: 20px;
+
+			a{
+				color: inherit;
+				text-decoration: inherit;
+				height: 30px;
+
+				&:hover{
+					color: $fgColor1-fade;
+				}
+			}
+
+			input[type='submit']{
+				background-color: transparent;
+				border: none;
+				outline: none;
+				color: inherit;
+				font-family: inherit;
+				font-size: inherit;
+				margin-left: 15px;
+
+				&:hover{
+					color: $fgColor1-fade;
+				}
+			}
+
+			input[type='text'],
+			input[type='password']{
+				font-family: inherit;
+				font-size: 0.8em;
+				padding: 2px;
+				width: 120px;
+			}
+
+			input{
+				height: 30px;
+			}
+		}
+	}
 }
 
-#popup-frame {
-	position: fixed;
-	top: 27.5%;
-	left: 27.5%;
-	width: 45%;
-	height: 45%;
-	z-index: 2000;
-	background-color:rgb(255,255,255);
-	padding:20px;
+div#content{
+	margin: 125px 30px 30px;
+	positive: relative;
+	z-index: 0;
+	
+	div#contentTitle{
+		margin-bottom: 30px;
+
+		h2{
+			float: left;
+			font-size: 2em;
+			text-transform: uppercase;
+			margin: 0;
+		}
+
+		div#sectionOptions{
+			float: right;
+
+			a,
+			button,
+			input[type='submit']{
+				text-decoration: none;
+				display: inline-block;
+				padding: 15px;
+				background-color: $bgColor2;
+				color: $accentColor;
+				margin-left: 10px;
+				border-radius: 6px;
+				font-size: 0.9em;
+				border: none;
+				outline: none;
+
+				&:hover{
+					background-color: $bgColor1-fade;
+				}
+
+				&#cancelAdd{
+					color: rgb(250, 150, 150);
+				}
+			}
+
+			input[type='text']{
+				display: inline-block;
+				padding: 15px;
+				background-color: $bgColor2;
+				color: $fgColor1;
+				margin-left: 10px;
+				border-radius: 6px;
+				font-size: 0.9em;
+				border: none;
+				outline: none;
+			}
+		}
+	}
+
+	// Register
+
+	#regForm{
+		width: 400px;
+		border-collapse: collapse;
+
+		td:first-of-type{
+			width: 100px;
+			font-weight: bold;
+		}
+
+		input{
+			width: 300px;
+			border: none;
+			box-sizing: border-box;
+			padding: 3px;
+			font-size: 0.9em;
+			margin: 5px 0;
+		}
+
+		#regName{
+			input{
+				&:nth-of-type(1){
+					width: 125px;
+					margin-right: 10px;
+				}
+				&:nth-of-type(2){
+					width: 30px;
+					margin-right: 10px;
+				}
+				&:nth-of-type(3){
+					width: 125px;
+				}
+			}
+		}
+	}
+
+	input#regButton{
+		text-align: right;
+		display: block;
+		width: 400px;
+	}
+
+	// View Sessions
+
+	table#sessionTable{
+		border-collapse: collapse;
+		width: 100%;
+		table-layout: fixed;
+
+		tr:nth-of-type(2){
+			td{
+				padding-top: 20px;
+			}
+		}
+
+		th{
+			border-bottom: 2px $fgColor1 solid;
+		}
+
+		th,
+		td{
+			padding: 10px;
+			text-align: left;
+			vertical-align: top;
+
+			&:first-of-type{
+				a{
+					text-decoration: none;
+					font-weight: bold;
+					color: $fgColor2;
+					border-radius: 6px;
+					padding: 10px;
+					background-color: $bgColor2;
+					border: none;
+					outline: none;
+					display: inline-block;
+
+					&:hover{
+						color: $fgColor1-fade;
+					}
+				}
+			}
+
+			&:nth-of-type(4){
+				width: 160px;
+			}
+
+			&:last-of-type{
+				width: 50px;
+				text-align: right;
+
+				a{
+					border-radius: 50%;
+					box-sizing: border-box;
+					height: 40px;
+					width: 40px;
+					background-color: $bgColor2;
+					border: none;
+					outline: none;
+					color: $fgColor2;
+					display: inline-block;
+					padding-top: 10px;
+					padding-left: 3px;
+					text-align: center;
+					font-size: 1.3em;
+
+					&:hover{
+						color: $fgColor1-fade;
+					}
+				}
+			}
+		}
+	}
+
+	// Add Session
+
+	#addSessionForm{
+		width: 500px;
+		border-collapse: collapse;
+
+		td:first-of-type{
+			width: 200px;
+			vertical-align: top;
+			font-weight: bold;
+			padding-top: 4px;
+		}
+
+		input[type='text'],
+		input[type='password']{
+			width: 300px;
+			height: 20px;
+			border: none;
+			box-sizing: border-box;
+			padding: 3px;
+			font-size: 0.9em;
+			margin: 5px 0;
+		}
+
+		.fromToDate{
+			width: 300px;
+			@extend .fromToDate;
+		}
+
+		.restrictedSection{
+			clear: both;
+			display: block;
+			padding-top: 15px;
+			font-weight: bold;
+		}
+
+		#addRestrictedDate.fromToDate,
+		#blackDate{
+			width: 260px;
+			float: left;
+			@extend .fromToDate;
+		}
+
+		#addDate,
+		#addTime{
+			float: right;
+			margin-top: 4px;
+			background: none;
+			border: none;
+			outline: none;
+			font-size: 1.2em;
+
+			&:hover{
+				color: $accentColor;
+			}
+		}
+
+		#blackDates,
+		#blackTimes{
+			padding: 0 0 0 10px;
+			width: 140px;
+			list-style: none;
+
+			li{
+				position: relative;
+				padding: 3px 0 3px 30px;
+				height: 20px;
+			}
+
+			button{
+				position: absolute;
+					left: 0;
+					top: 0;
+				border-radius: 50%;
+				height: 20px;
+				width: 20px;
+				background-color: $bgColor2;
+				border: none;
+				outline: none;
+
+				&:hover{
+					color: $fgColor1-fade;
+				}
+			}
+		}
+
+		.restrictedDay{
+			margin: 3px 5px 3px 10px;
+		}
+
+	}
+
+	input#addSessionButton{
+		text-align: right;
+		display: block;
+		width: 500px;
+	}
+
+	// Activities
+
+	table#activitiesTable{
+		border-collapse: collapse;
+		width: 100%;
+		table-layout: fixed;
+
+		tr:nth-of-type(2){
+			td{
+				padding-top: 20px;
+			}
+		}
+
+		th{
+			border-bottom: 2px $fgColor1 solid;
+		}
+
+		th,
+		td{
+			padding: 10px;
+			text-align: left;
+			vertical-align: top;
+
+			&:first-of-type{
+				a{
+					text-decoration: none;
+					font-weight: bold;
+					color: $fgColor2;
+					border-radius: 6px;
+					padding: 10px;
+					background-color: $bgColor2;
+					border: none;
+					outline: none;
+					display: inline-block;
+
+					&:hover{
+						color: $fgColor1-fade;
+					}
+				}
+			}
+
+			&:nth-of-type(2){
+				width: 100px;
+			}
+
+			&:nth-of-type(3){
+				width: 100px;
+			}
+
+			&:nth-of-type(5){
+				width: 100px;
+			}
+
+			&:nth-of-type(7){
+				width: 170px;
+			}
+
+			&:last-of-type{
+				width: 50px;
+				text-align: right;
+
+				a{
+					border-radius: 50%;
+					box-sizing: border-box;
+					height: 40px;
+					width: 40px;
+					background-color: $bgColor2;
+					border: none;
+					outline: none;
+					color: $fgColor2;
+					display: inline-block;
+					padding-top: 10px;
+					padding-left: 3px;
+					text-align: center;
+					font-size: 1.3em;
+
+					&:hover{
+						color: $fgColor1-fade;
+					}
+				}
+			}
+		}
+	}
+
+	// Add Activity
+
+	#addActivityForm{
+		width: 600px;
+		border-collapse: collapse;
+
+		td:first-of-type{
+			width: 250px;
+			vertical-align: top;
+			font-weight: bold;
+			padding-top: 4px;
+		}
+
+		input[type='text'],
+		input[type='password'],
+		input[type='number'],
+		select{
+			width: 350px;
+			height: 20px;
+			border: none;
+			box-sizing: border-box;
+			padding: 3px;
+			font-size: 0.9em;
+			margin: 5px 0;
+		}
+
+		.fromToDate{
+			width: 300px;
+			@extend .fromToDate;
+		}
+
+		.possibleSection{
+			clear: both;
+			display: block;
+			padding-top: 15px;
+			font-weight: bold;
+		}
+
+		#dateRange{
+			width: 310px;
+			float: left;
+			margin-bottom: 15px;
+		}
+
+		#addDate{
+			float: right;
+			margin-top: 4px;
+			background: none;
+			border: none;
+			outline: none;
+			font-size: 1.2em;
+
+			&:hover{
+				color: $accentColor;
+			}
+		}
+
+		#dates{
+			padding: 0 0 0 10px;
+			width: 140px;
+			list-style: none;
+
+			li{
+				position: relative;
+				padding: 3px 0 3px 30px;
+				height: 20px;
+			}
+
+			button{
+				position: absolute;
+					left: 0;
+					top: 0;
+				border-radius: 50%;
+				height: 20px;
+				width: 20px;
+				background-color: $bgColor2;
+				border: none;
+				outline: none;
+
+				&:hover{
+					color: $fgColor1-fade;
+				}
+			}
+		}
+
+		.possibleCheck{
+			margin: 3px 5px 3px 10px;
+		}
+
+	}
+
+	input#addActivityButton{
+		text-align: right;
+		display: block;
+		width: 600px;
+	}
+
+	// Target Groups and Venues
+
+	#addForm,
+	#popup-frame,
+	#popup-overlay{
+		display: none;
+	}
+
+	form#addForm{
+		display: inline-block;
+		margin: 0;
+	}
+
+	#itemList{
+		padding: 0 0 0 10px;
+		width: 500px;
+		list-style: none;
+
+		li{
+			position: relative;
+			padding: 3px 0 3px 40px;
+			min-height: 30px;
+		}
+
+		.editTG,
+		.editVenue{
+			cursor:pointer;	
+			position: absolute;
+				left: 0;
+				top: 0;
+			border-radius: 50%;
+			height: 30px;
+			width: 30px;
+			display: inline-block;
+			box-sizing: border-box;
+			padding: 8px;
+			background-color: $bgColor2;
+			border: none;
+			outline: none;
+
+			&:hover{
+				color: $fgColor1-fade;
+			}
+		}
+	}
+
+	#popup-overlay {
+		top:0;
+		left:0;
+		position: fixed;
+		width:100%;
+		height:100%;
+		z-index:1000;
+		background-color:rgba(100,100,100,0.6);
+	}
+
+	#popup-frame {
+		position: fixed;
+			top: calc(50% - 150px);
+			left: calc(50% - 200px);
+		boz-sizing: border-box;
+		height: 250px;
+		width: 400px;
+		z-index: 2000;
+		background-color:rgb(255,255,255);
+		padding: 20px;
+		border-radius: 6px;
+
+		#popup-title{
+			margin-bottom: 20px;
+
+			h3{
+				color: $fgColor1;
+				float: left;
+				margin: 0;
+				font-size: 1.8em;
+			}
+
+			#popup-options{
+				float: right;
+
+				button{
+					border-radius: 50%;
+					width: 40px;
+					height: 40px;
+					border: none;
+					outline: none;
+					background-color: $fgColor1;
+					font-size: 1.2em;
+					color: $bgColor2;
+
+					&:hover{
+						background-color: $fgColor1-fade;
+					}
+				}
+			}
+		}
+
+		input,
+		button{
+			height: 30px;
+			padding: 10px;
+		}
+
+		input{
+			width: 250px;
+		}
+
+		button#edit{
+			position: absolute;
+				bottom: 20px;
+				right: 15px;
+			border: none;
+			outline: none;
+			font-size: 1.1em;
+			text-transform: uppercase;
+			font-weight: bold;
+			color: $accentColor;
+			background-color: transparent;
+
+			&:hover{
+				color: $fgColor1-fade;
+			}
+		}
+	}
 }
 
-.editTG, .editVenue {
-	color:rgb(10,11,123);
-	cursor:pointer;	
+.fromToDate{
+	input{
+		width: calc(50% - 15px);
+
+		&:nth-of-type(1){
+			float: left;
+		}
+
+		&:nth-of-type(2){
+			float: right;
+		}
+	}
+
+	.dateMiddle{
+		margin-top: 5px;
+		width: 30px;
+		display: inline-block;
+		text-align: center;
+	}
+}
+
+.submitForm{
+	margin: 20px 0;
+	color: $accentColor;
+	font-size: 1.2em;
+	background-color: transparent;
+	border: none;
+	outline: none;
+	padding: 0;
+	font-family: inherit;
+
+	&:hover{
+		color: $fgColor1-fade;
+	}
+}
+
+.clear{
+	clear: both;
+}
+
+input,
+button,
+select{
+	font-family: $mainFont;
+}
+
+select{
+	-webkit-padding-end: 16px;
+	-webkit-padding-start: 8px;
+	-webkit-appearance: button;
+	-webkit-border-radius: 0;
+	-webkit-box-shadow: none;
+	background-image: url('../images/arrow-down.png');
+	background-repeat: no-repeat;
+	background-size: 10px 10px;
+	background-position: center right 5px;
 }
 
 // Error

@@ -1,31 +1,536 @@
 @font-face {
   font-family: 'Raleway';
   src: url("../fonts/Raleway-Regular.ttf"); }
+html,
 body {
-  font-family: Raleway; }
+  min-width: 980px;
+  min-height: 300px; }
 
-#popup-overlay {
+body {
+  font-family: "Raleway";
+  background-color: #e6e6e6; }
+
+div#mainContainer {
+  width: 980px; }
+
+div#header {
+  width: 100%;
+  height: 75px;
+  background-color: white;
+  min-width: 980px;
+  position: fixed;
   top: 0;
   left: 0;
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  z-index: 1000;
-  background-color: rgba(100, 100, 100, 0.6); }
+  z-index: 99; }
+  div#header span#usernameTop {
+    max-width: 80px;
+    text-overflow: ellipsis;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden; }
+  div#header h1 {
+    display: inline-block;
+    float: left;
+    color: #64c864;
+    margin: 15px;
+    vertical-align: middle;
+    font-size: 2em; }
+    div#header h1 a {
+      text-decoration: inherit;
+      color: inherit; }
+  div#header ul {
+    list-style: none;
+    float: right;
+    height: 75px;
+    position: relative; }
+    div#header ul li {
+      display: inline-block;
+      color: #786464;
+      height: 30px;
+      margin-top: 7.5px;
+      margin-right: 20px; }
+      div#header ul li a {
+        color: inherit;
+        text-decoration: inherit;
+        height: 30px; }
+        div#header ul li a:hover {
+          color: #c8b4b4; }
+      div#header ul li input[type='submit'] {
+        background-color: transparent;
+        border: none;
+        outline: none;
+        color: inherit;
+        font-family: inherit;
+        font-size: inherit;
+        margin-left: 15px; }
+        div#header ul li input[type='submit']:hover {
+          color: #c8b4b4; }
+      div#header ul li input[type='text'],
+      div#header ul li input[type='password'] {
+        font-family: inherit;
+        font-size: 0.8em;
+        padding: 2px;
+        width: 120px; }
+      div#header ul li input {
+        height: 30px; }
 
-#popup-frame {
-  position: fixed;
-  top: 27.5%;
-  left: 27.5%;
-  width: 45%;
-  height: 45%;
-  z-index: 2000;
-  background-color: white;
-  padding: 20px; }
+div#content {
+  margin: 125px 30px 30px;
+  positive: relative;
+  z-index: 0; }
+  div#content div#contentTitle {
+    margin-bottom: 30px; }
+    div#content div#contentTitle h2 {
+      float: left;
+      font-size: 2em;
+      text-transform: uppercase;
+      margin: 0; }
+    div#content div#contentTitle div#sectionOptions {
+      float: right; }
+      div#content div#contentTitle div#sectionOptions a,
+      div#content div#contentTitle div#sectionOptions button,
+      div#content div#contentTitle div#sectionOptions input[type='submit'] {
+        text-decoration: none;
+        display: inline-block;
+        padding: 15px;
+        background-color: white;
+        color: #64c864;
+        margin-left: 10px;
+        border-radius: 6px;
+        font-size: 0.9em;
+        border: none;
+        outline: none; }
+        div#content div#contentTitle div#sectionOptions a:hover,
+        div#content div#contentTitle div#sectionOptions button:hover,
+        div#content div#contentTitle div#sectionOptions input[type='submit']:hover {
+          background-color: whitesmoke; }
+        div#content div#contentTitle div#sectionOptions a#cancelAdd,
+        div#content div#contentTitle div#sectionOptions button#cancelAdd,
+        div#content div#contentTitle div#sectionOptions input[type='submit']#cancelAdd {
+          color: #fa9696; }
+      div#content div#contentTitle div#sectionOptions input[type='text'] {
+        display: inline-block;
+        padding: 15px;
+        background-color: white;
+        color: #786464;
+        margin-left: 10px;
+        border-radius: 6px;
+        font-size: 0.9em;
+        border: none;
+        outline: none; }
+  div#content #regForm {
+    width: 400px;
+    border-collapse: collapse; }
+    div#content #regForm td:first-of-type {
+      width: 100px;
+      font-weight: bold; }
+    div#content #regForm input {
+      width: 300px;
+      border: none;
+      box-sizing: border-box;
+      padding: 3px;
+      font-size: 0.9em;
+      margin: 5px 0; }
+    div#content #regForm #regName input:nth-of-type(1) {
+      width: 125px;
+      margin-right: 10px; }
+    div#content #regForm #regName input:nth-of-type(2) {
+      width: 30px;
+      margin-right: 10px; }
+    div#content #regForm #regName input:nth-of-type(3) {
+      width: 125px; }
+  div#content input#regButton {
+    text-align: right;
+    display: block;
+    width: 400px; }
+  div#content table#sessionTable {
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: fixed; }
+    div#content table#sessionTable tr:nth-of-type(2) td {
+      padding-top: 20px; }
+    div#content table#sessionTable th {
+      border-bottom: 2px #786464 solid; }
+    div#content table#sessionTable th,
+    div#content table#sessionTable td {
+      padding: 10px;
+      text-align: left;
+      vertical-align: top; }
+      div#content table#sessionTable th:first-of-type a,
+      div#content table#sessionTable td:first-of-type a {
+        text-decoration: none;
+        font-weight: bold;
+        color: black;
+        border-radius: 6px;
+        padding: 10px;
+        background-color: white;
+        border: none;
+        outline: none;
+        display: inline-block; }
+        div#content table#sessionTable th:first-of-type a:hover,
+        div#content table#sessionTable td:first-of-type a:hover {
+          color: #c8b4b4; }
+      div#content table#sessionTable th:nth-of-type(4),
+      div#content table#sessionTable td:nth-of-type(4) {
+        width: 160px; }
+      div#content table#sessionTable th:last-of-type,
+      div#content table#sessionTable td:last-of-type {
+        width: 50px;
+        text-align: right; }
+        div#content table#sessionTable th:last-of-type a,
+        div#content table#sessionTable td:last-of-type a {
+          border-radius: 50%;
+          box-sizing: border-box;
+          height: 40px;
+          width: 40px;
+          background-color: white;
+          border: none;
+          outline: none;
+          color: black;
+          display: inline-block;
+          padding-top: 10px;
+          padding-left: 3px;
+          text-align: center;
+          font-size: 1.3em; }
+          div#content table#sessionTable th:last-of-type a:hover,
+          div#content table#sessionTable td:last-of-type a:hover {
+            color: #c8b4b4; }
+  div#content #addSessionForm {
+    width: 500px;
+    border-collapse: collapse; }
+    div#content #addSessionForm td:first-of-type {
+      width: 200px;
+      vertical-align: top;
+      font-weight: bold;
+      padding-top: 4px; }
+    div#content #addSessionForm input[type='text'],
+    div#content #addSessionForm input[type='password'] {
+      width: 300px;
+      height: 20px;
+      border: none;
+      box-sizing: border-box;
+      padding: 3px;
+      font-size: 0.9em;
+      margin: 5px 0; }
+    div#content #addSessionForm .fromToDate, div#content #addSessionForm #addRestrictedDate.fromToDate,
+    div#content #addSessionForm #blackDate {
+      width: 300px; }
+    div#content #addSessionForm .restrictedSection {
+      clear: both;
+      display: block;
+      padding-top: 15px;
+      font-weight: bold; }
+    div#content #addSessionForm #addRestrictedDate.fromToDate,
+    div#content #addSessionForm #blackDate {
+      width: 260px;
+      float: left; }
+    div#content #addSessionForm #addDate,
+    div#content #addSessionForm #addTime {
+      float: right;
+      margin-top: 4px;
+      background: none;
+      border: none;
+      outline: none;
+      font-size: 1.2em; }
+      div#content #addSessionForm #addDate:hover,
+      div#content #addSessionForm #addTime:hover {
+        color: #64c864; }
+    div#content #addSessionForm #blackDates,
+    div#content #addSessionForm #blackTimes {
+      padding: 0 0 0 10px;
+      width: 140px;
+      list-style: none; }
+      div#content #addSessionForm #blackDates li,
+      div#content #addSessionForm #blackTimes li {
+        position: relative;
+        padding: 3px 0 3px 30px;
+        height: 20px; }
+      div#content #addSessionForm #blackDates button,
+      div#content #addSessionForm #blackTimes button {
+        position: absolute;
+        left: 0;
+        top: 0;
+        border-radius: 50%;
+        height: 20px;
+        width: 20px;
+        background-color: white;
+        border: none;
+        outline: none; }
+        div#content #addSessionForm #blackDates button:hover,
+        div#content #addSessionForm #blackTimes button:hover {
+          color: #c8b4b4; }
+    div#content #addSessionForm .restrictedDay {
+      margin: 3px 5px 3px 10px; }
+  div#content input#addSessionButton {
+    text-align: right;
+    display: block;
+    width: 500px; }
+  div#content table#activitiesTable {
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: fixed; }
+    div#content table#activitiesTable tr:nth-of-type(2) td {
+      padding-top: 20px; }
+    div#content table#activitiesTable th {
+      border-bottom: 2px #786464 solid; }
+    div#content table#activitiesTable th,
+    div#content table#activitiesTable td {
+      padding: 10px;
+      text-align: left;
+      vertical-align: top; }
+      div#content table#activitiesTable th:first-of-type a,
+      div#content table#activitiesTable td:first-of-type a {
+        text-decoration: none;
+        font-weight: bold;
+        color: black;
+        border-radius: 6px;
+        padding: 10px;
+        background-color: white;
+        border: none;
+        outline: none;
+        display: inline-block; }
+        div#content table#activitiesTable th:first-of-type a:hover,
+        div#content table#activitiesTable td:first-of-type a:hover {
+          color: #c8b4b4; }
+      div#content table#activitiesTable th:nth-of-type(2),
+      div#content table#activitiesTable td:nth-of-type(2) {
+        width: 100px; }
+      div#content table#activitiesTable th:nth-of-type(3),
+      div#content table#activitiesTable td:nth-of-type(3) {
+        width: 100px; }
+      div#content table#activitiesTable th:nth-of-type(5),
+      div#content table#activitiesTable td:nth-of-type(5) {
+        width: 100px; }
+      div#content table#activitiesTable th:nth-of-type(7),
+      div#content table#activitiesTable td:nth-of-type(7) {
+        width: 170px; }
+      div#content table#activitiesTable th:last-of-type,
+      div#content table#activitiesTable td:last-of-type {
+        width: 50px;
+        text-align: right; }
+        div#content table#activitiesTable th:last-of-type a,
+        div#content table#activitiesTable td:last-of-type a {
+          border-radius: 50%;
+          box-sizing: border-box;
+          height: 40px;
+          width: 40px;
+          background-color: white;
+          border: none;
+          outline: none;
+          color: black;
+          display: inline-block;
+          padding-top: 10px;
+          padding-left: 3px;
+          text-align: center;
+          font-size: 1.3em; }
+          div#content table#activitiesTable th:last-of-type a:hover,
+          div#content table#activitiesTable td:last-of-type a:hover {
+            color: #c8b4b4; }
+  div#content #addActivityForm {
+    width: 600px;
+    border-collapse: collapse; }
+    div#content #addActivityForm td:first-of-type {
+      width: 250px;
+      vertical-align: top;
+      font-weight: bold;
+      padding-top: 4px; }
+    div#content #addActivityForm input[type='text'],
+    div#content #addActivityForm input[type='password'],
+    div#content #addActivityForm input[type='number'],
+    div#content #addActivityForm select {
+      width: 350px;
+      height: 20px;
+      border: none;
+      box-sizing: border-box;
+      padding: 3px;
+      font-size: 0.9em;
+      margin: 5px 0; }
+    div#content #addActivityForm #addSessionForm #addRestrictedDate.fromToDate, div#content #addSessionForm #addActivityForm #addRestrictedDate.fromToDate,
+    div#content #addActivityForm #addSessionForm #blackDate,
+    div#content #addSessionForm #addActivityForm #blackDate, div#content #addActivityForm .fromToDate {
+      width: 300px; }
+    div#content #addActivityForm .possibleSection {
+      clear: both;
+      display: block;
+      padding-top: 15px;
+      font-weight: bold; }
+    div#content #addActivityForm #dateRange {
+      width: 310px;
+      float: left;
+      margin-bottom: 15px; }
+    div#content #addActivityForm #addDate {
+      float: right;
+      margin-top: 4px;
+      background: none;
+      border: none;
+      outline: none;
+      font-size: 1.2em; }
+      div#content #addActivityForm #addDate:hover {
+        color: #64c864; }
+    div#content #addActivityForm #dates {
+      padding: 0 0 0 10px;
+      width: 140px;
+      list-style: none; }
+      div#content #addActivityForm #dates li {
+        position: relative;
+        padding: 3px 0 3px 30px;
+        height: 20px; }
+      div#content #addActivityForm #dates button {
+        position: absolute;
+        left: 0;
+        top: 0;
+        border-radius: 50%;
+        height: 20px;
+        width: 20px;
+        background-color: white;
+        border: none;
+        outline: none; }
+        div#content #addActivityForm #dates button:hover {
+          color: #c8b4b4; }
+    div#content #addActivityForm .possibleCheck {
+      margin: 3px 5px 3px 10px; }
+  div#content input#addActivityButton {
+    text-align: right;
+    display: block;
+    width: 600px; }
+  div#content #addForm,
+  div#content #popup-frame,
+  div#content #popup-overlay {
+    display: none; }
+  div#content form#addForm {
+    display: inline-block;
+    margin: 0; }
+  div#content #itemList {
+    padding: 0 0 0 10px;
+    width: 500px;
+    list-style: none; }
+    div#content #itemList li {
+      position: relative;
+      padding: 3px 0 3px 40px;
+      min-height: 30px; }
+    div#content #itemList .editTG,
+    div#content #itemList .editVenue {
+      cursor: pointer;
+      position: absolute;
+      left: 0;
+      top: 0;
+      border-radius: 50%;
+      height: 30px;
+      width: 30px;
+      display: inline-block;
+      box-sizing: border-box;
+      padding: 8px;
+      background-color: white;
+      border: none;
+      outline: none; }
+      div#content #itemList .editTG:hover,
+      div#content #itemList .editVenue:hover {
+        color: #c8b4b4; }
+  div#content #popup-overlay {
+    top: 0;
+    left: 0;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    background-color: rgba(100, 100, 100, 0.6); }
+  div#content #popup-frame {
+    position: fixed;
+    top: calc(50% - 150px);
+    left: calc(50% - 200px);
+    boz-sizing: border-box;
+    height: 250px;
+    width: 400px;
+    z-index: 2000;
+    background-color: white;
+    padding: 20px;
+    border-radius: 6px; }
+    div#content #popup-frame #popup-title {
+      margin-bottom: 20px; }
+      div#content #popup-frame #popup-title h3 {
+        color: #786464;
+        float: left;
+        margin: 0;
+        font-size: 1.8em; }
+      div#content #popup-frame #popup-title #popup-options {
+        float: right; }
+        div#content #popup-frame #popup-title #popup-options button {
+          border-radius: 50%;
+          width: 40px;
+          height: 40px;
+          border: none;
+          outline: none;
+          background-color: #786464;
+          font-size: 1.2em;
+          color: white; }
+          div#content #popup-frame #popup-title #popup-options button:hover {
+            background-color: #c8b4b4; }
+    div#content #popup-frame input,
+    div#content #popup-frame button {
+      height: 30px;
+      padding: 10px; }
+    div#content #popup-frame input {
+      width: 250px; }
+    div#content #popup-frame button#edit {
+      position: absolute;
+      bottom: 20px;
+      right: 15px;
+      border: none;
+      outline: none;
+      font-size: 1.1em;
+      text-transform: uppercase;
+      font-weight: bold;
+      color: #64c864;
+      background-color: transparent; }
+      div#content #popup-frame button#edit:hover {
+        color: #c8b4b4; }
 
-.editTG, .editVenue {
-  color: #0a0b7b;
-  cursor: pointer; }
+.fromToDate input, div#content #addSessionForm .fromToDate input, div#content #addSessionForm #addRestrictedDate.fromToDate input,
+div#content #addSessionForm #blackDate input, div#content #addActivityForm .fromToDate input {
+  width: calc(50% - 15px); }
+  .fromToDate input:nth-of-type(1), div#content #addSessionForm .fromToDate input:nth-of-type(1), div#content #addSessionForm #addRestrictedDate.fromToDate input:nth-of-type(1),
+  div#content #addSessionForm #blackDate input:nth-of-type(1), div#content #addActivityForm .fromToDate input:nth-of-type(1) {
+    float: left; }
+  .fromToDate input:nth-of-type(2), div#content #addSessionForm .fromToDate input:nth-of-type(2), div#content #addSessionForm #addRestrictedDate.fromToDate input:nth-of-type(2),
+  div#content #addSessionForm #blackDate input:nth-of-type(2), div#content #addActivityForm .fromToDate input:nth-of-type(2) {
+    float: right; }
+.fromToDate .dateMiddle, div#content #addSessionForm .fromToDate .dateMiddle, div#content #addSessionForm #addRestrictedDate.fromToDate .dateMiddle,
+div#content #addSessionForm #blackDate .dateMiddle, div#content #addActivityForm .fromToDate .dateMiddle {
+  margin-top: 5px;
+  width: 30px;
+  display: inline-block;
+  text-align: center; }
+
+.submitForm {
+  margin: 20px 0;
+  color: #64c864;
+  font-size: 1.2em;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  padding: 0;
+  font-family: inherit; }
+  .submitForm:hover {
+    color: #c8b4b4; }
+
+.clear {
+  clear: both; }
+
+input,
+button,
+select {
+  font-family: "Raleway"; }
+
+select {
+  -webkit-padding-end: 16px;
+  -webkit-padding-start: 8px;
+  -webkit-appearance: button;
+  -webkit-border-radius: 0;
+  -webkit-box-shadow: none;
+  background-image: url("../images/arrow-down.png");
+  background-repeat: no-repeat;
+  background-size: 10px 10px;
+  background-position: center right 5px; }
 
 #message-display {
   position: fixed;

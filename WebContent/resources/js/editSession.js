@@ -33,14 +33,14 @@ var editSession = (function() {
 	
 	function addBD(bd) {
 		if( dateRegex.test(bd)) {
-			for(x in blackDates) {
-				if( blackDates[x] === bd ) {
+			for(x in blackdates) {
+				if( blackdates[x] === bd ) {
 					showError("You have already added that date.");
 					return;
 				}
 			}
 			blackdates[bdid] = bd;
-			$("#blackDates").append("<div id='bd-" + bdid + "'>" + bd + "<button type='button' onclick='editSession.removeBD(" + bdid + ");'><i class='fa fa-trash'/></button></div>");
+			$("#blackDates").append("<li id='bd-" + bdid + "'>" + bd + "<button type='button' onclick='editSession.removeBD(" + bdid + ");'><i class='fa fa-trash'/></button></li>");
 			$("#blackDate").val("");
 			bdid++;
 		} else {
@@ -59,7 +59,7 @@ var editSession = (function() {
 					}
 				}
 				blacktimes[btid] = timeval;
-				$("#blackTimes").append("<div id='bt-" + btid + "'>" + timeval + "<button type='button' onclick='editSession.removeBT(" + btid + ");'><i class='fa fa-trash'/></button></div>");
+				$("#blackTimes").append("<li id='bt-" + btid + "'>" + timeval + "<button type='button' onclick='editSession.removeBT(" + btid + ");'><i class='fa fa-trash'/></button></li>");
 				$("#startTime").val("");
 				$("#endTime").val("");
 				btid++;

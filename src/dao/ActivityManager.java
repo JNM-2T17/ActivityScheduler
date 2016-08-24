@@ -117,9 +117,125 @@ public class ActivityManager {
 		}
 	}
 	
+	public static void blackoutDates(boolean[] blackdays, Calendar[] blackdates,Calendar start, Calendar end, SiteSession ss) throws SQLException {
+		Activity[] acts = getActivities(ss);
+		if( acts.length > 0 ) {
+			Connection con = DBManager.getInstance().getConnection();
+			String sql = "SELECT id, days FROM gs_activity WHERE status = 1 AND sessionId = ?";
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setInt(1, ss.getId());
+			ResultSet rs = ps.executeQuery();
+			while(rs.next()) {
+				String days = rs.getString("days");
+				for(int i = 0; i < blackdays.length; i++) {
+					if(blackdays[i]) {
+						days = days.substring(0,2 * i) + "0" + days.substring(2 * i + 1);
+					}
+				}
+				sql = "UPDATE gs_activity SET days = ? WHERE id = ?";
+				ps = con.prepareStatement(sql);
+				ps.setString(1,days);
+				ps.setInt(2, rs.getInt("id"));
+				ps.execute();
+			}
+			
+			ArrayList<Calendar> cals = new ArrayList<Calendar>();
+			for(int i = 0; i < blackdays.length; i++) {
+				if( blackdays[i]) {
+					Calendar c = CalendarFactory.createCalendar(ss.getStartDate().getTimeInMillis());
+					if(c.get(Calendar.DAY_OF_WEEK) > i + 1 ) {
+						c.add(Calendar.DAY_OF_MONTH, i + 8 - c.get(Calendar.DAY_OF_WEEK) );
+					} else if( c.get(Calendar.DAY_OF_WEEK) < i + 1 ) {
+						c.add(Calendar.DAY_OF_MONTH, i + 1 - c.get(Calendar.DAY_OF_WEEK) );
+					}
+					while(c.compareTo(ss.getEndDate()) <= 0) {
+						cals.add(CalendarFactory.createCalendar(c.getTimeInMillis()));
+						c.add(Calendar.WEEK_OF_YEAR, 1);
+					}
+				}
+			}
+			if( blackdates != null & blackdates.length > 0 ) {
+				sql = "UPDATE gs_activity_date SET status = 0 WHERE actID IN (";
+				int i = 0;
+				for(Activity a : acts ) {
+					if( i > 0 ) {
+						sql += ",";
+					}
+					sql += "?";
+					i++;
+				}
+				sql += ") AND (actDate IN (";
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				i = 0;
+				for(Calendar c : blackdates) {
+					if( i > 0 ) {
+						sql += ",";
+					}
+					sql += "?"; 
+					i++;
+				}
+				for(Calendar c : cals) {
+					if( i > 0 ) {
+						sql += ",";
+					}
+					sql += "?"; 
+					i++;
+				}
+				sql += ") OR actDate < ? OR actDate > ? )";
+				ps = con.prepareStatement(sql);
+				i = 1;
+				for(Activity a : acts) {
+					ps.setInt(i++,a.getId());
+				}
+				for(Calendar c : blackdates) {
+					ps.setString(i++,sdf.format(c.getTime()));
+				}
+				for(Calendar c : cals) {
+					ps.setString(i++,sdf.format(c.getTime()));
+				}
+				ps.setString(i++, sdf.format(start.getTime()));
+				ps.setString(i++, sdf.format(end.getTime()));
+				ps.execute();
+			}  else {
+				sql = "UPDATE gs_activity_date SET status = 0 WHERE actID IN (";
+				int i = 0;
+				for(Activity a : acts ) {
+					if( i > 0 ) {
+						sql += ",";
+					}
+					sql += "?";
+					i++;
+				}
+				sql += ") AND (actDate IN (";
+				i = 0;
+				for( Calendar c : cals ) {
+					if(i > 0 ) {
+						sql += ",";
+					}
+					sql += "?";
+					i++;
+				}
+				sql += ") OR actDate < ? OR actDate > ? )";
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				ps = con.prepareStatement(sql);
+				i = 1;
+				for(Activity a : acts) {
+					ps.setInt(i++,a.getId());
+				}
+				for(Calendar c : cals) {
+					ps.setString(i++,sdf.format(c.getTime()));
+				}
+				ps.setString(i++, sdf.format(start.getTime()));
+				ps.setString(i++, sdf.format(end.getTime()));
+				ps.execute();
+			}
+			con.close();
+		}
+	}
+	
 	public static Activity[] getActivities(SiteSession ss) throws SQLException {
 		Connection con = DBManager.getInstance().getConnection();
-		String sql = "SELECT id FROM gs_activity WHERE sessionId = ?";
+		String sql = "SELECT id FROM gs_activity WHERE status = 1 AND sessionId = ? ORDER BY assignedTime";
 		PreparedStatement ps = con.prepareStatement(sql);
 		ps.setInt(1,ss.getId());
 		ResultSet rs = ps.executeQuery();
@@ -168,5 +284,152 @@ public class ActivityManager {
 			
 			con.close();
 		}
+	}
+	
+	public static boolean editActivity(int id,SiteSession ss, int venue, String name, int length, 
+			boolean[] days, Calendar startTime, Calendar endTime,
+		TargetGroup[] targets, Calendar[] dates) throws SQLException {
+		Activity a = getActivity(ss, id);
+		if( a != null ) {
+			Connection con = DBManager.getInstance().getConnection();
+			String sql = "UPDATE gs_activity SET venueId = ?,name = ?,length = ?,days = ?,startTimeRange = ?,endTimeRange = ?,assignedTime = NULL WHERE id = ?";
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setInt(1,venue);
+			ps.setString(2,name);
+			ps.setInt(3,length);
+			ps.setString(4, SessionManager.stringifyDays(days));
+			ps.setTime(5, new Time(startTime.getTime().getTime()));
+			ps.setTime(6, new Time(endTime.getTime().getTime()));
+			ps.setInt(7,a.getId());
+			System.out.println(ps);
+			ps.execute();
+			
+			if(dates != null && dates.length > 0 ) {
+				boolean[] hit1 = new boolean[dates.length];
+				boolean[] hit2 = new boolean[a.getDateRange().length];
+				
+				for(int i = 0; i < hit1.length; i++) {
+					for(int j = 0; j < hit2.length; j++) {
+						if( dates[i].equals(a.getDateRange()[j])) {
+							hit1[i] = hit2[j] = true;
+							break;
+						}
+					}
+				}
+				
+				sql = "INSERT INTO gs_activity_date(actId,actDate) VALUES ";
+				int curr = 0;
+				for(int i = 0; i < dates.length; i++) {
+					if(!hit1[i]) {
+						sql += (curr > 0 ? "," : "") + "(?,?)";
+						curr++;
+					}
+				}
+				if( curr > 0 ) {
+					ps = con.prepareStatement(sql);
+					curr = 0;
+					for(int i = 0; i < dates.length; i++) {
+						if( !hit1[i] ) {
+							ps.setInt(2 * curr + 1, id);
+							ps.setDate(2 * curr + 2, new Date(dates[i].getTime().getTime()));
+							curr++;
+						}
+					}
+					System.out.println(ps);
+					ps.execute();
+				}
+				sql = "UPDATE gs_activity_date SET status = 0 WHERE actId = ? AND actDate IN (";
+				curr = 0;
+				for(int i = 0; i < a.getDateRange().length; i++) {
+					if( !hit2[i] ) {
+						if( curr > 0 ) {
+							sql += ",";
+						}
+						sql += "?";
+						curr++;
+					}
+				}
+				sql += ")";
+				if( curr > 0 ) {
+					ps = con.prepareStatement(sql);
+					ps.setInt(1,id);
+					curr = 2;
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					for(int i = 0; i < a.getDateRange().length; i++) {
+						if( !hit2[i] ) {
+							ps.setString(curr,sdf.format(a.getDateRange()[i].getTime()));
+							curr++;
+						}
+					}
+					System.out.println(ps);
+					ps.execute();
+				}
+			}
+			
+			if( targets != null && targets.length > 0 ) {
+				boolean[] hit1 = new boolean[targets.length];
+				boolean[] hit2 = new boolean[a.getTargetGroups().size()];
+				
+				for(int i = 0; i < hit1.length; i++) {
+					for(int j = 0; j < hit2.length; j++) {
+						if( targets[i].getId() == a.getTargetGroups().get(j).getId() ) {
+							hit1[i] = hit2[j] = true;
+							break;
+						}
+					}
+				}
+				
+				sql = "INSERT INTO gs_activity_target_group(groupId,actId) VALUES ";
+				
+				int curr = 0;
+				for(int i = 0; i < targets.length; i++) {
+					if( !hit1[i] ) {
+						sql += (curr > 0 ? "," : "") + "(?,?)";
+						curr++;
+					}
+				}
+				if( curr > 0 ) {
+					ps = con.prepareStatement(sql);
+					curr = 0;
+					for(int i = 0; i < targets.length; i++) {
+						if(!hit1[i]) {
+							ps.setInt(2 * curr + 1, targets[i].getId());
+							ps.setInt(2 * curr + 2, id);
+							curr++;
+						}
+					}
+					System.out.println(ps);
+					ps.execute();
+				}
+				
+				sql = "UPDATE gs_activity_target_group SET status = 0 WHERE actId = ? AND groupId IN (";
+				curr = 0;
+				for(int i = 0; i < hit2.length; i++) {
+					if(!hit2[i]) {
+						if( curr > 0 ) {
+							sql += ",";
+						}
+						sql += "?";
+						curr++;
+					}
+				}
+				sql += ")";
+				if( curr > 0 ) {
+					ps = con.prepareStatement(sql);
+					ps.setInt(1,id);
+					curr = 2;
+					for(int i = 0; i < hit2.length; i++) {
+						if(!hit2[i]) {
+							ps.setInt(curr,a.getTargetGroups().get(i).getId());
+							curr++;
+						}
+					}
+					System.out.println(ps);
+					ps.execute();
+				}
+			}
+			con.close();
+		} 
+		return false;
 	}
 }

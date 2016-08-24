@@ -1,20 +1,21 @@
-var addActivity = (function() {
+var editActivity = (function() {
 	var dateRange = {};
 	var did = 0;
 	var dateRegex = /^(0?[1-9]|1[0-2])\/(0?[1-9]|[1-2][0-9]|3[0-1])\/2[0-9]{3}$/;
 	var timeRegex = /^((0?|1)[0-9]|2[0-3])([0-5][0-9])$/;
 	var startDate = null;
 	var endDate = null;
+	var actId = null;
 	var blackdates = [];
 	var days = [
-		'sunday',
-		'monday',
-		'tuesday',
-		'wednesday',
-		'thursday',
-		'friday',
-		'saturday'
-	];
+	    		'sunday',
+	    		'monday',
+	    		'tuesday',
+	    		'wednesday',
+	    		'thursday',
+	    		'friday',
+	    		'saturday'
+	    	];
 	
 	function setStartDate(sd) {
 		if( dateRegex.test(sd)) {
@@ -53,16 +54,74 @@ var addActivity = (function() {
 												}
 											}
 											if($("#" + days[date.getDay()]).length == 0 ) {
-												return false;
-											}
+												return [false];
+											}											
 											return [true];
 										}});
 		}
 	}
 	
+	function addDate(bd) {
+		if( dateRegex.test(bd)) {
+			for(x in dateRange) {
+				console.log(dateRange[x] + " " + bd);
+				if( dateRange[x] === bd ) {
+					showError("You have already added that date.");
+					return;
+				}
+			}
+			for(x in blackdates) {
+				var d = blackdates[x];
+				var month = (d.month * 1 + 1);
+				var str = (month < 10 ? "0" + month : month) + "/" + d.day + "/" + d.year;
+				console.log(str + " " + bd);
+				if( str == bd) {
+					showError("That date is blacked out.");
+					return;
+				}
+			}
+			dateRange[did] = bd;
+			$("#dates").append("<li id='d-" + did + "'>" + bd + "<button type='button' onclick='editActivity.removeDate(" + did + ");'><i class='fa fa-trash'/></button></li>");
+			$("#dateRange").val("");
+			did++;
+		} else {
+			showError("Invalid date");
+		}
+	} 
+	
 	$(document).ready(function() {
+		console.log($("#blackdates").val());
 		blackdates = JSON.parse($("#blackdates").val());
-		
+		actId = $("#actId").val();
+		$.ajax({
+			url : "getActivity",
+			method : "POST",
+			data : {
+				token : $("#token").val(),
+				actId : actId
+			},
+			dataType : "json",
+			success : function(a) {
+				if( a !== null ) {
+					$("#name").val(a.name);
+					$("#length").val(a.length);
+					$("#venue").val(a.venue);
+					$("#startTime").val(a.startTime);
+					$("#endTime").val(a.endTime);
+					for(x in a.days) {
+						$("#" + a.days[x].toLowerCase()).prop('checked',true);
+					}
+					for(x in a.tgs) {
+						$("#tg-" + a.tgs[x]).prop('checked',true);
+					}
+					for(x in a.dateRange) {
+						addDate(a.dateRange[x]);
+					}
+				} else {
+					window.location = ".";
+				} 
+			}
+		});
 		setStartDate($("#startDate").val());
 		setEndDate($("#endDate").val());
 		$(".blackDays").each(function() {
@@ -70,29 +129,25 @@ var addActivity = (function() {
 			$("label[for='" + $(this).val().toLowerCase() + "']").remove();
 		});
 		$("#addDate").click(function() {
-			var bd = $("#dateRange").val();
-			if( dateRegex.test(bd)) {
-				for(x in dateRange) {
-					if( dateRange[x] === bd ) {
-						showError("You have already added that date.");
-						return;
+			addDate($("#dateRange").val());
+		});
+		$("#deleteActivity").click(function() {
+			var token = $("#token").val();
+			$.ajax({
+				url : "deleteActivity",
+				method : "POST",
+				data : {
+					token : token,
+					id : actId
+				},
+				success : function(a){
+					if( a === "true" || a === "false") {
+						window.location = ".";
+					} else {
+						showError(a);
 					}
 				}
-				for(x in blackdates) {
-					var d = blackdates[x];
-					var str = (d.month + 1) + "/" + d.day + "/" + d.year;
-					if( str == bd) {
-						showError("That date is blacked out.");
-						return;
-					}
-				}
-				dateRange[did] = bd;
-				$("#dates").append("<li id='d-" + did + "'>" + bd + "<button type='button' onclick='addActivity.removeDate(" + did + ");'><i class='fa fa-trash'/></button></li>");
-				$("#dateRange").val("");
-				did++;
-			} else {
-				showError("Invalid date");
-			}
+			});
 		});
 	});
 	
@@ -140,6 +195,7 @@ var addActivity = (function() {
 					$("#dates").html(d);
 					
 					$("#targets").html(tg);
+					$("#actId").val(actId);
 					return true;
 				} else {
 					showError("Please choose at least one target group.");

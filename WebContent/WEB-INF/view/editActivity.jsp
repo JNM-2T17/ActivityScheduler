@@ -3,18 +3,23 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <jsp:include page="header.jsp"/>
 		<div id="contentTitle">
-			<h2>Add Activity</h2>
+			<h2>Edit Activity</h2>
+			<div id="sectionOptions">
+				<button id="deleteActivity">Delete Activity&nbsp;&nbsp;&nbsp;<i class="fa fa-trash"></i></button>
+			</div>
 			<div class="clear"></div>
 		</div>
 		
-		<script src="<c:url value="resources/js/addActivity.js"/>"></script>
+		<script src="<c:url value="resources/js/editActivity.js"/>"></script>
 		<input type="hidden" id="startDate" value="${startDate }"/>
 		<input type="hidden" id="endDate" value="${endDate }"/>
 		<input type="hidden" id="blackdates" value='${blackdates }'/>
 		<c:forEach items="${blackdays }" var="bd">
 		<input type="hidden" class="blackDays" value="${bd }"/>
 		</c:forEach>
-		<form action="addActivity" method="POST" onsubmit="return addActivity.checkSubmit();">
+		<form action="editActivity" method="POST" onsubmit="return editActivity.checkSubmit();">
+			<input type="hidden" id="actId" name="actId" value="${actId }"/>	
+			<input type="hidden" id="token" name="token" value="${sessionToken }"/>
 			<table id="addActivityForm">
 				<tr>
 					<td>Name</td>
@@ -58,7 +63,7 @@
 				<tr>
 					<td>Target Groups</td>
 					<td>
-						<button class="selectAllButton"  type="button" onclick="$('.targetGroup').prop('checked',true);">Select All</button>
+						<button class="selectAllButton" type="button" onclick="$('.targetGroup').prop('checked',true);">Select All</button>
 						<c:set var="i" value="0"/>
 						<c:forEach items="${targetGroups }" var="tg">
 						<br/><input type="checkbox" id="tg-${tg.id }" class="possibleCheck targetGroup"><c:out value="${tg.name }"/></input>
@@ -75,7 +80,7 @@
 				</tr>
 			</table>
 			<div id="targets"></div>
-			<input type="hidden" name="token" value="${sessionToken }"/>
 			<input class="submitForm" type="submit" value="Submit" id="addActivityButton"/>
 		</form>
+		
 <jsp:include page="footer.jsp"/>

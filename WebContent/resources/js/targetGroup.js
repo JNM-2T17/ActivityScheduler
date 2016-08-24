@@ -2,13 +2,13 @@ var tg = (function(){
 	var currId = null;
 	
 	function showPopup() {
-		$("#popup-overlay").show();
-		$("#popup-frame").show();
+		$("#popup-overlay").fadeIn(250);
+		$("#popup-frame").fadeIn(250);
 	}
 	
 	function hidePopup() {
-		$("#popup-overlay").hide();
-		$("#popup-frame").hide();
+		$("#popup-overlay").fadeOut(250);
+		$("#popup-frame").fadeOut(250);
 	}
 	
 	function editTG() {
@@ -19,12 +19,20 @@ var tg = (function(){
 	
 	$(document).ready(function() {
 		$("#addForm").hide();
+		$("#cancelAdd").hide();
 		$("#addButton").click(function() {
 			$("#addButton").hide();
+			$("#cancelAdd").show();
 			$("#addForm").show();
+			$("#name").focus();
+		});
+		$("#cancelAdd").click(function() {
+			$("#addButton").show();
+			$("#cancelAdd").hide();
+			$("#addForm").hide();
+			$("#targetGroupName").val("");
 		});
 		
-		hidePopup();
 		$(".editTG").click(editTG);
 		
 		$("#popup-overlay").click(function() {
@@ -76,6 +84,9 @@ var tg = (function(){
 				success : function(a) {
 					if(a === "true") {
 						$("#tg-" + currId).remove();
+						if($("li[id^='tg-']").length == 0 ) {
+							$("#itemList").html("<li id='empty-prompt'>No Target Groups</li>");
+						}
 						currId = null;
 						hidePopup();
 						showMessage(name + " has been deleted.");
@@ -118,12 +129,13 @@ var tg = (function(){
 								location = ".";
 							} else {
 								$("#name").val("");
-								$("#empty-prompt").remove();
-								$("table tbody").append("<tr id='tg-" + a.id + "'><td class='name'>" + escapeHtml(a.name) + 
-															"</td><td><span class='editTG' data-id='" + a.id + "'><i class='fa fa-edit'></i></span></td></tr>");
+								$("#empty-prompt").hide();
+								$("ul#itemList").append("<li id='tg-" + a.id + "'><span class='name'>" + escapeHtml(a.name) + 
+															"</span> <span class='editTG' data-id='" + a.id + "'><i class='fa fa-edit'></i></span></li>");
 								$("#tg-" + a.id + " .editTG").click(editTG);
 								$("#addButton").show();
 								$("#addForm").hide();
+								$("#cancelAdd").hide();
 								showMessage("Target group successfully added.");
 							} 
 						} else {

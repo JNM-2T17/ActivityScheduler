@@ -16,37 +16,39 @@
 		<script src="<c:url value="resources/js/script.js"/>"></script>
 	</head>
 	<body>
-		<div class="main-container">
-			<nav>
-				<h1><a href=".">CSO Activity Scheduler</a></h1>
+		<div id="main-container">
+			<div id="header">
+				<h1><a href=".">Activity Scheduler</a></h1>
 				<ul>
 				<c:choose>
 				<c:when test="${empty sessionUser }">
 					<li id="loginOption">
 						<div id="loginForm">
-						<form action="login" method="POST">
-						Login
-						<input type="hidden" name="token" value="<c:out value="${sessionToken }"/>"/>
-						<input type="text" name="username" placeholder="Username"/>
-						<input type="password" name="password" placeholder="Password"/>
-						<input type="submit" value="Login"/>
-						</form>
+							<form action="login" method="POST">
+								<input type="hidden" name="token" value="<c:out value="${sessionToken }"/>"/>
+								<input type="text" name="username" placeholder="Username"/>
+								<input type="password" name="password" placeholder="Password"/>
+								<input type="submit" value="Login"/>
+							</form>
 						</div>
 					</li>
 					<li id="registerOption"><a href="register">Register</a></li>
 				</c:when>
 				<c:otherwise>
-					<li id="accountOption">Account</li>
-					<li id="logoutOption"><a href="logout">Logout <c:out value="${sessionUser.username }"/></a></li>
 					<li id="targetGroupOption"><a href="targetGroup">Target Groups</a></li>
 					<li id="venueOption"><a href="venue">Venues</a></li>
 					<c:if test="${not empty activeSession }">
 					<li id="settingsOption"><a href="editSession?sessionId=${activeSession.id }">Settings</a></li>
-					<li id="sessions"><a href="sessions">Sessions</a></li>
 					</c:if>
+					<li id="sessions"><a href="sessions">Sessions</a></li>
+					<li id="accountOption"><a href="editAccount">Account</a></li>
+					<li id="logoutOption"><a href="logout">Logout <span id="usernameTop"><c:out value="${sessionUser.username }"/></span></a></li>
 				</c:otherwise>
 				</c:choose>
 				</ul>
-			</nav>
-			<input type="hidden" id="error" value="<c:out value="${error}"/>"/>
-			<input type="hidden" id="message" value="<c:out value="${message}"/>"/>
+				<input type="hidden" id="error" value="<c:out value="${error}"/>"/>
+				<input type="hidden" id="message" value="<c:out value="${message}"/>"/>
+				<div class="clear"></div>
+			</div>
+
+			<div id="content">
