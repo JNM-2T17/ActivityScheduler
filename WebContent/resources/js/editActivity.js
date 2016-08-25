@@ -25,9 +25,9 @@ var editActivity = (function() {
 			$("#dateRange").datepicker({minDate : startDate,maxDate : endDate,
 										beforeShowDay : function(date) {
 											for(x in blackdates ) {
-												if( date.getUTCDate() + 1 == blackdates[x].day &&
-													date.getUTCMonth() == blackdates[x].month && 
-													date.getUTCFullYear() == blackdates[x].year) {
+												if( date.getDate() == blackdates[x].day &&
+													date.getMonth() == blackdates[x].month && 
+													date.getFullYear() == blackdates[x].year) {
 													return [false];
 												}
 											}
@@ -47,9 +47,9 @@ var editActivity = (function() {
 			$("#dateRange").datepicker({minDate : startDate,maxDate : endDate,
 										beforeShowDay : function(date) {
 											for(x in blackdates ) {
-												if( date.getUTCDate() + 1 == blackdates[x].day &&
-													date.getUTCMonth() == blackdates[x].month && 
-													date.getUTCFullYear() == blackdates[x].year) {
+												if( date.getDate() == blackdates[x].day &&
+													date.getMonth() == blackdates[x].month && 
+													date.getFullYear() == blackdates[x].year) {
 													return [false];
 												}
 											}
@@ -70,12 +70,12 @@ var editActivity = (function() {
 					return;
 				}
 			}
+			var split = bd.split("/");
+			var temp = new Date(split[2],split[0] - 1,split[1]);
 			for(x in blackdates) {
 				var d = blackdates[x];
-				var month = (d.month * 1 + 1);
-				var str = (month < 10 ? "0" + month : month) + "/" + d.day + "/" + d.year;
-				console.log(str + " " + bd);
-				if( str == bd) {
+				if( temp.getDate() == d.day && temp.getMonth() == d.month && 
+						temp.getFullYear() == d.year) {
 					showError("That date is blacked out.");
 					return;
 				}
