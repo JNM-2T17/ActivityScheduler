@@ -47,11 +47,13 @@ var editAccount = (function(){
 				message = appendMessage(message,"Username is not valid.");
 			}
 			
-			var passCheck = checkPass(password);
-			if( passCheck !== true ) {
-				message = appendMessage(message,passCheck);
-			} else if(password != confirmPassword) {
-				message = appendMessage(message,"Passwords don't match.");
+			if( password.length > 0 ) {
+				var passCheck = checkPass(password);
+				if( passCheck !== true ) {
+					message = appendMessage(message,passCheck);
+				} else if(password != confirmPassword) {
+					message = appendMessage(message,"Passwords don't match.");
+				}
 			}
 			
 			if(!/^[a-z ,.'-]+$/i.test(fname)) {

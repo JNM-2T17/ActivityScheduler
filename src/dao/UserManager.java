@@ -138,7 +138,7 @@ public class UserManager {
 			ps.setInt(6, userId);
 			ps.execute();
 			con.close();
-			if( login(username,password) != null ) {
+			if( newPassword.length() > 0 && login(username,password) != null ) {
 				changePW(userId,newPassword);
 			}
 			return true;

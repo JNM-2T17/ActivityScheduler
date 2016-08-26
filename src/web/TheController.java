@@ -417,8 +417,8 @@ public class TheController {
 				checkToken(token,request,response);
 				if( username.matches("^[A-Za-z0-9_-]+$") && fname.matches("^[A-Za-z ,.'-]+$") && 
 						mi.matches("^[A-Za-z]{0,2}.?$") && lname.matches("^[A-Za-z ,.'-]+$") && 
-						email.matches("^([-.a-zA-Z0-9_]+)@([-.a-zA-Z0-9_]+)[.]([a-zA-Z]{2,5})$") && 
-						UserManager.checkPass(newPassword) && newPassword.equals(confirmPassword)) {
+						email.matches("^([-.a-zA-Z0-9_]+)@([-.a-zA-Z0-9_]+)[.]([a-zA-Z]{2,5})$")&& 
+						(newPassword.length() == 0 || UserManager.checkPass(newPassword) && newPassword.equals(confirmPassword))) {
 					try {
 						if(UserManager.updateUser(u.getId(),username, password, newPassword, fname, mi, lname, email)) {
 							((AuditManager)request.getSession().getAttribute("auditor")).addActivity("edited their account.");
