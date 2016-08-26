@@ -46,6 +46,8 @@ import dao.VenueManager;
 
 @Controller
 public class TheController {
+	private static final String rootDir = "/ActivityScheduler";
+	
 	private void restoreToken(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String token = (String)request.getSession().getAttribute("sessionToken");
 		if(token == null || token.length() == 0 ) {
@@ -300,7 +302,7 @@ public class TheController {
 				request.getSession().setAttribute("prompt",true);
 			} 
 		}
-		response.sendRedirect("/ActivityScheduler/.");
+		response.sendRedirect(rootDir + "/.");
 	}
 	
 	@RequestMapping("/logout")
@@ -331,7 +333,7 @@ public class TheController {
 	public void register(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User u = restoreSession(request, response);
 		if( u != null ) {
-			response.sendRedirect("/ActivityScheduler/.");
+			response.sendRedirect(rootDir + "/.");
 		} else {
 			request.getRequestDispatcher("WEB-INF/view/register.jsp").forward(request, response);
 		}
@@ -350,7 +352,7 @@ public class TheController {
 			HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User u = restoreSession(request, response);
 		if( u != null ) {
-			response.sendRedirect("/ActivityScheduler/.");
+			response.sendRedirect(rootDir + "/.");
 		} else {
 			try {
 				checkToken(token,request,response);
@@ -365,13 +367,13 @@ public class TheController {
 						((AuditManager)request.getSession().getAttribute("auditor")).addActivity("tried to register account " + username + " which is already registered.");
 						request.getSession().setAttribute("error", "Username is in use.");
 						request.getSession().setAttribute("prompt", true);
-						response.sendRedirect("/ActivityScheduler/register");
+						response.sendRedirect(rootDir + "/register");
 					}
 				} else {
 					((AuditManager)request.getSession().getAttribute("auditor")).addActivity("ran into data validation errors on register.");
 					request.getSession().setAttribute("error","Failed to register account.");
 					request.getSession().setAttribute("prompt",true);
-					response.sendRedirect("/ActivityScheduler/register");
+					response.sendRedirect(rootDir + "/register");
 				}
 			} catch (SQLException | MissingTokenException e) {
 				// TODO Auto-generated catch block
@@ -379,7 +381,7 @@ public class TheController {
 				logError(e,request);
 				request.getSession().setAttribute("error","An unexpected error occured.");
 				request.getSession().setAttribute("prompt",true);
-				response.sendRedirect("/ActivityScheduler/register");
+				response.sendRedirect(rootDir + "/register");
 			} 
 		}
 	}
@@ -388,7 +390,7 @@ public class TheController {
 	public void editAccount(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User u = restoreSession(request, response);
 		if( u == null ) {
-			response.sendRedirect("/ActivityScheduler/.");
+			response.sendRedirect(rootDir + "/.");
 		} else {
 			request.setAttribute("u", u);
 			request.getRequestDispatcher("WEB-INF/view/editAccount.jsp").forward(request, response);
@@ -409,7 +411,7 @@ public class TheController {
 			HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User u = restoreSession(request, response);
 		if( u == null ) {
-			response.sendRedirect("/ActivityScheduler/.");
+			response.sendRedirect(rootDir + "/.");
 		} else {
 			try {
 				checkToken(token,request,response);
@@ -422,12 +424,12 @@ public class TheController {
 							((AuditManager)request.getSession().getAttribute("auditor")).addActivity("edited their account.");
 							request.getSession().setAttribute("message", "Account successfully edited.");
 							request.getSession().setAttribute("prompt", true);
-							response.sendRedirect("/ActivityScheduler/.");
+							response.sendRedirect(rootDir + "/.");
 						} else {
 							((AuditManager)request.getSession().getAttribute("auditor")).addActivity("tried to register account " + username + " which is already registered.");
 							request.getSession().setAttribute("error", "Username is in use.");
 							request.getSession().setAttribute("prompt", true);
-							response.sendRedirect("/ActivityScheduler/register");
+							response.sendRedirect(rootDir + "/register");
 						}
 					} catch (AuthenticationException e) {
 						// TODO Auto-generated catch block
@@ -438,7 +440,7 @@ public class TheController {
 					((AuditManager)request.getSession().getAttribute("auditor")).addActivity("ran into data validation errors on edit account.");
 					request.getSession().setAttribute("error","Failed to edit account account.");
 					request.getSession().setAttribute("prompt",true);
-					response.sendRedirect("/ActivityScheduler/editAccount");
+					response.sendRedirect(rootDir + "/editAccount");
 				}
 			} catch (SQLException | MissingTokenException e) {
 				// TODO Auto-generated catch block
@@ -446,7 +448,7 @@ public class TheController {
 				logError(e,request);
 				request.getSession().setAttribute("error","An unexpected error occured.");
 				request.getSession().setAttribute("prompt",true);
-				response.sendRedirect("/ActivityScheduler/editAccount");
+				response.sendRedirect(rootDir + "/editAccount");
 			} 
 		}
 	}
@@ -572,7 +574,7 @@ public class TheController {
 	public void venue(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User u = restoreSession(request, response);
 		if( u == null ) {
-			response.sendRedirect("/ActivityScheduler/.");
+			response.sendRedirect(rootDir + "/.");
 		} else {
 			try {
 				request.setAttribute("venues", VenueManager.getAllVenues(u));
@@ -689,7 +691,7 @@ public class TheController {
 	public void addSession(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User u = restoreSession(request, response);
 		if( u == null ) {
-			response.sendRedirect("/ActivityScheduler/.");
+			response.sendRedirect(rootDir + "/.");
 		} else {
 			request.getRequestDispatcher("WEB-INF/view/addSession.jsp").forward(request, response);
 		}
@@ -713,7 +715,7 @@ public class TheController {
 			HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User u = restoreSession(request, response);
 		if( u == null ) {
-			response.sendRedirect("/ActivityScheduler/.");
+			response.sendRedirect(rootDir + "/.");
 		} else {
 			try {
 				checkToken(token,request,response);
@@ -772,7 +774,7 @@ public class TheController {
 							request.getSession().setAttribute("prompt", true);
 							request.getSession().setAttribute("activeSession", null);
 							genToken(request, response);
-							response.sendRedirect("/ActivityScheduler/.");
+							response.sendRedirect(rootDir + "/.");
 							return;
 						} catch (SQLException e) {
 							// TODO Auto-generated catch block
@@ -780,7 +782,7 @@ public class TheController {
 							logError(e,request);
 							request.getSession().setAttribute("error", "Adding Session Failed");
 							request.getSession().setAttribute("prompt",true);
-							response.sendRedirect("/ActivityScheduler/addSession");
+							response.sendRedirect(rootDir + "/addSession");
 							return;
 						}
 					}
@@ -788,14 +790,14 @@ public class TheController {
 				((AuditManager)request.getSession().getAttribute("auditor")).addActivity("ran into data validation errors on add session.");
 				request.getSession().setAttribute("error", "Data validation error.");
 				request.getSession().setAttribute("prompt",true);
-				response.sendRedirect("/ActivityScheduler/addSession");
+				response.sendRedirect(rootDir + "/addSession");
 			} catch (MissingTokenException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 				((AuditManager)request.getSession().getAttribute("auditor")).addActivity("had an invalid token on Add Session.");
 				request.getSession().setAttribute("error", "An unexpected error occured.");
 				request.getSession().setAttribute("prompt",true);
-				response.sendRedirect("/ActivityScheduler/addSession");
+				response.sendRedirect(rootDir + "/addSession");
 			}
 		}
 	}
@@ -805,7 +807,7 @@ public class TheController {
 			HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User u = restoreSession(request, response);
 		if( u == null ) {
-			response.sendRedirect("/ActivityScheduler/.");
+			response.sendRedirect(rootDir + "/.");
 		} else {
 			request.setAttribute("sessionId", sessionId);
 			request.getRequestDispatcher("WEB-INF/view/editSession.jsp").forward(request, response);
@@ -831,7 +833,7 @@ public class TheController {
 			HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User u = restoreSession(request, response);
 		if( u == null ) {
-			response.sendRedirect("/ActivityScheduler/.");
+			response.sendRedirect(rootDir + "/.");
 		} else {
 			try {
 				checkToken(token,request,response);
@@ -886,7 +888,7 @@ public class TheController {
 							}
 							request.getSession().setAttribute("message", "Session successfully edited.");
 							request.getSession().setAttribute("prompt", true);
-							response.sendRedirect("/ActivityScheduler/.");
+							response.sendRedirect(rootDir + "/.");
 							return;
 						} catch (SQLException e) {
 							// TODO Auto-generated catch block
@@ -894,7 +896,7 @@ public class TheController {
 							logError(e,request);
 							request.getSession().setAttribute("error", "Editing Session Failed");
 							request.getSession().setAttribute("prompt",true);
-							response.sendRedirect("/ActivityScheduler/editSession?sessionId="+sessionId);
+							response.sendRedirect(rootDir + "/editSession?sessionId="+sessionId);
 							return;
 						}
 					}
@@ -902,14 +904,14 @@ public class TheController {
 				((AuditManager)request.getSession().getAttribute("auditor")).addActivity("ran into data validation errors on edit session.");
 				request.getSession().setAttribute("error", "Data validation error.");
 				request.getSession().setAttribute("prompt",true);
-				response.sendRedirect("/ActivityScheduler/editSession?sessionId=" + sessionId);
+				response.sendRedirect(rootDir + "/editSession?sessionId=" + sessionId);
 			} catch (MissingTokenException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 				((AuditManager)request.getSession().getAttribute("auditor")).addActivity("had an invalid token on Edit Session.");
 				request.getSession().setAttribute("error", "An unexpected error occured.");
 				request.getSession().setAttribute("prompt",true);
-				response.sendRedirect("/ActivityScheduler/editSession?sessionId=" + sessionId);
+				response.sendRedirect(rootDir + "/editSession?sessionId=" + sessionId);
 			}
 		}
 	}
@@ -968,12 +970,18 @@ public class TheController {
 			HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		User u = restoreSession(request,response);
 		if( u == null ) {
+			request.getSession().setAttribute("error", "An unexpected error occured.");
+			request.getSession().setAttribute("prompt", true);
 			response.getWriter().print(false);
 		} else {
 			try {
 				checkToken(token,request,response);
 				SiteSession ss = SessionManager.getSession(sessionId);
-				if( ss.getUserId() == u.getId() ) {
+				if( ss == null ) {
+					request.getSession().setAttribute("error", "That session does not exist.");
+					request.getSession().setAttribute("prompt", true);
+					response.getWriter().print("null");
+				} else if( ss.getUserId() == u.getId() ) {
 					SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
 					Gson g = new Gson();
 					String json = "{\"name\":\"" + ss.getName() + "\",\"startDate\":\"" + 
@@ -1001,15 +1009,21 @@ public class TheController {
 					response.getWriter().print(json);
 				} else {
 					((AuditManager)request.getSession().getAttribute("auditor")).addActivity("tried to get session " + ss.getId() + " that isn't theirs.");
+					request.getSession().setAttribute("error", "That session does not exist.");
+					request.getSession().setAttribute("prompt", true);
 					response.getWriter().print("null");
 				}
 			} catch (MissingTokenException e) {
 				// TODO Auto-generated catch block
 				((AuditManager)request.getSession().getAttribute("auditor")).addActivity("had an invalid token on Get Session.");
+				request.getSession().setAttribute("error", "An unexpected error occured.");
+				request.getSession().setAttribute("prompt", true);
 				response.getWriter().print("null");
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				logError(e,request);
+				request.getSession().setAttribute("error", "An unexpected error occured.");
+				request.getSession().setAttribute("prompt", true);
 				response.getWriter().print("null");
 			}
 		}
@@ -1020,7 +1034,7 @@ public class TheController {
 			HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User u = restoreSession(request, response);
 		if( u == null ) {
-			response.sendRedirect("/ActivityScheduler/.");
+			response.sendRedirect(rootDir + "/.");
 		} else {
 			SiteSession ss;
 			try {
@@ -1044,7 +1058,7 @@ public class TheController {
 				request.getSession().setAttribute("error", "An unexpected error occured");
 				request.getSession().setAttribute("prompt",true);
 			}
-			response.sendRedirect("/ActivityScheduler/.");
+			response.sendRedirect(rootDir + "/.");
 		}
 	}
 	
@@ -1055,6 +1069,8 @@ public class TheController {
 			HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User u = restoreSession(request,response);
 		if( u == null || request.getSession().getAttribute("activeSession")== null ) {
+			request.getSession().setAttribute("error", "An unexpected error occured.");
+			request.getSession().setAttribute("prompt", true);
 			response.getWriter().print(false);
 		} else {
 			try {
@@ -1098,11 +1114,15 @@ public class TheController {
 					json += "]}";
 					response.getWriter().print(json);
 				} else {
+					request.getSession().setAttribute("error", "That activity does not exist.");
+					request.getSession().setAttribute("prompt", true);
 					response.getWriter().print("null");
 				}
 			} catch (MissingTokenException | SQLException e) {
 				// TODO Auto-generated catch block
 				logError(e,request);
+				request.getSession().setAttribute("error", "An unexpected error occured.");
+				request.getSession().setAttribute("prompt", true);
 				response.getWriter().print("null");
 			}
 			
@@ -1113,28 +1133,42 @@ public class TheController {
 	public void addActivity(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User u = restoreSession(request,response);
 		if( u == null ) {
-			response.sendRedirect("/ActivityScheduler/.");
+			response.sendRedirect(rootDir + "/.");
 		} else {
 			Venue[] vs;
 			try {
 				vs = VenueManager.getAllVenues(u);
 				TargetGroup[] tgs = TargetGroupManager.getAllTargetGroups(u);
-				request.setAttribute("venues", vs);
-				request.setAttribute("targetGroups", tgs);
-				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-				SiteSession ss = (SiteSession)request.getSession().getAttribute("activeSession");
-				request.setAttribute("startDate",sdf.format(ss.getStartDate().getTime()));
-				request.setAttribute("endDate",sdf.format(ss.getEndDate().getTime()));
-				request.setAttribute("blackdays", ss.getBlackDaysString());
-				request.setAttribute("blackdates", ss.getBlackdatesString());
-				request.getRequestDispatcher("WEB-INF/view/addActivity.jsp").forward(request, response);
+				String error = "";
+				if(tgs.length == 0 ) {
+					error = "Please add a target group first.";
+				}
+				if( vs.length == 0 ) {
+					error += (error.length() == 0 ? "" : "<br/>") + "Please add a venue first.";
+				}
+				
+				if( error.length() > 0 ) {
+					request.getSession().setAttribute("error", error);
+					request.getSession().setAttribute("prompt", true);
+					response.sendRedirect(rootDir + "/.");
+				} else {
+					request.setAttribute("venues", vs);
+					request.setAttribute("targetGroups", tgs);
+					SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+					SiteSession ss = (SiteSession)request.getSession().getAttribute("activeSession");
+					request.setAttribute("startDate",sdf.format(ss.getStartDate().getTime()));
+					request.setAttribute("endDate",sdf.format(ss.getEndDate().getTime()));
+					request.setAttribute("blackdays", ss.getBlackDaysString());
+					request.setAttribute("blackdates", ss.getBlackdatesString());
+					request.getRequestDispatcher("WEB-INF/view/addActivity.jsp").forward(request, response);
+				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				logError(e,request);
 				request.getSession().setAttribute("error", "An unexpected error occured");
 				request.getSession().setAttribute("prompt",true);
-				response.sendRedirect("/ActivityScheduler/.");
+				response.sendRedirect(rootDir + "/.");
 			}
 		}
 	}
@@ -1158,7 +1192,7 @@ public class TheController {
 			HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User u = restoreSession(request,response);
 		if( u == null ) {
-			response.sendRedirect("/ActivityScheduler/.");
+			response.sendRedirect(rootDir + "/.");
 		} else {
 			try {
 				checkToken(token,request,response);
@@ -1217,7 +1251,7 @@ public class TheController {
 							((AuditManager)request.getSession().getAttribute("auditor")).addActivity("added activity " + name + ".");
 							request.getSession().setAttribute("message", "Activity successfully added.");
 							request.getSession().setAttribute("prompt", true);
-							response.sendRedirect("/ActivityScheduler/.");
+							response.sendRedirect(rootDir + "/.");
 							return;
 						} catch (SQLException e) {
 							// TODO Auto-generated catch block
@@ -1225,7 +1259,7 @@ public class TheController {
 							logError(e,request);
 							request.getSession().setAttribute("error", "Adding Activity Failed");
 							request.getSession().setAttribute("prompt",true);
-							response.sendRedirect("/ActivityScheduler/addActivity");
+							response.sendRedirect(rootDir + "/addActivity");
 							return;
 						}
 					}
@@ -1233,21 +1267,21 @@ public class TheController {
 				((AuditManager)request.getSession().getAttribute("auditor")).addActivity("ran into data validation errors on add activity.");
 				request.getSession().setAttribute("error", "Data validation error.");
 				request.getSession().setAttribute("prompt",true);
-				response.sendRedirect("/ActivityScheduler/addActivity");
+				response.sendRedirect(rootDir + "/addActivity");
 			} catch (MissingTokenException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 				((AuditManager)request.getSession().getAttribute("auditor")).addActivity("had an invalid token on Add Activity.");
 				request.getSession().setAttribute("error", "An unexpected error occured.");
 				request.getSession().setAttribute("prompt",true);
-				response.sendRedirect("/ActivityScheduler/addActivity");
+				response.sendRedirect(rootDir + "/addActivity");
 			} catch (SQLException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 				logError(e1,request);
 				request.getSession().setAttribute("error", "Adding Activity Failed");
 				request.getSession().setAttribute("prompt",true);
-				response.sendRedirect("/ActivityScheduler/addActivity");
+				response.sendRedirect(rootDir + "/addActivity");
 			}
 		}
 	}
@@ -1257,7 +1291,7 @@ public class TheController {
 			HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User u = restoreSession(request,response);
 		if( u == null ) {
-			response.sendRedirect("/ActivityScheduler/.");
+			response.sendRedirect(rootDir + "/.");
 		} else {
 			try {
 				int id = Integer.parseInt(idS);
@@ -1266,26 +1300,40 @@ public class TheController {
 				try {
 					vs = VenueManager.getAllVenues(u);
 					TargetGroup[] tgs = TargetGroupManager.getAllTargetGroups(u);
-					request.setAttribute("venues", vs);
-					request.setAttribute("targetGroups", tgs);
-					SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-					SiteSession ss = (SiteSession)request.getSession().getAttribute("activeSession");
-					request.setAttribute("startDate",sdf.format(ss.getStartDate().getTime()));
-					request.setAttribute("endDate",sdf.format(ss.getEndDate().getTime()));
-					request.setAttribute("blackdays", ss.getBlackDaysString());
-					request.setAttribute("blackdates", ss.getBlackdatesString());
-					request.getRequestDispatcher("WEB-INF/view/editActivity.jsp").forward(request, response);
+					String error = "";
+					if(tgs.length == 0 ) {
+						error = "Please add a target group first.";
+					}
+					if( vs.length == 0 ) {
+						error += (error.length() == 0 ? "" : "<br/>") + "Please add a venue first.";
+					}
+					
+					if( error.length() > 0 ) {
+						request.getSession().setAttribute("error", error);
+						request.getSession().setAttribute("prompt", true);
+						response.sendRedirect(rootDir + "/.");
+					} else {
+						request.setAttribute("venues", vs);
+						request.setAttribute("targetGroups", tgs);
+						SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+						SiteSession ss = (SiteSession)request.getSession().getAttribute("activeSession");
+						request.setAttribute("startDate",sdf.format(ss.getStartDate().getTime()));
+						request.setAttribute("endDate",sdf.format(ss.getEndDate().getTime()));
+						request.setAttribute("blackdays", ss.getBlackDaysString());
+						request.setAttribute("blackdates", ss.getBlackdatesString());
+						request.getRequestDispatcher("WEB-INF/view/editActivity.jsp").forward(request, response);
+					}
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 					logError(e,request);
 					request.getSession().setAttribute("error", "An unexpected error occured");
 					request.getSession().setAttribute("prompt",true);
-					response.sendRedirect("/ActivityScheduler/.");
+					response.sendRedirect(rootDir + "/.");
 				}
 			} catch (NumberFormatException nfe) {
 				logError(nfe,request);
-				response.sendRedirect("/ActivityScheduler/.");
+				response.sendRedirect(rootDir + "/.");
 			}
 		}
 	}
@@ -1310,7 +1358,7 @@ public class TheController {
 			HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User u = restoreSession(request,response);
 		if( u == null ) {
-			response.sendRedirect("/ActivityScheduler/.");
+			response.sendRedirect(rootDir + "/.");
 		} else {
 			try {
 				checkToken(token,request,response);
@@ -1369,7 +1417,7 @@ public class TheController {
 							((AuditManager)request.getSession().getAttribute("auditor")).addActivity("edited activity " + name + ".");
 							request.getSession().setAttribute("message", "Activity successfully edited.");
 							request.getSession().setAttribute("prompt", true);
-							response.sendRedirect("/ActivityScheduler/.");
+							response.sendRedirect(rootDir + "/.");
 							return;
 						} catch (SQLException e) {
 							// TODO Auto-generated catch block
@@ -1377,7 +1425,7 @@ public class TheController {
 							logError(e,request);
 							request.getSession().setAttribute("error", "Editing Activity Failed");
 							request.getSession().setAttribute("prompt",true);
-							response.sendRedirect("/ActivityScheduler/editActivity");
+							response.sendRedirect(rootDir + "/editActivity");
 							return;
 						}
 					}
@@ -1385,21 +1433,21 @@ public class TheController {
 				((AuditManager)request.getSession().getAttribute("auditor")).addActivity("ran into data validation errors on edit activity.");
 				request.getSession().setAttribute("error", "Data validation error.");
 				request.getSession().setAttribute("prompt",true);
-				response.sendRedirect("/ActivityScheduler/editActivity?id=" + id);
+				response.sendRedirect(rootDir + "/editActivity?id=" + id);
 			} catch (MissingTokenException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 				((AuditManager)request.getSession().getAttribute("auditor")).addActivity("had an invalid token on Add Activity.");
 				request.getSession().setAttribute("error", "An unexpected error occured.");
 				request.getSession().setAttribute("prompt",true);
-				response.sendRedirect("/ActivityScheduler/editActivity?id=" + id);
+				response.sendRedirect(rootDir + "/editActivity?id=" + id);
 			} catch (SQLException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 				logError(e1,request);
 				request.getSession().setAttribute("error", "Editing Activity Failed");
 				request.getSession().setAttribute("prompt",true);
-				response.sendRedirect("/ActivityScheduler/editActivity?id=" + id);
+				response.sendRedirect(rootDir + "/editActivity?id=" + id);
 			}
 		}
 	}

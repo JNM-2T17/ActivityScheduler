@@ -101,6 +101,7 @@ var addActivity = (function() {
 	return {
 		checkSubmit : function() {
 			var name = $("#name").val();
+			var venue = $("#venue").val();
 			var length = $("#length").val();
 			var startTimeRange = $("#startTime").val();
 			var endTimeRange = $("#endTime").val();
@@ -108,6 +109,10 @@ var addActivity = (function() {
 			if( !/^[A-Za-z0-9.,' \-:&]+$/.test(name)) {
 				message = appendMessage(message,"Name is invalid.");
 			} 
+			
+			if(!/^[1-9][0-9]*$/.test(venue)) {
+				message = appendMessage(message,"Venue is invalid.");
+			}
 			
 			if( !/^[1-9][0-9]*$/.test(length)) {
 				message = appendMessage(message,"Length is invalid.");
