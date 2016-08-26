@@ -722,10 +722,6 @@ public class TheController {
 				String dateRegex = "^(0?[1-9]|1[0-2])\\/(0?[1-9]|[1-2][0-9]|3[0-1])\\/2[0-9]{3}$";
 				String timeRegex = "^((0?|1)[0-9]|2[0-3])([0-5][0-9])$";
 				
-				System.out.println(name + " " + name.matches("^[A-Za-z0-9.,' \\-]+$"));
-				System.out.println(startDate + " " + startDate.matches(dateRegex));
-				System.out.println(endDate + " " + endDate.matches(dateRegex));
-				
 				if( name.matches("^[A-Za-z0-9.,' \\-]+$") && startDate.matches(dateRegex) && endDate.matches(dateRegex)) {
 					boolean error = false;
 					Calendar[] bds = null;
@@ -733,7 +729,6 @@ public class TheController {
 						bds = new Calendar[blackdates.length];
 						int i = 0;
 						for(String s : blackdates ) {
-							System.out.println(s + " " + dateRegex);
 							if( !s.matches(dateRegex) ) {
 								error = true;
 								break;
@@ -751,7 +746,6 @@ public class TheController {
 						int i = 0;
 						for(String s : blacktimes) {
 							String[] parts = s.split("-");
-							System.out.println(s + " " + parts[0].matches(timeRegex) + " " + parts[1].matches(timeRegex));
 							if( parts[0].matches(timeRegex) && parts[1].matches(timeRegex)) {
 								bts[i] = CalendarFactory.createCalendarTime(parts[0]);
 								bte[i] = CalendarFactory.createCalendarTime(parts[1]);
@@ -809,8 +803,22 @@ public class TheController {
 		if( u == null ) {
 			response.sendRedirect(rootDir + "/.");
 		} else {
-			request.setAttribute("sessionId", sessionId);
-			request.getRequestDispatcher("WEB-INF/view/editSession.jsp").forward(request, response);
+			try {
+				SiteSession ss = SessionManager.getSession(sessionId);
+				if( ss == null || ss.getUserId() != u.getId() ) {
+					request.getSession().setAttribute("error", "That session does not exist.");
+					request.getSession().setAttribute("prompt", true);
+					response.sendRedirect(rootDir + "/.");
+				} else {
+					request.setAttribute("sessionId", sessionId);
+					request.getRequestDispatcher("WEB-INF/view/editSession.jsp").forward(request, response);
+				}
+			} catch(SQLException e) {
+				logError(e,request);
+				request.getSession().setAttribute("error", "An unexpected error occured");
+				request.getSession().setAttribute("prompt",true);
+				response.sendRedirect(rootDir + "/.");
+			}
 		}
 	}
 	
@@ -1203,7 +1211,7 @@ public class TheController {
 				
 				
 				if( name.matches("^[A-Za-z0-9.,' \\-:&]+$") && str.matches(timeRegex) && etr.matches(timeRegex) &&
-						v.getUserId() == u.getId() ) {
+						v != null && ss != null && v.getUserId() == u.getId() ) {
 					boolean error = false;
 					
 					Calendar[] bds = null;
@@ -1295,6 +1303,13 @@ public class TheController {
 		} else {
 			try {
 				int id = Integer.parseInt(idS);
+				Activity a = ActivityManager.getActivity((SiteSession)request.getSession().getAttribute("activeSession"), id);
+				if( a == null ) {
+					request.getSession().setAttribute("error", "That session does not exist.");
+					request.getSession().setAttribute("prompt", true);
+					response.sendRedirect(rootDir + "/.");
+					return;
+				}
 				request.setAttribute("actId", id);
 				Venue[] vs;
 				try {
@@ -1334,6 +1349,13 @@ public class TheController {
 			} catch (NumberFormatException nfe) {
 				logError(nfe,request);
 				response.sendRedirect(rootDir + "/.");
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				logError(e1,request);
+				request.getSession().setAttribute("error", "An unexpected error occured");
+				request.getSession().setAttribute("prompt",true);
+				response.sendRedirect(rootDir + "/.");
+				e1.printStackTrace();
 			}
 		}
 	}
@@ -1368,7 +1390,7 @@ public class TheController {
 				SiteSession ss = (SiteSession)request.getSession().getAttribute("activeSession");
 				
 				if( name.matches("^[A-Za-z0-9.,' \\-:&]+$") && str.matches(timeRegex) && etr.matches(timeRegex) &&
-						v.getUserId() == u.getId() ) {
+						ss != null && v != null && v.getUserId() == u.getId() ) {
 					boolean error = false;
 					
 					Calendar[] bds = null;
@@ -1376,7 +1398,6 @@ public class TheController {
 						bds = new Calendar[dateRange.length];
 						int i = 0;
 						for(String s : dateRange ) {
-							System.out.println(s + s.matches(dateRegex));
 							if( !s.matches(dateRegex) ) {
 								error = true;
 								break;
