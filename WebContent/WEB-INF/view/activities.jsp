@@ -17,6 +17,7 @@
 		</c:when>
 		<c:otherwise>
 		<table id="activitiesTable">
+		<thead>
 			<tr>
 				<th>Name</th>
 				<th>Venue</th>
@@ -28,8 +29,10 @@
 				<th>Assigned Time</th>
 				<th></th>
 			</tr>
+		</thead>
+		<tbody>
 			<c:forEach items="${activities }" var="a">
-			<tr>
+			<tr id="act-${a.id }">
 				<td><c:out value="${a.name }"/></td>
 				<td><c:out value="${a.venue.name }"/></td>
 				<td><c:out value="${a.length }"/> mins</td>
@@ -86,6 +89,7 @@
 				<td><a href="editActivity?id=${a.id }"><i class="fa fa-edit"></i></a></td>
 			</tr>
 			</c:forEach>
+		</tbody>
 		</table>
 		</c:otherwise>
 		</c:choose>
