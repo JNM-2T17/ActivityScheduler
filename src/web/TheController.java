@@ -417,8 +417,8 @@ public class TheController {
 				checkToken(token,request,response);
 				if( username.matches("^[A-Za-z0-9_-]+$") && fname.matches("^[A-Za-z ,.'-]+$") && 
 						mi.matches("^[A-Za-z]{0,2}.?$") && lname.matches("^[A-Za-z ,.'-]+$") && 
-						email.matches("^([-.a-zA-Z0-9_]+)@([-.a-zA-Z0-9_]+)[.]([a-zA-Z]{2,5})$") && 
-						UserManager.checkPass(newPassword) && newPassword.equals(confirmPassword)) {
+						email.matches("^([-.a-zA-Z0-9_]+)@([-.a-zA-Z0-9_]+)[.]([a-zA-Z]{2,5})$")&& 
+						(newPassword.length() == 0 || UserManager.checkPass(newPassword) && newPassword.equals(confirmPassword))) {
 					try {
 						if(UserManager.updateUser(u.getId(),username, password, newPassword, fname, mi, lname, email)) {
 							((AuditManager)request.getSession().getAttribute("auditor")).addActivity("edited their account.");
@@ -1520,27 +1520,28 @@ public class TheController {
 			if( ss != null ) {
 				try {
 					GeneticScheduleGenerator gsg = new GeneticScheduleGenerator(50, 0.14, 0.2, 0.4, 1000, ActivityManager.getActivities(ss));
-					ScheduleChromosome sc = (ScheduleChromosome)gsg.generate();
+					ScheduleChromosome schrom = (ScheduleChromosome)gsg.generate();
 					String json = "[";
 					SimpleDateFormat sdf = new SimpleDateFormat("hh:mm aa");
 					SimpleDateFormat sdf2 = new SimpleDateFormat("EEEE, MMMM dd, yyyy hh:mm aa");
-					for(int i = 0; i < sc.size(); i++) {
+					Activity[] sc = schrom.getSortedActivities();
+					for(int i = 0; i < sc.length; i++) {
 						if( i > 0 ) {
 							json += ",";
 						}
-						if( sc.getActivity(i).getStartTime().getTimeInMillis() == 0 ){
-							json += "{\"id\":\"" + sc.getActivity(i).getId() + 
+						if( sc[i].getStartTime().getTimeInMillis() == 0 ){
+							json += "{\"id\":\"" + sc[i].getId() + 
 									"\",\"startTime\":\"null\",\"endTime\":\"null\"}";
 						} else {
-							json += "{\"id\":\"" + sc.getActivity(i).getId() + 
+							json += "{\"id\":\"" + sc[i].getId() + 
 									"\",\"startTime\":\"" + 
-									sdf2.format(sc.getActivity(i).getStartTime().getTime()) + 
+									sdf2.format(sc[i].getStartTime().getTime()) + 
 									"\",\"endTime\":\"" + 
-									sdf.format(sc.getActivity(i).getEndTime().getTime()) +"\"}";
+									sdf.format(sc[i].getEndTime().getTime()) +"\"}";
 						}
 					}
 					json += "]";
-					ActivityManager.assignDates(sc);
+					ActivityManager.assignDates(schrom);
 					response.getWriter().print(json);
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block

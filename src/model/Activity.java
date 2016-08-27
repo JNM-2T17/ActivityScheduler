@@ -294,7 +294,7 @@ public class Activity {
 		int dateCtr = getAllDates().length;
 		if( dateCtr == 0 ) {
 			startTime = CalendarFactory.createCalendar(0);
-			System.out.println(allf.format(startTime.getTime()));
+//			System.out.println(allf.format(startTime.getTime()));
 			return;
 		}
 		int randIndex = (int)(Math.random() * dateCtr);
@@ -336,7 +336,7 @@ public class Activity {
 		
 		if(possibleTimes.size() == 0 ) {
 			startTime = CalendarFactory.createCalendar(0);
-			System.out.println(allf.format(startTime.getTime()));
+//			System.out.println(allf.format(startTime.getTime()));
 			return;
 		}
 		

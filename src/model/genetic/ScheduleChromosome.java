@@ -1,7 +1,9 @@
 package model.genetic;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Comparator;
 
 import model.Activity;
 
@@ -26,6 +28,35 @@ public class ScheduleChromosome implements Chromosome {
 	
 	public Activity getActivity(int index) {
 		return activities.get(index);
+	}
+	
+	public Activity[] getSortedActivities() {
+		Activity[] sorted = new Activity[activities.size()];
+		for(int i = 0; i < sorted.length; i++) {
+			sorted[i] = getActivity(i);
+		}
+		Arrays.sort(sorted,new Comparator<Activity>(){
+
+			@Override
+			public int compare(Activity arg0, Activity arg1) {
+				// TODO Auto-generated method stub
+				Calendar s1 = arg0.getStartTime();
+				Calendar s2 = arg1.getStartTime();
+				if( s1 == null && s2 == null ) {
+					return arg0.getName().compareTo(arg0.getName());
+				} else if( s1 == null ) {
+					return -1;
+				} else if( s2 == null ) {
+					return 1;
+				} else {
+					long l1 = s1.getTimeInMillis();
+					long l2 = s2.getTimeInMillis();
+					return l1 == l2 ? arg0.getName().compareTo(arg0.getName()) : (int)((l1 - l2)/Math.abs(l1 - l2));
+				}
+			}
+			
+		});
+		return sorted;
 	}
 	
 	public int size() {
